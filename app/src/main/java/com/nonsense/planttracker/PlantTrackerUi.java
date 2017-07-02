@@ -4,7 +4,6 @@ package com.nonsense.planttracker;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -36,7 +35,7 @@ import com.nonsense.planttracker.tracker.impl.Plant;
 import com.nonsense.planttracker.tracker.impl.PlantTracker;
 import com.nonsense.planttracker.tracker.impl.Recordable;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class PlantTrackerUi extends AppCompatActivity
@@ -62,7 +61,8 @@ public class PlantTrackerUi extends AppCompatActivity
     private Button waterButton;
     private Button feedButton;
     private Button observationButton;
-    private FloatingActionButton fap;
+
+    private Menu individualPlantMenu;
 
     private PlantTileArrayAdapter plantTileAdapter;
     private PlantRecordableTileArrayAdapter plantRecordableAdapter;
@@ -121,40 +121,7 @@ public class PlantTrackerUi extends AppCompatActivity
         waterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Dialog dialog = new Dialog(PlantTrackerUi.this);
-                dialog.setContentView(R.layout.dialog_water_event);
-                dialog.setTitle("Record watering...");
-
-                Button okButton = (Button)dialog.findViewById(R.id.okButton);
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        EditText pHEditText = (EditText)dialog.findViewById(R.id.pHEditText);
-                        String phInput = pHEditText.getText().toString();
-                        double d = Double.parseDouble(phInput);
-                        currentPlant.waterPlant(d);
-
-                        dialog.dismiss();
-
-                        fillIndividualPlantView();
-
-                    }
-                });
-
-                Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                    }
-                });
-
-                try {
-                    dialog.show();
-                }
-                catch(Exception e)  {
-                    e.printStackTrace();
-                }
+            presentWateringDialog();
             }
         });
 
@@ -162,45 +129,7 @@ public class PlantTrackerUi extends AppCompatActivity
         feedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Dialog dialog = new Dialog(PlantTrackerUi.this);
-                dialog.setContentView(R.layout.dialog_feed_event);
-                dialog.setTitle("Record feeding...");
-
-                Button okButton = (Button)dialog.findViewById(R.id.feedOkButton);
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        EditText pHEditText = (EditText)dialog.findViewById(R.id.feedPhEditText);
-                        String phInput = pHEditText.getText().toString();
-                        double ph = Double.parseDouble(phInput);
-
-                        EditText feedStrengthEditText = (EditText)dialog.findViewById(
-                                R.id.feedStrengthEditText);
-                        String feedStrengthInput = feedStrengthEditText.getText().toString();
-                        double str = Double.parseDouble(feedStrengthInput);
-
-                        currentPlant.feedPlant(str, ph);
-
-                        dialog.dismiss();
-
-                        fillIndividualPlantView();
-                    }
-                });
-
-                Button cancelButton = (Button)dialog.findViewById(R.id.feedCancelButton);
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                    }
-                });
-
-                try {
-                    dialog.show();
-                }
-                catch(Exception e)  {
-                    e.printStackTrace();
-                }
+            presentFeedingDialog();
             }
         });
 
@@ -208,55 +137,7 @@ public class PlantTrackerUi extends AppCompatActivity
         observationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Dialog dialog = new Dialog(PlantTrackerUi.this);
-                dialog.setContentView(R.layout.dialog_observation_event);
-                dialog.setTitle("Record observation...");
-
-                Button okButton = (Button)dialog.findViewById(R.id.okButton);
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        EditText rhMinEditText = (EditText)dialog.findViewById(R.id.rhMinEditText);
-                        EditText rhMaxEditText = (EditText)dialog.findViewById(R.id.rhMaxEditText);
-                        EditText tempMinEditText = (EditText)dialog.findViewById(R.id.tempMinEditText);
-                        EditText tempMaxEditText = (EditText)dialog.findViewById(R.id.tempMaxEditText);
-                        EditText observationsEditText = (EditText)dialog.findViewById(
-                                R.id.observationNotesEditText);
-
-                        String rhMin = rhMinEditText.getText().toString();
-                        String rhMax = rhMaxEditText.getText().toString();
-                        String tempMin = tempMinEditText.getText().toString();
-                        String tempMax = tempMaxEditText.getText().toString();
-                        int minTemp = Integer.parseInt(tempMin);
-                        int maxTemp = Integer.parseInt(tempMax);
-                        int minRh = Integer.parseInt(rhMin);
-                        int maxRh = Integer.parseInt(rhMax);
-                        String observations = observationsEditText.getText().toString();
-
-                        currentPlant.addObservation(maxRh, minRh, maxTemp, minTemp, observations);
-
-                        dialog.dismiss();
-
-                        fillIndividualPlantView();
-
-                    }
-                });
-
-                Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                    }
-                });
-
-                try {
-                    dialog.show();
-                }
-                catch(Exception e)  {
-                    e.printStackTrace();
-                }
-
+                presentAddObservationDialog();
             }
         });
 
@@ -273,7 +154,7 @@ public class PlantTrackerUi extends AppCompatActivity
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 currentPlant = tracker.getAllPlants().get(position);
                 fillIndividualPlantView();
-                switcher.showNext();
+                switcherToNext();
             }
         });
     }
@@ -283,9 +164,9 @@ public class PlantTrackerUi extends AppCompatActivity
         daysSinceGrowStartTextView.setText("" + currentPlant.getDaysFromStart());
         daysSinceFlowerStartTextView.setText("" + currentPlant.getDaysFromFlowerStart());
         weeksSinceGrowStartTextView.setText("" + currentPlant.getWeeksFromStart());
-        weeksSinceFlowerStartTextView.setText("" + currentPlant.getDaysFromFlowerStart());
-        growStartTextView.setText("" + currentPlant.getPlantStartDate().getTime());
-        fromSeedTextView.setText("" + (currentPlant.isFromSeed()?"From Seed":"Clone"));
+        weeksSinceFlowerStartTextView.setText("" + currentPlant.getWeeksFromFlowerStart());
+        growStartTextView.setText("" + formatDate(currentPlant.getPlantStartDate()));
+        fromSeedTextView.setText("" + (currentPlant.isFromSeed()?"From Seed on":"Cloned on"));
         //TODO if it is from a clone, link to another plant!
 
         floweringCheckBox.setOnCheckedChangeListener(null);
@@ -313,62 +194,8 @@ public class PlantTrackerUi extends AppCompatActivity
         recordableEventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                final Dialog dialog = new Dialog(PlantTrackerUi.this);
-
-                Recordable r = currentPlant.getAllRecordableEvents().get(i);
-
-                TextView eventTypeTextView;
-                TextView dateTextView;
-
-                if (r instanceof EventRecord)   {
-                    EventRecord er = (EventRecord)r;
-                    dialog.setContentView(R.layout.dialog_display_recordable_event);
-                    eventTypeTextView = (TextView)dialog.findViewById(R.id.observEventTypeTextView);
-                    dateTextView = (TextView)dialog.findViewById(R.id.dateTextView);
-
-                    eventTypeTextView.setText(er.getEventString());
-                    dateTextView.setText(r.getTimestamp().getTime().toString());
-                    TextView phTextView = (TextView)dialog.findViewById(R.id.pHTextView);
-                    TextView foodStrengthTextView = (TextView)dialog.findViewById(
-                            R.id.foodStrengthTextView);
-
-                    if (er.getEventType() == EventRecord.PlantEvent.Food ||
-                            er.getEventType() == EventRecord.PlantEvent.Water)  {
-                        phTextView.setText(""+er.getpH());
-                        foodStrengthTextView.setText(""+er.getFoodStrength());
-                        RelativeLayout phLayout = (RelativeLayout)dialog.findViewById(
-                                R.id.waterLayout);
-                        phLayout.setVisibility(View.VISIBLE);
-                    }
-                    else    {
-                        RelativeLayout phLayout = (RelativeLayout)dialog.findViewById(
-                                R.id.waterLayout);
-                        phLayout.setVisibility(View.INVISIBLE);
-                    }
-
-                }
-                else if(r instanceof ObservationRecord) {
-                    ObservationRecord or = (ObservationRecord)r;
-                    dialog.setContentView(R.layout.dialog_display_observation);
-                    eventTypeTextView = (TextView)dialog.findViewById(R.id.observEventTypeTextView);
-                    dateTextView = (TextView)dialog.findViewById(R.id.observDateTextView);
-                    TextView tempTextView = (TextView)dialog.findViewById(R.id.tempTextView);
-                    TextView rhTextView = (TextView)dialog.findViewById(R.id.rhTextView);
-                    TextView notesTextView = (TextView)dialog.findViewById(R.id.notesTextView);
-
-                    eventTypeTextView.setText("Observation");
-                    dateTextView.setText(r.getTimestamp().getTime().toString());
-                    tempTextView.setText(or.getTempLow() + "/" + or.getTempHigh());
-                    rhTextView.setText(or.getRhLow() + "/" + or.getRhHigh());
-                    notesTextView.setText(or.getNotes());
-                }
-
-                try {
-                    dialog.show();
-                }
-                catch(Exception e)  {
-                    e.printStackTrace();
-                }            }
+                presentRecordableEventSummaryDialog(i);
+            }
         });
     }
 
@@ -379,7 +206,7 @@ public class PlantTrackerUi extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         }
         else if (switcher.getCurrentView() == individualPlantView)  {
-            switcher.showPrevious();
+            switcherToPrevious();
         }
         else    {
             super.onBackPressed();
@@ -390,6 +217,9 @@ public class PlantTrackerUi extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.plant_tracker_ui, menu);
+        individualPlantMenu = menu;
+        individualPlantMenu.setGroupVisible(0, false);
+        individualPlantMenu.setGroupVisible(1, false);
         return true;
     }
 
@@ -400,9 +230,20 @@ public class PlantTrackerUi extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch(id)  {
+            case R.id.action_rename:
+                presentRenameDialog();
+                break;
+            case R.id.action_change_start_date:
+                presentChangePlantDateDialog();
+                break;
+            case R.id.action_change_flower_date:
+                presentChangeFlowerDateDialog();
+                break;
+            case R.id.action_delete_plant_really:
+                tracker.deletePlant(currentPlant);
+                switcherToPrevious();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -415,84 +256,460 @@ public class PlantTrackerUi extends AppCompatActivity
 
         if (id == R.id.nav_all_plants) {
             if (switcher.getCurrentView() != allPlantsView) {
-                switcher.showPrevious();
+                switcherToPrevious();
             }
         }
         else if (id == R.id.nav_delete) {
-            ArrayList<Plant> plants = tracker.getAllPlants();
-
-            for (Plant p : plants)   {
-                tracker.deletePlantFileData(p);
-            }
-
-            plants.clear();
-
-            fillViewWithPlants();
+            presentDeleteAllPlantsDialog();
         }
         else if (id == R.id.nav_add_plant)  {
-            final Dialog dialog = new Dialog(PlantTrackerUi.this);
-            dialog.setContentView(R.layout.dialog_new_plant);
-            dialog.setTitle("New plant...");
-
-            Button okButton = (Button)dialog.findViewById(R.id.okButton);
-            okButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    EditText plantNameEditText = (EditText)dialog.findViewById(
-                            R.id.plantNameEditText);
-
-                    String plantName = plantNameEditText.getText().toString();
-
-                    RadioGroup rg = (RadioGroup)dialog.findViewById(R.id.originRadioGroup);
-                    boolean isFromSeed;
-                    int selectedId = rg.getCheckedRadioButtonId();
-                    RadioButton selectedOrigin =(RadioButton)dialog.findViewById(selectedId);
-                    RadioButton cloneRadioButton = (RadioButton)dialog.findViewById(
-                            R.id.cloneRadioButton);
-                    if (selectedOrigin == cloneRadioButton &&
-                            selectedOrigin.isChecked())    {
-                        isFromSeed = false;
-                    }
-                    else    {
-                        isFromSeed = true;
-                    }
-
-                    Calendar c = Calendar.getInstance();
-
-                    DatePicker datePicker = (DatePicker)dialog.findViewById(R.id.datePicker);
-                    int year = datePicker.getYear();
-                    int month = datePicker.getMonth();
-                    int dayOfMonth = datePicker.getDayOfMonth();
-
-                    c.set(year, month, dayOfMonth);
-
-                    tracker.addPlant(c, plantName, isFromSeed);
-
-                    dialog.dismiss();
-
-                    fillViewWithPlants();
-                }
-            });
-
-            Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
-            cancelButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    dialog.dismiss();
-                }
-            });
-
-            try {
-                dialog.show();
-            }
-            catch(Exception e)  {
-                e.printStackTrace();
-            }
+            presentAddPlantDialog();
         }
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu)  {
+        MenuItem changeFloweringDateMenuItem = (MenuItem)individualPlantMenu.findItem(
+                R.id.action_change_flower_date);
+
+        if (currentPlant == null)   {
+            changeFloweringDateMenuItem.setVisible(false);
+        }
+        else    {
+            if(currentPlant.isFlowering())
+            {
+                changeFloweringDateMenuItem.setVisible(true);
+            }
+            else
+            {
+                changeFloweringDateMenuItem.setVisible(false);
+            }
+        }
+
+        return true;
+    }
+
+    private void presentDeleteAllPlantsDialog() {
+        final Dialog dialog = new Dialog(PlantTrackerUi.this);
+        dialog.setContentView(R.layout.dialog_delete_all_plants);
+
+        Button okButton = (Button)dialog.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                tracker.deleteAllPlants();
+                fillViewWithPlants();
+
+                dialog.dismiss();
+
+                fillIndividualPlantView();
+            }
+        });
+
+        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        try {
+            dialog.show();
+        }
+        catch(Exception e)  {
+            e.printStackTrace();
+        }
+    }
+
+    private void presentFeedingDialog() {
+        final Dialog dialog = new Dialog(PlantTrackerUi.this);
+        dialog.setContentView(R.layout.dialog_feed_event);
+        dialog.setTitle("Record feeding...");
+
+        Button okButton = (Button)dialog.findViewById(R.id.feedOkButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText pHEditText = (EditText)dialog.findViewById(R.id.feedPhEditText);
+                String phInput = pHEditText.getText().toString();
+                double ph = Double.parseDouble(phInput);
+
+                EditText feedStrengthEditText = (EditText)dialog.findViewById(
+                        R.id.feedStrengthEditText);
+                String feedStrengthInput = feedStrengthEditText.getText().toString();
+                double str = Double.parseDouble(feedStrengthInput);
+
+                currentPlant.feedPlant(str, ph);
+
+                dialog.dismiss();
+
+                fillIndividualPlantView();
+            }
+        });
+
+        Button cancelButton = (Button)dialog.findViewById(R.id.feedCancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        try {
+            dialog.show();
+        }
+        catch(Exception e)  {
+            e.printStackTrace();
+        }
+    }
+
+    private void presentWateringDialog()    {
+        final Dialog dialog = new Dialog(PlantTrackerUi.this);
+        dialog.setContentView(R.layout.dialog_water_event);
+        dialog.setTitle("Record watering...");
+
+        Button okButton = (Button)dialog.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText pHEditText = (EditText)dialog.findViewById(R.id.pHEditText);
+                String phInput = pHEditText.getText().toString();
+                double d = Double.parseDouble(phInput);
+                currentPlant.waterPlant(d);
+
+                dialog.dismiss();
+
+                fillIndividualPlantView();
+
+            }
+        });
+
+        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        try {
+            dialog.show();
+        }
+        catch(Exception e)  {
+            e.printStackTrace();
+        }
+    }
+
+    private void presentAddObservationDialog()  {
+        final Dialog dialog = new Dialog(PlantTrackerUi.this);
+        dialog.setContentView(R.layout.dialog_observation_event);
+        dialog.setTitle("Record observation...");
+
+        Button okButton = (Button)dialog.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText rhMinEditText = (EditText)dialog.findViewById(R.id.rhMinEditText);
+                EditText rhMaxEditText = (EditText)dialog.findViewById(R.id.rhMaxEditText);
+                EditText tempMinEditText = (EditText)dialog.findViewById(R.id.tempMinEditText);
+                EditText tempMaxEditText = (EditText)dialog.findViewById(R.id.tempMaxEditText);
+                EditText observationsEditText = (EditText)dialog.findViewById(
+                        R.id.observationNotesEditText);
+
+                String rhMin = rhMinEditText.getText().toString();
+                String rhMax = rhMaxEditText.getText().toString();
+                String tempMin = tempMinEditText.getText().toString();
+                String tempMax = tempMaxEditText.getText().toString();
+                int minTemp = Integer.parseInt(tempMin);
+                int maxTemp = Integer.parseInt(tempMax);
+                int minRh = Integer.parseInt(rhMin);
+                int maxRh = Integer.parseInt(rhMax);
+                String observations = observationsEditText.getText().toString();
+
+                currentPlant.addObservation(maxRh, minRh, maxTemp, minTemp, observations);
+
+                dialog.dismiss();
+
+                fillIndividualPlantView();
+
+            }
+        });
+
+        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        try {
+            dialog.show();
+        }
+        catch(Exception e)  {
+            e.printStackTrace();
+        }
+    }
+
+    private void presentRecordableEventSummaryDialog(int eventIndex)  {
+        final Dialog dialog = new Dialog(PlantTrackerUi.this);
+
+        Recordable r = currentPlant.getAllRecordableEvents().get(eventIndex);
+
+        TextView eventTypeTextView;
+        TextView dateTextView;
+
+        if (r instanceof EventRecord)   {
+            EventRecord er = (EventRecord)r;
+            dialog.setContentView(R.layout.dialog_display_recordable_event);
+            eventTypeTextView = (TextView)dialog.findViewById(R.id.observEventTypeTextView);
+            dateTextView = (TextView)dialog.findViewById(R.id.dateTextView);
+
+            eventTypeTextView.setText(er.getEventString());
+            dateTextView.setText(r.getTimestamp().getTime().toString());
+            TextView phTextView = (TextView)dialog.findViewById(R.id.pHTextView);
+            TextView foodStrengthTextView = (TextView)dialog.findViewById(
+                    R.id.foodStrengthTextView);
+
+            if (er.getEventType() == EventRecord.PlantEvent.Food ||
+                    er.getEventType() == EventRecord.PlantEvent.Water)  {
+                phTextView.setText(""+er.getpH());
+                foodStrengthTextView.setText(""+er.getFoodStrength());
+                RelativeLayout phLayout = (RelativeLayout)dialog.findViewById(
+                        R.id.waterLayout);
+                phLayout.setVisibility(View.VISIBLE);
+            }
+            else    {
+                RelativeLayout phLayout = (RelativeLayout)dialog.findViewById(
+                        R.id.waterLayout);
+                phLayout.setVisibility(View.INVISIBLE);
+            }
+
+        }
+        else if(r instanceof ObservationRecord) {
+            ObservationRecord or = (ObservationRecord)r;
+            dialog.setContentView(R.layout.dialog_display_observation);
+            eventTypeTextView = (TextView)dialog.findViewById(R.id.observEventTypeTextView);
+            dateTextView = (TextView)dialog.findViewById(R.id.observDateTextView);
+            TextView tempTextView = (TextView)dialog.findViewById(R.id.tempTextView);
+            TextView rhTextView = (TextView)dialog.findViewById(R.id.rhTextView);
+            TextView notesTextView = (TextView)dialog.findViewById(R.id.notesTextView);
+
+            eventTypeTextView.setText("Observation");
+            dateTextView.setText(r.getTimestamp().getTime().toString());
+            tempTextView.setText(or.getTempLow() + "/" + or.getTempHigh());
+            rhTextView.setText(or.getRhLow() + "/" + or.getRhHigh());
+            notesTextView.setText(or.getNotes());
+        }
+
+        try {
+            dialog.show();
+        }
+        catch(Exception e)  {
+            e.printStackTrace();
+        }
+    }
+
+    private void presentRenameDialog()  {
+        final Dialog dialog = new Dialog(PlantTrackerUi.this);
+        dialog.setContentView(R.layout.dialog_rename);
+
+        Button okButton = (Button)dialog.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText renameEditText = (EditText)dialog.findViewById(R.id.renameEditText);
+
+                currentPlant.setPlantName(renameEditText.getText().toString());
+
+                dialog.dismiss();
+
+                fillIndividualPlantView();
+
+            }
+        });
+
+        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        try {
+            dialog.show();
+        }
+        catch(Exception e)  {
+            e.printStackTrace();
+        }
+    }
+
+    private void presentAddPlantDialog()    {
+        final Dialog dialog = new Dialog(PlantTrackerUi.this);
+        dialog.setContentView(R.layout.dialog_new_plant);
+        dialog.setTitle("New plant...");
+
+        Button okButton = (Button)dialog.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText plantNameEditText = (EditText)dialog.findViewById(
+                        R.id.plantNameEditText);
+
+                String plantName = plantNameEditText.getText().toString();
+
+                RadioGroup rg = (RadioGroup)dialog.findViewById(R.id.originRadioGroup);
+                boolean isFromSeed;
+                int selectedId = rg.getCheckedRadioButtonId();
+                RadioButton selectedOrigin =(RadioButton)dialog.findViewById(selectedId);
+                RadioButton cloneRadioButton = (RadioButton)dialog.findViewById(
+                        R.id.cloneRadioButton);
+                if (selectedOrigin == cloneRadioButton &&
+                        selectedOrigin.isChecked())    {
+                    isFromSeed = false;
+                }
+                else    {
+                    isFromSeed = true;
+                }
+
+                Calendar c = Calendar.getInstance();
+
+                DatePicker datePicker = (DatePicker)dialog.findViewById(R.id.datePicker);
+                int year = datePicker.getYear();
+                int month = datePicker.getMonth();
+                int dayOfMonth = datePicker.getDayOfMonth();
+
+                c.set(year, month, dayOfMonth);
+
+                tracker.addPlant(c, plantName, isFromSeed);
+
+                dialog.dismiss();
+
+                fillViewWithPlants();
+            }
+        });
+
+        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        try {
+            dialog.show();
+        }
+        catch(Exception e)  {
+            e.printStackTrace();
+        }
+    }
+
+    private void presentChangePlantDateDialog() {
+        final Dialog dialog = new Dialog(PlantTrackerUi.this);
+        dialog.setContentView(R.layout.dialog_change_date);
+
+        Button okButton = (Button)dialog.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePicker dateChangePicker = (DatePicker)dialog.findViewById(
+                        R.id.dateChangePicker);
+
+                Calendar c = Calendar.getInstance();
+                c.set(dateChangePicker.getYear(), dateChangePicker.getMonth(),
+                        dateChangePicker.getDayOfMonth());
+
+                currentPlant.changePlantingDate(c);
+
+                dialog.dismiss();
+
+                fillIndividualPlantView();
+
+            }
+        });
+
+        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        try {
+            dialog.show();
+        }
+        catch(Exception e)  {
+            e.printStackTrace();
+        }
+    }
+
+    private void presentChangeFlowerDateDialog()    {
+        final Dialog dialog = new Dialog(PlantTrackerUi.this);
+        dialog.setContentView(R.layout.dialog_change_date);
+
+        Button okButton = (Button)dialog.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePicker dateChangePicker = (DatePicker)dialog.findViewById(
+                        R.id.dateChangePicker);
+
+                Calendar c = Calendar.getInstance();
+                c.set(dateChangePicker.getYear(), dateChangePicker.getMonth(),
+                        dateChangePicker.getDayOfMonth());
+
+                currentPlant.changeFloweringDate(c);
+
+                dialog.dismiss();
+
+                fillIndividualPlantView();
+
+            }
+        });
+
+        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        try {
+            dialog.show();
+        }
+        catch(Exception e)  {
+            e.printStackTrace();
+        }
+    }
+
+
+    // switch to all plants
+    private void switcherToPrevious()    {
+        switcher.showPrevious();
+        individualPlantMenu.setGroupVisible(0, false);
+        individualPlantMenu.setGroupVisible(1, false);
+        fillViewWithPlants();
+    }
+
+    // switch to individual plant
+    private void switcherToNext()   {
+        switcher.showNext();
+        individualPlantMenu.setGroupVisible(0, true);
+        individualPlantMenu.setGroupVisible(1, true);
+    }
+
+    private String formatDate(Calendar c)   {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
+        return sdf.format(c.getTime());
     }
 }

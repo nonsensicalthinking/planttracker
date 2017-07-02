@@ -12,17 +12,17 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="73dp">
+        android:layout_height="87dp">
 
         <TextView
             android:id="@+id/growStartTextView"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/textView14"
-            android:layout_below="@+id/plantNameTextView"
             android:layout_toLeftOf="@+id/floweringCheckBox"
             android:gravity="bottom"
-            android:text="Start date: " />
+            android:text="Start date: "
+            android:layout_alignTop="@+id/fromSeedTextView"
+            android:layout_alignBottom="@+id/fromSeedTextView" />
 
         <TextView
             android:id="@+id/plantNameTextView"
@@ -52,132 +52,159 @@
             android:id="@+id/fromSeedTextView"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/textView14"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/plantNameTextView"
-            android:layout_toLeftOf="@+id/growStartTextView"
-            android:layout_toStartOf="@+id/growStartTextView"
             android:gravity="bottom"
             android:paddingLeft="5dp"
-            android:text="From Seed" />
+            android:text="From Seed"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/growStartTextView"
+            android:layout_toStartOf="@+id/growStartTextView" />
 
         <TextView
             android:id="@+id/textView14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:paddingLeft="5dp"
             android:text="Parent plant: 15291829586"
-            android:textColor="@android:color/holo_blue_light" />
+            android:textColor="@android:color/holo_blue_light"
+            android:layout_below="@+id/growStartTextView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp">
+        android:layout_height="78dp"
+        android:gravity="center_horizontal">
 
-        <TextView
-            android:id="@+id/textView15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/textView13"
-            android:layout_alignEnd="@+id/weeksSinceFlowerStartTextView"
-            android:layout_alignLeft="@+id/weeksSinceFlowerStartTextView"
-            android:layout_alignRight="@+id/weeksSinceFlowerStartTextView"
-            android:layout_alignStart="@+id/weeksSinceFlowerStartTextView"
-            android:layout_below="@+id/weeksSinceFlowerStartTextView"
-            android:text="Weeks since flwr start" />
+        <RelativeLayout
+            android:id="@+id/relativeLayout4"
+            android:layout_width="95dp"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/relativeLayout3"
+            android:layout_toRightOf="@+id/relativeLayout3">
 
-        <TextView
-            android:id="@+id/weeksSinceFlowerStartTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/textView13"
-            android:layout_alignEnd="@+id/textView6"
-            android:layout_alignLeft="@+id/textView6"
-            android:layout_alignRight="@+id/textView6"
-            android:layout_alignStart="@+id/textView6"
-            android:gravity="bottom|center_horizontal"
-            android:text="0"
-            android:textSize="25sp"
-            android:layout_alignTop="@+id/daysSinceFlowerStartTextView" />
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_horizontal"
+                android:text="Flower day" />
 
-        <TextView
-            android:id="@+id/textView13"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/daysSinceFlowerStartTextView"
-            android:text="Days since flwr start"
-            android:layout_alignRight="@+id/textView5"
-            android:layout_alignEnd="@+id/textView5"
-            android:layout_alignLeft="@+id/textView5"
-            android:layout_alignStart="@+id/textView5" />
+            <TextView
+                android:id="@+id/daysSinceFlowerStartTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/textView13"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:gravity="bottom|center_horizontal"
+                android:text="0"
+                android:textSize="25sp" />
+        </RelativeLayout>
 
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="18dp"
-            android:layout_marginStart="18dp"
-            android:text="Days since grow start"
-            android:layout_below="@+id/daysSinceGrowStartTextView"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+        <RelativeLayout
+            android:id="@+id/relativeLayout3"
+            android:layout_width="95dp"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/relativeLayout2"
+            android:layout_toRightOf="@+id/relativeLayout2">
 
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/textView5"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginEnd="19dp"
-            android:layout_marginRight="19dp"
-            android:text="Weeks since grow start" />
+            <TextView
+                android:id="@+id/weeksSinceGrowStartTextView"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/textView6"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="8"
+                android:textSize="25sp" />
 
-        <TextView
-            android:id="@+id/daysSinceGrowStartTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/textView5"
-            android:layout_alignLeft="@+id/textView5"
-            android:layout_alignParentTop="true"
-            android:layout_alignRight="@+id/textView5"
-            android:layout_alignStart="@+id/textView5"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="56"
-            android:textSize="25sp" />
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_horizontal"
+                android:text="Grow week" />
+        </RelativeLayout>
 
-        <TextView
-            android:id="@+id/weeksSinceGrowStartTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/textView6"
-            android:layout_alignEnd="@+id/textView6"
-            android:layout_alignLeft="@+id/textView6"
-            android:layout_alignRight="@+id/textView6"
-            android:layout_alignStart="@+id/textView6"
-            android:layout_alignTop="@+id/daysSinceGrowStartTextView"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="8"
-            android:textSize="25sp" />
+        <RelativeLayout
+            android:id="@+id/relativeLayout2"
+            android:layout_width="95dp"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/daysSinceFlowerStartTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="bottom|center_horizontal"
-            android:text="0"
-            android:textSize="25sp"
-            android:layout_below="@+id/textView5"
-            android:layout_marginTop="13dp"
-            android:layout_alignRight="@+id/textView13"
-            android:layout_alignEnd="@+id/textView13"
-            android:layout_alignLeft="@+id/textView5"
-            android:layout_alignStart="@+id/textView5" />
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="Grow day" />
+
+            <TextView
+                android:id="@+id/daysSinceGrowStartTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/textView5"
+                android:layout_alignEnd="@+id/textView5"
+                android:layout_alignLeft="@+id/textView5"
+                android:layout_alignRight="@+id/textView5"
+                android:layout_alignStart="@+id/textView5"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="56"
+                android:textSize="25sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="95dp"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/relativeLayout4"
+            android:layout_toRightOf="@+id/relativeLayout4">
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_horizontal"
+                android:text="Flower week" />
+
+            <TextView
+                android:id="@+id/weeksSinceFlowerStartTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/textView15"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:gravity="bottom|center_horizontal"
+                android:text="0"
+                android:textSize="25sp" />
+
+        </RelativeLayout>
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -206,6 +233,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:text="Feed" />
+
     </RelativeLayout>
 
     <ListView

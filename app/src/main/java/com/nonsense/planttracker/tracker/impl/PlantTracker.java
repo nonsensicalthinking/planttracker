@@ -110,7 +110,20 @@ public class PlantTracker implements IPlantUpdateListener {
         }
     }
 
-    public void deletePlantFileData(Plant p)   {
+    public void deletePlant(Plant p)    {
+        deletePlantFileData(p);
+        plants.remove(p);
+    }
+
+    public void deleteAllPlants()    {
+        for(Plant p : plants)   {
+            deletePlantFileData(p);
+        }
+
+        plants.clear();
+    }
+
+    private void deletePlantFileData(Plant p)   {
         File plantFile = new File(plantFolderPath + "/" + p.getPlantId() + ".ser");
         if (plantFile.exists() && plantFile.isFile())   {
             plantFile.delete();

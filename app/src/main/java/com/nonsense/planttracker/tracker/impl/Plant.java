@@ -190,21 +190,48 @@ public class Plant implements Serializable {
         long diffTime = endTime - startTime;
         long diffDays = diffTime / (1000 * 60 * 60 * 24);
 
-        return diffDays;
+        return diffDays + 1;    // shift to 1 based
     }
 
     public long calcWeeksFromTime(Calendar start)   {
         Calendar end = Calendar.getInstance();
 
-        Date startDate = this.startDate.getTime();
+        Date startDate = start.getTime();
         Date endDate = end.getTime();
         long startTime = startDate.getTime();
         long endTime = endDate.getTime();
         long diffTime = endTime - startTime;
         long diffDays = diffTime / (1000 * 60 * 60 * 24 * 7);
 
-        return diffDays;
+        return diffDays + 1;    // shift to 1 based
     }
+
+    public void changePlantingDate(Calendar c)  {
+        startDate = c;
+
+        long currentDay = getDaysFromStart();
+        long currentWeek = getWeeksFromStart();
+        recordableEvents.add(new EventRecord(currentDay, currentWeek,
+                EventRecord.PlantEvent.ChangePlantingDate, c));
+
+        notifyUpdateListeners();
+    }
+
+    public void changeFloweringDate(Calendar c) {
+        flowerStartDate = c;
+
+        long currentDay = getDaysFromStart();
+        long currentWeek = getWeeksFromStart();
+        recordableEvents.add(new EventRecord(currentDay, currentWeek,
+                EventRecord.PlantEvent.ChangeFloweringDate, c));
+
+        notifyUpdateListeners();
+    }
+
+    public boolean isFlowering()    {
+        return (vegFlowerState == VegFlower.Flower);
+    }
+
 
     private void setPlantState(VegFlower state)    {
         vegFlowerState = state;

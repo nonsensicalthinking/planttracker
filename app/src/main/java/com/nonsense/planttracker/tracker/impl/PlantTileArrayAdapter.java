@@ -51,7 +51,14 @@ public class PlantTileArrayAdapter extends ArrayAdapter<Plant> {
             }
 
             if (tt2 != null) {
-                tt2.setText("Started " + p.getDaysFromStart() + " days ago, Grow Wk. " + p.getWeeksFromStart());
+                String flowerWeek = "";
+
+                if (p.getWeeksFromFlowerStart() > 0)   {
+                    flowerWeek = ", Flower wk. " + p.getWeeksFromFlowerStart();
+                }
+
+                tt2.setText("Started " + p.getDaysFromStart() + " days ago, Grow Wk. " +
+                        p.getWeeksFromStart() + flowerWeek);
             }
         }
         else    {

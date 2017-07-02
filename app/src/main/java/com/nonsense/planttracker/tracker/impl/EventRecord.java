@@ -1,5 +1,6 @@
 package com.nonsense.planttracker.tracker.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -14,12 +15,15 @@ public class EventRecord extends Recordable {
         Water,
         Food,
         VegetationState,
-        FloweringState
+        FloweringState,
+        ChangePlantingDate,
+        ChangeFloweringDate
     }
 
     private PlantEvent event;
     private double foodStrength;
     private double pH;
+    private Calendar dateChangedTo;
 
     // for other style events
     public EventRecord(long dayCount, long weekCount, PlantEvent e)    {
@@ -30,6 +34,7 @@ public class EventRecord extends Recordable {
     public EventRecord(long dayCount, long weekCount, PlantEvent e, Calendar timestamp) {
         super(dayCount, weekCount);
         event = e;
+        dateChangedTo = timestamp;
     }
 
     // for food/water events
@@ -66,6 +71,10 @@ public class EventRecord extends Recordable {
                 return "Vegetation";
             case FloweringState:
                 return "Flowering";
+            case ChangePlantingDate:
+                return "Changed planting date";
+            case ChangeFloweringDate:
+                return "Changed flowering date";
             default:
                 return "";
         }
@@ -77,14 +86,28 @@ public class EventRecord extends Recordable {
                 return "pH: " + pH;
             case Food:
                 return "ph: " + pH + " Food Str.: " + foodStrength;
+            case ChangePlantingDate:
+                return "to: " + getDateChangedToAsString();
+            case ChangeFloweringDate:
+                return "to: " + getDateChangedToAsString();
             default:
                 return "";
         }
     }
 
+    public String getDateChangedToAsString()    {
+        return formatDate(dateChangedTo);
+    }
+
+    private String formatDate(Calendar c)   {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
+        return sdf.format(c.getTime());
+    }
+
+
     @Override
     public String Summary() {
-        return timestamp.getTime() + " " + getEventString() + " " + getEventText();
+        return formatDate(timestamp) + " " + getEventString() + " " + getEventText();
     }
 
     public String getEventTypeString()    {
@@ -101,6 +124,10 @@ public class EventRecord extends Recordable {
                 return "2VS";
             case FloweringState:
                 return "2FS";
+            case ChangePlantingDate:
+                return "CPD";
+            case ChangeFloweringDate:
+                return "CFL";
             default:
                 return "";
         }
