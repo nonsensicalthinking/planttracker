@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_all_plants"
+            android:icon="@drawable/ic_growing_plant"
+            android:title="All Plants" />
+        <item
+            android:id="@+id/nav_add_plant"
+            android:icon="@drawable/ic_add"
+            android:title="Add Plant" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send" />
+        </menu>
+    </item>
+
+    <item android:title="Delete">
+        <menu>
+            <item
+                android:id="@+id/nav_delete"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Delete All Plants" />
+        </menu>
+    </item>
+
+</menu>

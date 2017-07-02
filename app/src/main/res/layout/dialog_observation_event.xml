@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="308dp"
+        android:layout_height="476dp">
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="29dp"
+            android:layout_marginStart="29dp"
+            android:layout_marginTop="17dp"
+            android:text="RH Range for the day, min/max" />
+
+        <EditText
+            android:id="@+id/rhMinEditText"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView7"
+            android:layout_alignStart="@+id/textView7"
+            android:layout_below="@+id/textView7"
+            android:ems="10"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/rhMaxEditText"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView7"
+            android:layout_marginLeft="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_toEndOf="@+id/rhMinEditText"
+            android:layout_toRightOf="@+id/rhMinEditText"
+            android:ems="10"
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/rhMinEditText"
+            android:layout_alignStart="@+id/rhMinEditText"
+            android:layout_below="@+id/rhMinEditText"
+            android:layout_marginTop="23dp"
+            android:text="Temperature range for the day, min/max" />
+
+        <EditText
+            android:id="@+id/tempMinEditText"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView8"
+            android:layout_alignStart="@+id/textView8"
+            android:layout_below="@+id/textView8"
+            android:ems="10"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/tempMaxEditText"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/rhMaxEditText"
+            android:layout_alignStart="@+id/rhMaxEditText"
+            android:layout_below="@+id/textView8"
+            android:ems="10"
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tempMinEditText"
+            android:layout_alignStart="@+id/tempMinEditText"
+            android:layout_below="@+id/tempMinEditText"
+            android:layout_marginTop="22dp"
+            android:text="Observation notes" />
+
+        <EditText
+            android:id="@+id/observationNotesEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_alignEnd="@+id/textView8"
+            android:layout_alignLeft="@+id/textView9"
+            android:layout_alignRight="@+id/textView8"
+            android:layout_alignStart="@+id/textView9"
+            android:layout_below="@+id/textView9"
+            android:ems="10"
+            android:inputType="textMultiLine" />
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/observationNotesEditText"
+            android:layout_alignStart="@+id/observationNotesEditText"
+            android:layout_below="@+id/observationNotesEditText"
+            android:layout_marginTop="14dp"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/okButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/observationNotesEditText"
+            android:layout_alignRight="@+id/observationNotesEditText"
+            android:layout_alignTop="@+id/cancelButton"
+            android:text="Ok" />
+
+    </RelativeLayout>
+</LinearLayout>
