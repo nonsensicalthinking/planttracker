@@ -228,6 +228,16 @@ public class Plant implements Serializable {
         notifyUpdateListeners();
     }
 
+    public void addGeneralEvent(String generalEventName, String generalEventAbbrev,
+                                String eventNotes)  {
+        long currentDay = getDaysFromStart();
+        long currentWeek = getWeeksFromStart();
+        recordableEvents.add(new EventRecord(currentDay, currentWeek, generalEventName,
+                generalEventAbbrev, eventNotes));
+
+        notifyUpdateListeners();
+    }
+
     public boolean isFlowering()    {
         return (vegFlowerState == VegFlower.Flower);
     }

@@ -17,7 +17,8 @@ public class EventRecord extends Recordable {
         VegetationState,
         FloweringState,
         ChangePlantingDate,
-        ChangeFloweringDate
+        ChangeFloweringDate,
+        GeneralEvent
     }
 
     private PlantEvent event;
@@ -25,12 +26,18 @@ public class EventRecord extends Recordable {
     private double pH;
     private Calendar dateChangedTo;
 
+    // general event
+    private String generalEventName;
+    private String generalEventAbbrev;
+    private String eventNotes;
+
     // for other style events
     public EventRecord(long dayCount, long weekCount, PlantEvent e)    {
         super(dayCount, weekCount);
         event = e;
     }
 
+    // for date change event types
     public EventRecord(long dayCount, long weekCount, PlantEvent e, Calendar timestamp) {
         super(dayCount, weekCount);
         event = e;
@@ -43,6 +50,15 @@ public class EventRecord extends Recordable {
         this.event = e;
         this.foodStrength = foodStrength;
         this.pH = pH;
+    }
+
+    public EventRecord(long dayCount, long weekCount, String generalEventName,
+                       String generalEventAbbrev, String eventNotes)   {
+        super(dayCount, weekCount);
+        this.event = PlantEvent.GeneralEvent;
+        this.generalEventName = generalEventName;
+        this.generalEventAbbrev = generalEventAbbrev;
+        this.eventNotes = eventNotes;
     }
 
     public double getFoodStrength() {
@@ -75,6 +91,8 @@ public class EventRecord extends Recordable {
                 return "Changed planting date";
             case ChangeFloweringDate:
                 return "Changed flowering date";
+            case GeneralEvent:
+                return generalEventName;
             default:
                 return "";
         }
@@ -90,6 +108,8 @@ public class EventRecord extends Recordable {
                 return "to: " + getDateChangedToAsString();
             case ChangeFloweringDate:
                 return "to: " + getDateChangedToAsString();
+            case GeneralEvent:
+                return eventNotes;
             default:
                 return "";
         }
@@ -128,6 +148,8 @@ public class EventRecord extends Recordable {
                 return "CPD";
             case ChangeFloweringDate:
                 return "CFL";
+            case GeneralEvent:
+                return generalEventAbbrev;
             default:
                 return "";
         }

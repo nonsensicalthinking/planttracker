@@ -3,7 +3,10 @@ package com.nonsense.planttracker;
 // TODO: Give attributionhttp://www.freepik.com/free-icon/plant-growing_743982.htm
 
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.v4.widget.ExploreByTouchHelper;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -61,6 +64,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private Button waterButton;
     private Button feedButton;
     private Button observationButton;
+    private Button generalButton;
 
     private Menu individualPlantMenu;
 
@@ -116,12 +120,20 @@ public class PlantTrackerUi extends AppCompatActivity
         growStartTextView = (TextView)findViewById(R.id.growStartTextView);
         fromSeedTextView = (TextView)findViewById(R.id.fromSeedTextView);
         recordableEventListView = (ListView)findViewById(R.id.recordableEventListView);
+        generalButton = (Button)findViewById(R.id.generalEventButton);
+
+        generalButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                presentGeneralEventDialog();
+            }
+        });
 
         waterButton = (Button)findViewById(R.id.waterButton);
         waterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            presentWateringDialog();
+                presentWateringDialog();
             }
         });
 
@@ -293,6 +305,52 @@ public class PlantTrackerUi extends AppCompatActivity
         return true;
     }
 
+    private void presentGeneralEventDialog()    {
+        final Dialog dialog = new Dialog(PlantTrackerUi.this);
+        dialog.setContentView(R.layout.dialog_general_event);
+
+        Button okButton = (Button)dialog.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView generalEventName = (TextView)dialog.findViewById(
+                        R.id.generalEventNameTextView);
+                TextView generalEventNameAbbrevEditText = (TextView)dialog.findViewById(
+                        R.id.generalEventAbbrevTextView);
+                TextView eventNotesEditText = (TextView)dialog.findViewById(
+                        R.id.eventNotesEditText);
+
+                if (generalEventName.getText().toString().equals("") ||
+                        generalEventNameAbbrevEditText.getText().toString().equals("")) {
+                    return;
+                }
+
+                currentPlant.addGeneralEvent(generalEventName.getText().toString(),
+                        generalEventNameAbbrevEditText.getText().toString(),
+                        eventNotesEditText.getText().toString());
+
+                dialog.dismiss();
+
+                fillIndividualPlantView();
+            }
+        });
+
+        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        try {
+            dialog.show();
+        }
+        catch(Exception e)  {
+            e.printStackTrace();
+        }
+    }
+
     private void presentDeleteAllPlantsDialog() {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
         dialog.setContentView(R.layout.dialog_delete_all_plants);
@@ -330,7 +388,6 @@ public class PlantTrackerUi extends AppCompatActivity
     private void presentFeedingDialog() {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
         dialog.setContentView(R.layout.dialog_feed_event);
-        dialog.setTitle("Record feeding...");
 
         Button okButton = (Button)dialog.findViewById(R.id.feedOkButton);
         okButton.setOnClickListener(new View.OnClickListener() {
@@ -338,12 +395,24 @@ public class PlantTrackerUi extends AppCompatActivity
             public void onClick(View view) {
                 EditText pHEditText = (EditText)dialog.findViewById(R.id.feedPhEditText);
                 String phInput = pHEditText.getText().toString();
-                double ph = Double.parseDouble(phInput);
+                double ph = 0.0;
+                try {
+                    ph = Double.parseDouble(phInput);
+                }
+                catch (Exception e) {
+                    return;
+                }
 
                 EditText feedStrengthEditText = (EditText)dialog.findViewById(
                         R.id.feedStrengthEditText);
                 String feedStrengthInput = feedStrengthEditText.getText().toString();
-                double str = Double.parseDouble(feedStrengthInput);
+                double str = 0.0;
+                try {
+                    str = Double.parseDouble(feedStrengthInput);
+                }
+                catch (Exception e) {
+                    return;
+                }
 
                 currentPlant.feedPlant(str, ph);
 
@@ -372,7 +441,6 @@ public class PlantTrackerUi extends AppCompatActivity
     private void presentWateringDialog()    {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
         dialog.setContentView(R.layout.dialog_water_event);
-        dialog.setTitle("Record watering...");
 
         Button okButton = (Button)dialog.findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
@@ -380,7 +448,15 @@ public class PlantTrackerUi extends AppCompatActivity
             public void onClick(View view) {
                 EditText pHEditText = (EditText)dialog.findViewById(R.id.pHEditText);
                 String phInput = pHEditText.getText().toString();
-                double d = Double.parseDouble(phInput);
+
+                double d = 0.0;
+                try {
+                    d = Double.parseDouble(phInput);
+                }
+                catch (Exception e) {
+                    return;
+                }
+
                 currentPlant.waterPlant(d);
 
                 dialog.dismiss();
@@ -409,7 +485,6 @@ public class PlantTrackerUi extends AppCompatActivity
     private void presentAddObservationDialog()  {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
         dialog.setContentView(R.layout.dialog_observation_event);
-        dialog.setTitle("Record observation...");
 
         Button okButton = (Button)dialog.findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
@@ -426,10 +501,40 @@ public class PlantTrackerUi extends AppCompatActivity
                 String rhMax = rhMaxEditText.getText().toString();
                 String tempMin = tempMinEditText.getText().toString();
                 String tempMax = tempMaxEditText.getText().toString();
-                int minTemp = Integer.parseInt(tempMin);
-                int maxTemp = Integer.parseInt(tempMax);
-                int minRh = Integer.parseInt(rhMin);
-                int maxRh = Integer.parseInt(rhMax);
+
+                int minTemp = 0;
+                int maxTemp = 0;
+                int minRh = 0;
+                int maxRh = 0;
+
+                try {
+                    minTemp = Integer.parseInt(tempMin);
+                }
+                catch (Exception e) {
+                    return;
+                }
+
+                try {
+                    maxTemp = Integer.parseInt(tempMax);
+                }
+                catch (Exception e) {
+                    return;
+                }
+
+                try {
+                    minRh = Integer.parseInt(rhMin);
+                }
+                catch (Exception e) {
+                    return;
+                }
+
+                try {
+                    maxRh = Integer.parseInt(rhMax);
+                }
+                catch (Exception e) {
+                    return;
+                }
+
                 String observations = observationsEditText.getText().toString();
 
                 currentPlant.addObservation(maxRh, minRh, maxTemp, minTemp, observations);
@@ -571,6 +676,7 @@ public class PlantTrackerUi extends AppCompatActivity
                 RadioButton selectedOrigin =(RadioButton)dialog.findViewById(selectedId);
                 RadioButton cloneRadioButton = (RadioButton)dialog.findViewById(
                         R.id.cloneRadioButton);
+
                 if (selectedOrigin == cloneRadioButton &&
                         selectedOrigin.isChecked())    {
                     isFromSeed = false;

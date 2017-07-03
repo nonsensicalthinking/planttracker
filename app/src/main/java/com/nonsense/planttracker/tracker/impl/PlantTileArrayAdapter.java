@@ -61,11 +61,7 @@ public class PlantTileArrayAdapter extends ArrayAdapter<Plant> {
                         p.getWeeksFromStart() + flowerWeek);
             }
         }
-        else    {
-            System.out.println("Plant index: " + position + " is null!");
-        }
 
         return v;
     }
-
 }

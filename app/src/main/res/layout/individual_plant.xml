@@ -212,27 +212,42 @@
         android:layout_height="50dp">
 
         <Button
+            android:id="@+id/generalEventButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="General"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/observeButton"
+            android:layout_toEndOf="@+id/observeButton" />
+
+        <Button
             android:id="@+id/observeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
+            android:text="Observe"
             android:layout_alignParentTop="true"
-            android:text="Observe" />
+            android:layout_toRightOf="@+id/feedButton"
+            android:layout_toEndOf="@+id/feedButton" />
 
         <Button
             android:id="@+id/waterButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Water" />
+            android:text="Water"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
         <Button
             android:id="@+id/feedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Feed"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:text="Feed" />
+            android:layout_toRightOf="@+id/waterButton"
+            android:layout_toEndOf="@+id/waterButton" />
 
     </RelativeLayout>
 
