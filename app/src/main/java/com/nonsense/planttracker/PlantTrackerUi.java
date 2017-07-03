@@ -1,6 +1,7 @@
 package com.nonsense.planttracker;
 
-// TODO: Give attributionhttp://www.freepik.com/free-icon/plant-growing_743982.htm
+// TODO: Give attribution, plant icon used in this program was provided by the author through this
+// website http://www.freepik.com/free-icon/plant-growing_743982.htm
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -650,12 +651,13 @@ public class PlantTrackerUi extends AppCompatActivity
     private void presentRenameDialog()  {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
         dialog.setContentView(R.layout.dialog_rename);
+        final EditText renameEditText = (EditText)dialog.findViewById(R.id.renameEditText);
+        renameEditText.setText(currentPlant.getPlantName());
 
         Button okButton = (Button)dialog.findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText renameEditText = (EditText)dialog.findViewById(R.id.renameEditText);
 
                 currentPlant.setPlantName(renameEditText.getText().toString());
 
