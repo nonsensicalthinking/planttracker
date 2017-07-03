@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -8,38 +9,76 @@
         android:layout_height="415dp">
 
         <RelativeLayout
+            android:id="@+id/relativeLayout6"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/relativeLayout7">
+            android:layout_height="100dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true">
 
-            <Button
-                android:id="@+id/cancelButton"
+            <AutoCompleteTextView
+                android:id="@+id/generalEventAbbrevTextView"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/textView20"
+                android:layout_alignStart="@+id/textView20"
+                android:layout_below="@+id/textView20"
+                android:importantForAutofill="auto"
+                android:inputType="textAutoComplete"
+                android:maxLength="4"
+                android:maxLines="1" />
+
+            <TextView
+                android:id="@+id/textView20"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cancel"
-                android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp" />
-
-            <Button
-                android:id="@+id/okButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ok"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginRight="19dp"
-                android:layout_marginEnd="19dp" />
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="18dp"
+                android:text="Abbreviation for event" />
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/relativeLayout5"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/relativeLayout6">
+
+            <TextView
+                android:id="@+id/textView18"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="18dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="14dp"
+                android:text="Name for event" />
+
+            <AutoCompleteTextView
+                android:id="@+id/generalEventNameTextView"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/textView18"
+                android:layout_alignStart="@+id/textView18"
+                android:layout_centerVertical="true" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout7"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:layout_below="@+id/relativeLayout6"
-            android:id="@+id/relativeLayout7">
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/relativeLayout5">
 
             <EditText
                 android:id="@+id/eventNotesEditText"
@@ -66,20 +105,13 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_below="@+id/relativeLayout5"
-            android:id="@+id/relativeLayout6">
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
 
-            <AutoCompleteTextView
-                android:id="@+id/generalEventAbbrevTextView"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView20"
-                android:layout_alignStart="@+id/textView20"
-                android:layout_below="@+id/textView20" />
-
-            <TextView
-                android:id="@+id/textView20"
+            <Button
+                android:id="@+id/cancelButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -87,38 +119,20 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginLeft="20dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="18dp"
-                android:text="Abbreviation for event" />
-        </RelativeLayout>
+                android:text="Cancel" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:id="@+id/relativeLayout5">
-
-            <TextView
-                android:id="@+id/textView18"
+            <Button
+                android:id="@+id/okButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Name for event"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="18dp"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="14dp" />
-
-            <AutoCompleteTextView
-                android:id="@+id/generalEventNameTextView"
-                android:layout_width="220dp"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView18"
-                android:layout_alignStart="@+id/textView18"
-                android:layout_centerVertical="true" />
+                android:layout_marginEnd="19dp"
+                android:layout_marginRight="19dp"
+                android:text="Ok" />
 
         </RelativeLayout>
+
     </RelativeLayout>
 </LinearLayout>

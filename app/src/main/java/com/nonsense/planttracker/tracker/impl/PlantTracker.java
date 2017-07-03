@@ -1,6 +1,7 @@
 package com.nonsense.planttracker.tracker.impl;
 
 import com.nonsense.planttracker.tracker.interf.IPlantUpdateListener;
+import com.nonsense.planttracker.tracker.interf.ISettingsChangedListener;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,15 +9,19 @@ import java.io.FileOutputStream;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * Created by Derek Brooks on 6/30/2017.
  */
-public class PlantTracker implements IPlantUpdateListener {
+public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListener {
+    private PlantTrackerSettings settings;
     private ArrayList<Plant> plants;
     private String plantFolderPath;
 
@@ -26,6 +31,17 @@ public class PlantTracker implements IPlantUpdateListener {
 
     public PlantTracker(String plantFolderPath)   {
         this.plantFolderPath = plantFolderPath;
+
+        File settingsFile = new File(plantFolderPath + "/settings/tracker_settings.ser");
+        if (!settingsFile.exists())  {
+            settings = new PlantTrackerSettings();
+            settings.setListener(this);
+            savePlantTrackerSettings();
+        }
+        else    {
+            loadPlantTrackerSettings();
+        }
+
         plants = new ArrayList<>();
         loadPlants();
     }
@@ -67,14 +83,14 @@ public class PlantTracker implements IPlantUpdateListener {
     }
 
     public void savePlant(Plant p)  {
-        File folder = new File(plantFolderPath);
+        File folder = new File(plantFolderPath+"/plants/");
         if (!folder.exists())   {
             folder.mkdir();
         }
 
         try
         {
-            FileOutputStream fos = new FileOutputStream(plantFolderPath + "/" + p.getPlantId() + ".ser");
+            FileOutputStream fos = new FileOutputStream(plantFolderPath + "/plants/" + p.getPlantId() + ".ser");
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(p);
             oos.close();
@@ -88,12 +104,12 @@ public class PlantTracker implements IPlantUpdateListener {
     private void loadPlants()    {
         // search plants folder for plant files
         List<String> results = new ArrayList<String>();
-        File[] files = new File(plantFolderPath).listFiles();
+        File[] files = new File(plantFolderPath + "/plants/").listFiles();
         if (files != null)  {
             for (File file : files) {
                 try
                 {
-                    FileInputStream fis = new FileInputStream(plantFolderPath + "/" + file.getName());
+                    FileInputStream fis = new FileInputStream(plantFolderPath + "/plants/" + file.getName());
                     ObjectInputStream ois = new ObjectInputStream(fis);
 
                     Plant p = (Plant)ois.readObject();
@@ -102,11 +118,49 @@ public class PlantTracker implements IPlantUpdateListener {
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    File f = new File(plantFolderPath + "/" + file.getName());
+                    File f = new File(plantFolderPath + "/plants/" + file.getName());
                     f.delete();
                     System.out.println("Deleted invalid plant data: " + file.getName());
                 }
             }
+        }
+    }
+
+    private void savePlantTrackerSettings() {
+        File folder = new File(plantFolderPath+ "/settings/");
+        if (!folder.exists())   {
+            folder.mkdir();
+        }
+
+        try
+        {
+            FileOutputStream fos = new FileOutputStream(plantFolderPath + "/settings/tracker_settings.ser");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(settings);
+            oos.close();
+            fos.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadPlantTrackerSettings() {
+        // search plants folder for plant files
+        try
+        {
+            FileInputStream fis = new FileInputStream(plantFolderPath + "/settings/tracker_settings.ser");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            PlantTrackerSettings p = (PlantTrackerSettings)ois.readObject();
+            p.setListener(this);
+            settings = p;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            File f = new File(plantFolderPath + "/settings/tracker_settings.scr");
+            f.delete();
+            System.out.println("Deleted invalid settings data: " + f.getName());
         }
     }
 
@@ -124,14 +178,23 @@ public class PlantTracker implements IPlantUpdateListener {
     }
 
     private void deletePlantFileData(Plant p)   {
-        File plantFile = new File(plantFolderPath + "/" + p.getPlantId() + ".ser");
+        File plantFile = new File(plantFolderPath + "/plants/" + p.getPlantId() + ".ser");
         if (plantFile.exists() && plantFile.isFile())   {
             plantFile.delete();
         }
     }
 
+    public PlantTrackerSettings getPlantTrackerSettings()   {
+        return settings;
+    }
+
     @Override
     public void plantUpdate(Plant p) {
         savePlant(p);
+    }
+
+    @Override
+    public void settingsChanged() {
+        savePlantTrackerSettings();
     }
 }

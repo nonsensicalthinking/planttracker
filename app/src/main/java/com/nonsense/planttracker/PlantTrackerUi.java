@@ -3,10 +3,7 @@ package com.nonsense.planttracker;
 // TODO: Give attributionhttp://www.freepik.com/free-icon/plant-growing_743982.htm
 
 import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.v4.widget.ExploreByTouchHelper;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -39,6 +38,7 @@ import com.nonsense.planttracker.tracker.impl.PlantTracker;
 import com.nonsense.planttracker.tracker.impl.Recordable;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class PlantTrackerUi extends AppCompatActivity
@@ -106,7 +106,7 @@ public class PlantTrackerUi extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        tracker = new PlantTracker(getFilesDir() + "/plants/");
+        tracker = new PlantTracker(getFilesDir().toString());
 
         fillViewWithPlants();
     }
@@ -237,9 +237,6 @@ public class PlantTrackerUi extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         switch(id)  {
@@ -309,17 +306,37 @@ public class PlantTrackerUi extends AppCompatActivity
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
         dialog.setContentView(R.layout.dialog_general_event);
 
+        final AutoCompleteTextView generalEventName = (AutoCompleteTextView)dialog.findViewById(
+                R.id.generalEventNameTextView);
+        final AutoCompleteTextView generalEventNameAbbrevEditText =
+                (AutoCompleteTextView)dialog.findViewById(R.id.generalEventAbbrevTextView);
+
+        generalEventNameAbbrevEditText.setAdapter(new ArrayAdapter<String>(
+                getBaseContext(), android.R.layout.simple_list_item_1,
+                tracker.getPlantTrackerSettings().getAutoCompleteKeys()));
+
+        generalEventNameAbbrevEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                String selectedAbbreviation = (String)arg0.getItemAtPosition(arg2);
+                if (tracker.getPlantTrackerSettings().getAutoCompleteKeys()
+                        .contains(selectedAbbreviation))    {
+
+                    generalEventName.setText(tracker.getPlantTrackerSettings()
+                            .getAutoCompleteValueForKey(selectedAbbreviation));
+                }
+            }
+        });
+
+        generalEventNameAbbrevEditText.setThreshold(1);
+
+        final TextView eventNotesEditText = (TextView)dialog.findViewById(
+                R.id.eventNotesEditText);
+
+
         Button okButton = (Button)dialog.findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TextView generalEventName = (TextView)dialog.findViewById(
-                        R.id.generalEventNameTextView);
-                TextView generalEventNameAbbrevEditText = (TextView)dialog.findViewById(
-                        R.id.generalEventAbbrevTextView);
-                TextView eventNotesEditText = (TextView)dialog.findViewById(
-                        R.id.eventNotesEditText);
-
                 if (generalEventName.getText().toString().equals("") ||
                         generalEventNameAbbrevEditText.getText().toString().equals("")) {
                     return;
@@ -330,6 +347,15 @@ public class PlantTrackerUi extends AppCompatActivity
                         eventNotesEditText.getText().toString());
 
                 dialog.dismiss();
+
+                if (!tracker.getPlantTrackerSettings().getAutoCompleteKeys().contains(
+                        generalEventNameAbbrevEditText.getText().toString()))   {
+
+                    tracker.getPlantTrackerSettings().addAutoCompleteKeyValuePair(
+                            generalEventNameAbbrevEditText.getText().toString(),
+                            generalEventName.getText().toString());
+                }
+
 
                 fillIndividualPlantView();
             }
