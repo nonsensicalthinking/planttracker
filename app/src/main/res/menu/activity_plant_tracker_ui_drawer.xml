@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/viewMenuGroup"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_active_plants"
+            android:icon="@drawable/ic_growing_plant"
+            android:title="Plants: Active" />
+        <item
+            android:id="@+id/nav_archived_plants"
+            android:icon="@drawable/ic_growing_plant"
+            android:title="Plants: Archived" />
         <item
             android:id="@+id/nav_all_plants"
             android:icon="@drawable/ic_growing_plant"
-            android:title="All Plants" />
+            android:title="Plants: All" />
         <item
             android:id="@+id/nav_add_plant"
+            android:checkable="false"
             android:icon="@drawable/ic_add"
             android:title="Add Plant" />
         <item

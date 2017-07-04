@@ -23,6 +23,8 @@ import java.util.TreeMap;
 public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListener {
     private PlantTrackerSettings settings;
     private ArrayList<Plant> plants;
+    private transient ArrayList<Plant> activePlants;
+    private transient ArrayList<Plant> archivedPlants;
     private String plantFolderPath;
 
     public PlantTracker()   {
@@ -43,6 +45,8 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         }
 
         plants = new ArrayList<>();
+        archivedPlants = new ArrayList<>();
+        activePlants = new ArrayList<>();
         loadPlants();
     }
 
@@ -52,6 +56,28 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
 
     public ArrayList<Plant> getAllPlants()  {
         return plants;
+    }
+
+    public ArrayList<Plant> getActivePlants()   {
+        activePlants.clear();
+        for(Plant p : plants)   {
+            if (!p.isArchived())    {
+                activePlants.add(p);
+            }
+        }
+
+        return activePlants;
+    }
+
+    public ArrayList<Plant> getArchivedPlants() {
+        archivedPlants.clear();
+        for(Plant p : plants)   {
+            if (p.isArchived()) {
+                archivedPlants.add(p);
+            }
+        }
+
+        return archivedPlants;
     }
 
     public void addPlant(String plantName, boolean isFromSeed)  {
@@ -115,6 +141,13 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
                     Plant p = (Plant)ois.readObject();
                     p.addUpdateListener(this);
                     plants.add(p);
+
+                    if (p.isArchived()) {
+                        archivedPlants.add(p);
+                    }
+                    else    {
+                        activePlants.add(p);
+                    }
                 }
                 catch (Exception e) {
                     e.printStackTrace();

@@ -1,4 +1,4 @@
-package com.nonsense.planttracker.tracker.impl;
+package com.nonsense.planttracker.tracker.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.nonsense.planttracker.R;
+import com.nonsense.planttracker.tracker.impl.Plant;
 
 import java.util.List;
 
@@ -43,22 +44,30 @@ public class PlantTileArrayAdapter extends ArrayAdapter<Plant> {
         Plant p = getItem(position);
 
         if (p != null) {
-            TextView tt1 = v.findViewById(R.id.firstLine);
-            TextView tt2 = v.findViewById(R.id.secondLine);
+            TextView plantNameTextView = v.findViewById(R.id.firstLine);
+            TextView plantSummaryTextView = v.findViewById(R.id.secondLine);
+            TextView archivedTextView = v.findViewById(R.id.archivedTextView);
 
-            if (tt1 != null) {
-                tt1.setText(p.getPlantName());
+            if (plantNameTextView != null) {
+                plantNameTextView.setText(p.getPlantName());
             }
 
-            if (tt2 != null) {
+            if (plantSummaryTextView != null) {
                 String flowerWeek = "";
 
                 if (p.getWeeksFromFlowerStart() > 0)   {
                     flowerWeek = ", Flower wk. " + p.getWeeksFromFlowerStart();
                 }
 
-                tt2.setText("Started " + p.getDaysFromStart() + " days ago, Grow Wk. " +
+                plantSummaryTextView.setText("Started " + p.getDaysFromStart() + " days ago, Grow Wk. " +
                         p.getWeeksFromStart() + flowerWeek);
+            }
+
+            if (p.isArchived()) {
+                archivedTextView.setVisibility(View.VISIBLE);
+            }
+            else    {
+                archivedTextView.setVisibility(View.INVISIBLE);
             }
         }
 

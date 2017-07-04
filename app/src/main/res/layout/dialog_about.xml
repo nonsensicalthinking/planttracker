@@ -1,44 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1">
 
     <RelativeLayout
-        android:layout_width="330dp"
-        android:layout_height="108dp"
-        android:layout_weight="0.00">
+        android:layout_width="346dp"
+        android:layout_height="165dp">
 
-        <TextView
-            android:id="@+id/textView19"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <RelativeLayout
+            android:id="@+id/relativeLayout8"
+            android:layout_width="306dp"
+            android:layout_height="100dp"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="24dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="14dp"
-            android:text="Plant Tracker by Derek Brooks Copyright 2017" />
+            android:layout_alignParentRight="true"
+            android:layout_alignParentStart="true">
 
-        <TextView
-            android:id="@+id/textView23"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Icon made by Freepik from www.flaticon.com"
-            android:layout_alignParentBottom="true"
-            android:layout_alignLeft="@+id/textView24"
-            android:layout_alignStart="@+id/textView24"
-            android:layout_marginBottom="12dp" />
+            <TextView
+                android:id="@+id/textView24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="https://github.com/nonsensicalthinking/planttracker"
+                android:textSize="12sp"
+                android:layout_alignParentTop="true"
+                android:layout_alignLeft="@+id/textView19"
+                android:layout_alignStart="@+id/textView19" />
 
-        <TextView
-            android:id="@+id/textView24"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="https://github.com/nonsensicalthinking/planttracker"
-            android:textSize="12sp"
-            android:layout_below="@+id/textView19"
-            android:layout_alignLeft="@+id/textView19"
-            android:layout_alignStart="@+id/textView19" />
+            <TextView
+                android:id="@+id/textView19"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/textView24"
+                android:layout_marginLeft="26dp"
+                android:layout_marginStart="26dp"
+                android:layout_marginTop="12dp"
+                android:text="Plant Tracker by Derek Brooks"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView22"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/textView19"
+                android:layout_alignStart="@+id/textView19"
+                android:layout_below="@+id/textView19"
+                android:text="Copyright 2017" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignEnd="@+id/relativeLayout8"
+            android:layout_alignRight="@+id/relativeLayout8"
+            android:layout_below="@+id/relativeLayout8">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="11dp"
+                android:layout_marginStart="11dp"
+                app:srcCompat="@drawable/ic_growing_plant"
+                android:layout_alignBottom="@+id/textView23"
+                android:layout_toRightOf="@+id/textView23"
+                android:layout_toEndOf="@+id/textView23" />
+
+            <TextView
+                android:id="@+id/textView23"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginStart="25dp"
+                android:text="Icon made by Freepik from www.flaticon.com"
+                android:textSize="12sp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="24dp" />
+        </RelativeLayout>
+
     </RelativeLayout>
 </LinearLayout>

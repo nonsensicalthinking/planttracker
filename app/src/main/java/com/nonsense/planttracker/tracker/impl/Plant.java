@@ -13,6 +13,7 @@ import java.util.Iterator;
  */
 
 public class Plant implements Serializable {
+
     public enum VegFlower   {
         Veg,
         Flower
@@ -22,11 +23,13 @@ public class Plant implements Serializable {
     private String plantName;
     private Calendar startDate;
     private ArrayList<Recordable> recordableEvents;
-//    private ArrayList<EventRecord> eventRecords;
-//    private ArrayList<ObservationRecord> observationRecords;
     private VegFlower vegFlowerState;
     private Calendar flowerStartDate;
     private boolean isFromSeed;
+    private boolean isArchived;
+
+    // TODO add grouping
+    // TODO store grouping auto-complete as part of settings
 
     private transient ArrayList<IPlantUpdateListener> updateListeners;
 
@@ -81,16 +84,6 @@ public class Plant implements Serializable {
 
         recordableEvents.add(new EventRecord(currentDay, currentWeek,
                 EventRecord.PlantEvent.GrowStart));
-
-        notifyUpdateListeners();
-    }
-
-    public void endGrow(Calendar c)   {
-        long currentDay = getDaysFromStart();
-        long currentWeek = getWeeksFromStart();
-
-        recordableEvents.add(new EventRecord(currentDay, currentWeek,
-                EventRecord.PlantEvent.GrowEnd));
 
         notifyUpdateListeners();
     }
@@ -257,4 +250,17 @@ public class Plant implements Serializable {
         }
     }
 
+    public void archivePlant() {
+        isArchived = true;
+        notifyUpdateListeners();
+    }
+
+    public void unarchivePlant()   {
+        isArchived = false;
+        notifyUpdateListeners();
+    }
+
+    public boolean isArchived() {
+        return isArchived;
+    }
 }

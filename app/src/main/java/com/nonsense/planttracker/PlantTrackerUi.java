@@ -32,8 +32,8 @@ import android.widget.ViewSwitcher;
 
 import com.nonsense.planttracker.tracker.impl.EventRecord;
 import com.nonsense.planttracker.tracker.impl.ObservationRecord;
-import com.nonsense.planttracker.tracker.impl.PlantRecordableTileArrayAdapter;
-import com.nonsense.planttracker.tracker.impl.PlantTileArrayAdapter;
+import com.nonsense.planttracker.tracker.adapters.PlantRecordableTileArrayAdapter;
+import com.nonsense.planttracker.tracker.adapters.PlantTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.Plant;
 import com.nonsense.planttracker.tracker.impl.PlantTracker;
 import com.nonsense.planttracker.tracker.impl.Recordable;
@@ -41,6 +41,8 @@ import com.nonsense.planttracker.tracker.impl.Recordable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 
 public class PlantTrackerUi extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -48,6 +50,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private ViewSwitcher switcher;
     private LinearLayout allPlantsView;
     private LinearLayout individualPlantView;
+    private Toolbar toolbar;
 
     // All plants view
     private ListView plantListView;
@@ -73,16 +76,24 @@ public class PlantTrackerUi extends AppCompatActivity
     private PlantRecordableTileArrayAdapter plantRecordableAdapter;
 
     // Data
+    private ArrayList<Plant> currentDisplayArray;
+    private PlantDisplay plantDisplay = PlantDisplay.Active;
     private PlantTracker tracker;
     private Plant currentPlant;
 
+    private enum PlantDisplay   {
+        All,
+        Active,
+        Archived
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plant_tracker_ui);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setSubtitle("Showing Active Plants");
 
         switcher = (ViewSwitcher)findViewById(R.id.viewSwitcher);
         allPlantsView = (LinearLayout)findViewById(R.id.allPlantsView);
@@ -108,6 +119,7 @@ public class PlantTrackerUi extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         tracker = new PlantTracker(getFilesDir().toString());
+
 
         fillViewWithPlants();
     }
@@ -158,14 +170,30 @@ public class PlantTrackerUi extends AppCompatActivity
     }
 
     private void fillViewWithPlants()   {
+        switch(plantDisplay)    {
+            case All:
+                currentDisplayArray = tracker.getAllPlants();
+                toolbar.setSubtitle("Showing All Plants");
+                break;
+            case Active:
+                currentDisplayArray = tracker.getActivePlants();
+                toolbar.setSubtitle("Showing Active Plants");
+                break;
+            case Archived:
+                currentDisplayArray = tracker.getArchivedPlants();
+                toolbar.setSubtitle("Showing Archived Plants");
+                break;
+        }
+
         PlantTileArrayAdapter adapter = new PlantTileArrayAdapter(getBaseContext(),
-                R.layout.plant_list_tile, tracker.getAllPlants());
+                R.layout.plant_list_tile, currentDisplayArray);
 
         plantListView.setAdapter(adapter);
         plantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                currentPlant = tracker.getAllPlants().get(position);
+                currentPlant = currentDisplayArray.get(position);
+                toolbar.setSubtitle("");
                 fillIndividualPlantView();
                 switcherToNext();
             }
@@ -233,6 +261,7 @@ public class PlantTrackerUi extends AppCompatActivity
         individualPlantMenu = menu;
         individualPlantMenu.setGroupVisible(0, false);
         individualPlantMenu.setGroupVisible(1, false);
+
         return true;
     }
 
@@ -254,6 +283,12 @@ public class PlantTrackerUi extends AppCompatActivity
                 tracker.deletePlant(currentPlant);
                 switcherToPrevious();
                 break;
+            case R.id.action_archive_plant:
+                currentPlant.archivePlant();
+                break;
+            case R.id.action_unarchive_plant:
+                currentPlant.unarchivePlant();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -265,8 +300,30 @@ public class PlantTrackerUi extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_all_plants) {
+            plantDisplay = PlantDisplay.All;
             if (switcher.getCurrentView() != allPlantsView) {
                 switcherToPrevious();
+            }
+            else    {
+                fillViewWithPlants();
+            }
+        }
+        else if (id == R.id.nav_active_plants)  {
+            plantDisplay = PlantDisplay.Active;
+            if (switcher.getCurrentView() != allPlantsView) {
+                switcherToPrevious();
+            }
+            else    {
+                fillViewWithPlants();
+            }
+        }
+        else if (id == R.id.nav_archived_plants)    {
+            plantDisplay = PlantDisplay.Archived;
+            if (switcher.getCurrentView() != allPlantsView) {
+                switcherToPrevious();
+            }
+            else    {
+                fillViewWithPlants();
             }
         }
         else if (id == R.id.nav_delete) {
@@ -274,6 +331,7 @@ public class PlantTrackerUi extends AppCompatActivity
         }
         else if (id == R.id.nav_add_plant)  {
             presentAddPlantDialog();
+            MenuItem activeMenuItem = toolbar.findViewById(R.id.nav_about_plant_tracker);
         }
         else if (id == R.id.nav_about_plant_tracker)    {
             presentAboutDialog();
@@ -293,6 +351,18 @@ public class PlantTrackerUi extends AppCompatActivity
             changeFloweringDateMenuItem.setVisible(false);
         }
         else    {
+            MenuItem archivedMenuItem = individualPlantMenu.findItem(R.id.action_archive_plant);
+            MenuItem activeMenuItem = individualPlantMenu.findItem(R.id.action_unarchive_plant);
+
+            if (currentPlant.isArchived())  {
+                archivedMenuItem.setVisible(false);
+                activeMenuItem.setVisible(true);
+            }
+            else    {
+                archivedMenuItem.setVisible(true);
+                activeMenuItem.setVisible(false);
+            }
+
             if(currentPlant.isFlowering())
             {
                 changeFloweringDateMenuItem.setVisible(true);

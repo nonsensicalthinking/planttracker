@@ -1,4 +1,4 @@
-package com.nonsense.planttracker.tracker.impl;
+package com.nonsense.planttracker.tracker.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.nonsense.planttracker.R;
+import com.nonsense.planttracker.tracker.impl.Recordable;
 
 import java.util.List;
 

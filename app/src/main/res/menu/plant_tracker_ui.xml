@@ -27,6 +27,22 @@
             android:title="@string/action_change_flower_date"
             android:visible="true"
             app:showAsAction="never" />
+        <item
+            android:id="@+id/action_archive_plant"
+            android:checkable="false"
+            android:enabled="true"
+            android:orderInCategory="100"
+            android:title="Archive Plant"
+            android:visible="true"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_unarchive_plant"
+            android:checkable="false"
+            android:enabled="true"
+            android:orderInCategory="100"
+            android:title="Un-Archive Plant"
+            android:visible="true"
+            app:showAsAction="never" />
     </group>
     <group>
         <item
