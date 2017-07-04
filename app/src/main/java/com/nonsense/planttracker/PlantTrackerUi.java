@@ -1,6 +1,6 @@
 package com.nonsense.planttracker;
 
-// TODO: Give attribution, plant icon used in this program was provided by the author through this
+// Additional source attribution for icon:
 // website http://www.freepik.com/free-icon/plant-growing_743982.htm
 
 import android.app.Dialog;
@@ -274,6 +274,9 @@ public class PlantTrackerUi extends AppCompatActivity
         }
         else if (id == R.id.nav_add_plant)  {
             presentAddPlantDialog();
+        }
+        else if (id == R.id.nav_about_plant_tracker)    {
+            presentAboutDialog();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -826,6 +829,12 @@ public class PlantTrackerUi extends AppCompatActivity
         }
     }
 
+    private void presentAboutDialog()   {
+        final Dialog dialog = new Dialog(PlantTrackerUi.this);
+        dialog.setContentView(R.layout.dialog_about);
+
+        dialog.show();
+    }
 
     // switch to all plants
     private void switcherToPrevious()    {

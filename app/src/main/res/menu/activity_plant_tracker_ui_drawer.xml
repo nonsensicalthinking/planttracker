@@ -10,6 +10,10 @@
             android:id="@+id/nav_add_plant"
             android:icon="@drawable/ic_add"
             android:title="Add Plant" />
+        <item
+            android:id="@+id/nav_about_plant_tracker"
+            android:icon="@drawable/ic_about"
+            android:title="About Plant Tracker" />
     </group>
 
     <item android:title="Communicate">
