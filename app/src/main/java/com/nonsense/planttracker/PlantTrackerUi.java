@@ -41,8 +41,7 @@ import com.nonsense.planttracker.tracker.impl.Recordable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Stack;
 
 public class PlantTrackerUi extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -76,6 +75,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private PlantRecordableTileArrayAdapter plantRecordableAdapter;
 
     // Data
+    private Stack<Plant> parentPlantViewStack;
     private ArrayList<Plant> currentDisplayArray;
     private PlantDisplay plantDisplay = PlantDisplay.Active;
     private PlantTracker tracker;
@@ -118,6 +118,7 @@ public class PlantTrackerUi extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        parentPlantViewStack = new Stack<>();
         tracker = new PlantTracker(getFilesDir().toString());
 
 
@@ -208,6 +209,26 @@ public class PlantTrackerUi extends AppCompatActivity
         weeksSinceFlowerStartTextView.setText("" + currentPlant.getWeeksFromFlowerStart());
         growStartTextView.setText("" + formatDate(currentPlant.getPlantStartDate()));
         fromSeedTextView.setText("" + (currentPlant.isFromSeed()?"From Seed on":"Cloned on"));
+
+        final Plant parentPlant = tracker.getPlantById(currentPlant.getParentPlantId());
+        TextView parentPlantTextView = (TextView)findViewById(R.id.parentPlantIdTextView);
+        parentPlantTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                parentPlantViewStack.push(currentPlant);
+                currentPlant = parentPlant;
+                fillIndividualPlantView();
+            }
+        });
+
+        if (!currentPlant.isFromSeed() && currentPlant.getParentPlantId() > 0) {
+            parentPlantTextView.setText("Parent Plant: " + parentPlant.getPlantName());
+            parentPlantTextView.setVisibility(View.VISIBLE);
+        }
+        else    {
+            parentPlantTextView.setVisibility(View.INVISIBLE);
+        }
+
         //TODO if it is from a clone, link to another plant!
 
         floweringCheckBox.setOnCheckedChangeListener(null);
@@ -247,7 +268,13 @@ public class PlantTrackerUi extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         }
         else if (switcher.getCurrentView() == individualPlantView)  {
-            switcherToPrevious();
+            if (parentPlantViewStack.size() > 0)    {
+                currentPlant = parentPlantViewStack.pop();
+                fillIndividualPlantView();
+            }
+            else    {
+                switcherToPrevious();
+            }
         }
         else    {
             super.onBackPressed();
@@ -288,6 +315,9 @@ public class PlantTrackerUi extends AppCompatActivity
                 break;
             case R.id.action_unarchive_plant:
                 currentPlant.unarchivePlant();
+                break;
+            case R.id.action_clone_plant:
+                presentAddPlantDialog(currentPlant.getPlantId());
                 break;
         }
 
@@ -330,7 +360,7 @@ public class PlantTrackerUi extends AppCompatActivity
             presentDeleteAllPlantsDialog();
         }
         else if (id == R.id.nav_add_plant)  {
-            presentAddPlantDialog();
+            presentAddPlantDialog(0);
             MenuItem activeMenuItem = toolbar.findViewById(R.id.nav_about_plant_tracker);
         }
         else if (id == R.id.nav_about_plant_tracker)    {
@@ -757,10 +787,11 @@ public class PlantTrackerUi extends AppCompatActivity
         }
     }
 
-    private void presentAddPlantDialog()    {
+    private void presentAddPlantDialog(final long parentPlantId)    {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
         dialog.setContentView(R.layout.dialog_new_plant);
-        dialog.setTitle("New plant...");
+
+        final long parentId = parentPlantId;
 
         Button okButton = (Button)dialog.findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
@@ -778,12 +809,17 @@ public class PlantTrackerUi extends AppCompatActivity
                 RadioButton cloneRadioButton = (RadioButton)dialog.findViewById(
                         R.id.cloneRadioButton);
 
-                if (selectedOrigin == cloneRadioButton &&
-                        selectedOrigin.isChecked())    {
+                if (parentId > 0)   {
                     isFromSeed = false;
                 }
                 else    {
-                    isFromSeed = true;
+                    if (selectedOrigin == cloneRadioButton &&
+                            selectedOrigin.isChecked())    {
+                        isFromSeed = false;
+                    }
+                    else    {
+                        isFromSeed = true;
+                    }
                 }
 
                 Calendar c = Calendar.getInstance();
@@ -795,7 +831,12 @@ public class PlantTrackerUi extends AppCompatActivity
 
                 c.set(year, month, dayOfMonth);
 
-                tracker.addPlant(c, plantName, isFromSeed);
+                if (parentPlantId > 0)  {
+                    tracker.addPlant(c, plantName, parentPlantId);
+                }
+                else    {
+                    tracker.addPlant(c, plantName, isFromSeed);
+                }
 
                 dialog.dismiss();
 
@@ -908,6 +949,7 @@ public class PlantTrackerUi extends AppCompatActivity
 
     // switch to all plants
     private void switcherToPrevious()    {
+        parentPlantViewStack.clear();   // clear the view stack
         switcher.showPrevious();
         individualPlantMenu.setGroupVisible(0, false);
         individualPlantMenu.setGroupVisible(1, false);

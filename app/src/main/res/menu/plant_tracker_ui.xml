@@ -4,6 +4,14 @@
     android:id="@+id/individual_plant_menu">
     <group>
         <item
+            android:id="@+id/action_clone_plant"
+            android:checkable="false"
+            android:enabled="true"
+            android:orderInCategory="100"
+            android:title="Clone Plant"
+            android:visible="true"
+            app:showAsAction="never" />
+        <item
             android:id="@+id/action_rename"
             android:checkable="false"
             android:enabled="true"

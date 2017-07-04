@@ -91,6 +91,14 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         plantUpdate(p);
     }
 
+    public void addPlant(Calendar c, String plantName, long parentPlantId)  {
+        Plant p = new Plant(c, plantName, false);
+        p.addUpdateListener(this);
+        p.setParentPlantId(parentPlantId);
+        plants.add(p);
+        plantUpdate(p);
+    }
+
     public void removePlant(int plantIndex) {
         deletePlantFileData(plants.get(plantIndex));
         plants.remove(plantIndex);
@@ -229,5 +237,15 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     @Override
     public void settingsChanged() {
         savePlantTrackerSettings();
+    }
+
+    public Plant getPlantById(long plantId) {
+        for(Plant p : plants)   {
+            if (p.getPlantId() == plantId)  {
+                return p;
+            }
+        }
+
+        return null;
     }
 }

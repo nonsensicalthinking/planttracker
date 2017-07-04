@@ -20,6 +20,7 @@ public class Plant implements Serializable {
     }
 
     private long plantId;
+    private long parentPlantId;
     private String plantName;
     private Calendar startDate;
     private ArrayList<Recordable> recordableEvents;
@@ -59,6 +60,14 @@ public class Plant implements Serializable {
         plantName = name;
 
         notifyUpdateListeners();
+    }
+
+    public void setParentPlantId(long id) {
+        parentPlantId = id;
+    }
+
+    public long getParentPlantId()  {
+        return parentPlantId;
     }
 
     public long getPlantId()    {

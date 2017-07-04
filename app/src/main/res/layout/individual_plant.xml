@@ -62,15 +62,15 @@
             android:layout_toStartOf="@+id/growStartTextView" />
 
         <TextView
-            android:id="@+id/textView14"
+            android:id="@+id/parentPlantIdTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/growStartTextView"
             android:paddingLeft="5dp"
             android:text="Parent plant: 15291829586"
-            android:textColor="@android:color/holo_blue_light"
-            android:layout_below="@+id/growStartTextView"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:textColor="@android:color/holo_blue_light" />
 
     </RelativeLayout>
 
