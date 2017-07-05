@@ -44,8 +44,8 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<Recordable> {
         Recordable p = getItem(position);
 
         if (p != null) {
-            TextView recordableSummaryTextView = v.findViewById(R.id.recordableSummaryTextView);
-            TextView eventTypeTextView = v.findViewById(R.id.observEventTypeTextView);
+            TextView recordableSummaryTextView = (TextView)v.findViewById(R.id.recordableSummaryTextView);
+            TextView eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
 
             if (recordableSummaryTextView != null) {
                 recordableSummaryTextView.setText(p.Summary());

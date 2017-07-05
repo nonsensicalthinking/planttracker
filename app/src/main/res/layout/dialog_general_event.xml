@@ -23,7 +23,6 @@
                 android:layout_alignLeft="@+id/textView20"
                 android:layout_alignStart="@+id/textView20"
                 android:layout_below="@+id/textView20"
-                android:importantForAutofill="auto"
                 android:inputType="textAutoComplete"
                 android:maxLength="4"
                 android:maxLines="1" />

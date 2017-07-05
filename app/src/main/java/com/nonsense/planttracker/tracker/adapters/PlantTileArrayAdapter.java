@@ -44,9 +44,9 @@ public class PlantTileArrayAdapter extends ArrayAdapter<Plant> {
         Plant p = getItem(position);
 
         if (p != null) {
-            TextView plantNameTextView = v.findViewById(R.id.firstLine);
-            TextView plantSummaryTextView = v.findViewById(R.id.secondLine);
-            TextView archivedTextView = v.findViewById(R.id.archivedTextView);
+            TextView plantNameTextView = (TextView)v.findViewById(R.id.firstLine);
+            TextView plantSummaryTextView = (TextView)v.findViewById(R.id.secondLine);
+            TextView archivedTextView = (TextView)v.findViewById(R.id.archivedTextView);
 
             if (plantNameTextView != null) {
                 plantNameTextView.setText(p.getPlantName());

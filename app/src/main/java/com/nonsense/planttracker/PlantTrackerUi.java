@@ -374,7 +374,7 @@ public class PlantTrackerUi extends AppCompatActivity
         }
         else if (id == R.id.nav_add_plant)  {
             presentAddPlantDialog(0);
-            MenuItem activeMenuItem = toolbar.findViewById(R.id.nav_about_plant_tracker);
+            MenuItem activeMenuItem = (MenuItem)toolbar.findViewById(R.id.nav_about_plant_tracker);
         }
         else if (id == R.id.nav_about_plant_tracker)    {
             presentAboutDialog();
