@@ -18,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -263,7 +262,7 @@ public class PlantTrackerUi extends AppCompatActivity
 
         plantRecordableAdapter = new PlantRecordableTileArrayAdapter(
                 getBaseContext(), R.layout.plant_recordable_tile,
-                currentPlant.getAllRecordableEvents());
+                currentPlant.getAllRecordableEvents(), currentPlant);
 
         recordableEventListView.setAdapter(plantRecordableAdapter);
         recordableEventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

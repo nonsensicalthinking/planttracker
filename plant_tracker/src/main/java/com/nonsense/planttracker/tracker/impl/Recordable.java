@@ -2,12 +2,15 @@ package com.nonsense.planttracker.tracker.impl;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Derek Brooks on 6/30/2017.
  */
 
-public abstract class Recordable implements Serializable {
+
+
+public abstract class Recordable extends Datable implements Serializable {
     Calendar timestamp;
     private long dayCount;
     private long weekCount;
@@ -37,4 +40,9 @@ public abstract class Recordable implements Serializable {
     public abstract String Summary();
 
     public abstract String getEventTypeString();
+
+    // Calculate where this event is on a timeline
+    public long weeksSinceDate(Calendar date)   {
+        return calcWeeksFromTimeToTime(date, timestamp);
+    }
 }

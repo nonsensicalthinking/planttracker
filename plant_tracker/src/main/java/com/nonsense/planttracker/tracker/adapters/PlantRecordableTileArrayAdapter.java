@@ -8,8 +8,10 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.nonsense.planttracker.R;
+import com.nonsense.planttracker.tracker.impl.Plant;
 import com.nonsense.planttracker.tracker.impl.Recordable;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -19,15 +21,19 @@ import java.util.List;
 public class PlantRecordableTileArrayAdapter extends ArrayAdapter<Recordable> {
 
     private int viewResourceId;
+    private Plant currentPlant;
 
-    public PlantRecordableTileArrayAdapter(Context context, int textViewResourceId) {
+    public PlantRecordableTileArrayAdapter(Context context, int textViewResourceId, Plant plant) {
         super(context, textViewResourceId);
         viewResourceId = textViewResourceId;
+        currentPlant = plant;
     }
 
-    public PlantRecordableTileArrayAdapter(Context context, int resource, List<Recordable> items) {
+    public PlantRecordableTileArrayAdapter(Context context, int resource, List<Recordable> items,
+                                           Plant plant) {
         super(context, resource, items);
         viewResourceId = resource;
+        currentPlant = plant;
     }
 
     @Override
@@ -41,18 +47,35 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<Recordable> {
             v = vi.inflate(viewResourceId, null);
         }
 
+        Calendar plantStartDate = currentPlant.getPlantStartDate();
+        Calendar flowerStartDate = currentPlant.getFlowerStartDate();
+
         Recordable p = getItem(position);
+        long growWeekCount = p.weeksSinceDate(plantStartDate);
+        long flowerWeekCount = 0;
+
+        if (flowerStartDate != null)    {
+            flowerWeekCount = p.weeksSinceDate(flowerStartDate);
+        }
+
+        String weekDisplay = "";
+        if (currentPlant.isFlowering()) {
+            weekDisplay = "(W" + growWeekCount + "/" + flowerWeekCount + ") ";
+        }
+        else    {
+            weekDisplay = "(W" + growWeekCount + ") ";
+        }
 
         if (p != null) {
-            TextView recordableSummaryTextView = (TextView)v.findViewById(R.id.recordableSummaryTextView);
             TextView eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
-
-            if (recordableSummaryTextView != null) {
-                recordableSummaryTextView.setText(p.Summary());
-            }
-
             if (eventTypeTextView != null) {
                 eventTypeTextView.setText(p.getEventTypeString());
+            }
+
+            TextView recordableSummaryTextView = (TextView)v.findViewById(
+                    R.id.recordableSummaryTextView);
+            if (recordableSummaryTextView != null) {
+                recordableSummaryTextView.setText(weekDisplay + p.Summary());
             }
         }
 

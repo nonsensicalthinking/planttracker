@@ -2,8 +2,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="20dp"
+    android:layout_height="wrap_content"
     android:theme="@style/Theme.Design">
+
+    <TextView
+        android:id="@+id/recordableSummaryTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/observEventTypeTextView"
+        android:paddingLeft="3dp"
+        android:text="Fs: 0.5 pH: 6.4 Notes: lorem ispum dollar solat ..."
+        android:textColor="@android:color/background_dark" />
 
     <TextView
         android:id="@+id/observEventTypeTextView"
@@ -18,17 +30,4 @@
         android:textColor="@color/colorPrimary"
         android:textSize="14sp" />
 
-    <TextView
-        android:id="@+id/recordableSummaryTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/fab_margin"
-        android:text="Fs: 0.5 pH: 6.4 Notes: lorem ispum dollar solat ..."
-        android:textColor="@android:color/background_dark"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/observEventTypeTextView"
-        android:layout_toEndOf="@+id/observEventTypeTextView" />
 </RelativeLayout>

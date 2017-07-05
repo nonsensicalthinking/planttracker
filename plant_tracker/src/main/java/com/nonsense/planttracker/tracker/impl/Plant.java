@@ -253,6 +253,10 @@ public class Plant implements Serializable {
         return startDate;
     }
 
+    public Calendar getFlowerStartDate() {
+        return flowerStartDate;
+    }
+
     private void notifyUpdateListeners()    {
         for(IPlantUpdateListener pul : updateListeners) {
             pul.plantUpdate(this);
