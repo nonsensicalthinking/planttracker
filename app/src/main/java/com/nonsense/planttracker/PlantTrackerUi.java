@@ -4,7 +4,11 @@ package com.nonsense.planttracker;
 // website http://www.freepik.com/free-icon/plant-growing_743982.htm
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -38,10 +43,13 @@ import com.nonsense.planttracker.tracker.impl.Plant;
 import com.nonsense.planttracker.tracker.impl.PlantTracker;
 import com.nonsense.planttracker.tracker.impl.Recordable;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Stack;
+
 
 public class PlantTrackerUi extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -222,14 +230,19 @@ public class PlantTrackerUi extends AppCompatActivity
         });
 
         if (!currentPlant.isFromSeed() && currentPlant.getParentPlantId() > 0) {
-            parentPlantTextView.setText("Parent Plant: " + parentPlant.getPlantName());
+            if (parentPlant == null)    {
+                parentPlantTextView.setText("Parent Plant: " + parentPlant.getPlantName());
+            }
+            else    {
+                // couldn't find the parent plant
+                parentPlantTextView.setText("Parent Plant: " + currentPlant.getParentPlantId());
+            }
+
             parentPlantTextView.setVisibility(View.VISIBLE);
         }
         else    {
             parentPlantTextView.setVisibility(View.INVISIBLE);
         }
-
-        //TODO if it is from a clone, link to another plant!
 
         floweringCheckBox.setOnCheckedChangeListener(null);
         floweringCheckBox.setChecked(currentPlant.getVegFlowerState() == Plant.VegFlower.Flower);
@@ -366,6 +379,25 @@ public class PlantTrackerUi extends AppCompatActivity
         else if (id == R.id.nav_about_plant_tracker)    {
             presentAboutDialog();
         }
+        else if (id == R.id.nav_send)   {
+            if (switcher.getCurrentView() == individualPlantView)   {
+                ArrayList<String> files = new ArrayList<>();
+                files.add(getFilesDir() + "/plants/" + currentPlant.getPlantId() + ".ser");
+                email(PlantTrackerUi.this, "", "", "Plant Tracker Export", "Plant Tracker Export",
+                        files);
+            }
+            else    {
+                ArrayList<Plant> allPlants = tracker.getAllPlants();
+                ArrayList<String> files = new ArrayList<>();
+                String filesDir = getFilesDir().toString();
+                for(Plant p : allPlants)    {
+                    files.add(filesDir + "/plants/" + p.getPlantId() + ".ser");
+                }
+                email(PlantTrackerUi.this, "", "", "Plant Tracker Export", "Plant Tracker Export",
+                        files);
+            }
+        }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -489,13 +521,16 @@ public class PlantTrackerUi extends AppCompatActivity
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                tracker.deleteAllPlants();
-                fillViewWithPlants();
-
                 dialog.dismiss();
 
-                fillIndividualPlantView();
+                tracker.deleteAllPlants();
+                currentPlant = null;
+                if (switcher.getCurrentView() == individualPlantView)  {
+                    switcherToPrevious();
+                }
+                else    {
+                    fillViewWithPlants();
+                }
             }
         });
 
@@ -791,8 +826,6 @@ public class PlantTrackerUi extends AppCompatActivity
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
         dialog.setContentView(R.layout.dialog_new_plant);
 
-        final long parentId = parentPlantId;
-
         Button okButton = (Button)dialog.findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -809,7 +842,7 @@ public class PlantTrackerUi extends AppCompatActivity
                 RadioButton cloneRadioButton = (RadioButton)dialog.findViewById(
                         R.id.cloneRadioButton);
 
-                if (parentId > 0)   {
+                if (parentPlantId > 0)   {
                     isFromSeed = false;
                 }
                 else    {
@@ -966,5 +999,33 @@ public class PlantTrackerUi extends AppCompatActivity
     private String formatDate(Calendar c)   {
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
         return sdf.format(c.getTime());
+    }
+
+    // email files
+    public void email(Context context, String emailTo, String emailCC,
+                             String subject, String emailText, List<String> filePaths) {
+
+        //need to "send multiple" to get more than one attachment
+        final Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+
+        emailIntent.setType("text/plain");
+        emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{emailTo});
+        emailIntent.putExtra(android.content.Intent.EXTRA_CC, new String[]{emailCC});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, emailText);
+
+        //has to be an ArrayList
+        ArrayList<Uri> uris = new ArrayList<Uri>();
+
+        //convert from paths to Android friendly Parcelable Uri's
+        for (String file : filePaths) {
+            File fileIn = new File(file);
+            Uri u = FileProvider.getUriForFile(context, "com.nonsense.planttracker.provider", fileIn);
+
+            uris.add(u);
+        }
+
+        emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
     }
 }
