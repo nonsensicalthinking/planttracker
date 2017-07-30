@@ -2,11 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:weightSum="1">
 
     <RelativeLayout
         android:layout_width="260dp"
-        android:layout_height="161dp">
+        android:layout_height="207dp"
+        android:layout_weight="0.54">
 
         <TextView
             android:id="@+id/textView2"
@@ -37,19 +39,37 @@
             android:id="@+id/cancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/pHEditText"
-            android:layout_alignStart="@+id/pHEditText"
-            android:layout_below="@+id/pHEditText"
+            android:layout_alignBaseline="@+id/okButton"
+            android:layout_alignBottom="@+id/okButton"
+            android:layout_alignStart="@+id/applyToGroupCheckbox"
             android:text="Cancel" />
 
         <Button
             android:id="@+id/okButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/pHEditText"
-            android:layout_alignRight="@+id/pHEditText"
-            android:layout_below="@+id/pHEditText"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/groupListSpinner"
+            android:layout_marginEnd="18dp"
+            android:layout_marginTop="14dp"
             android:text="Ok" />
+
+        <CheckBox
+            android:id="@+id/applyToGroupCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/pHEditText"
+            android:layout_centerVertical="true"
+            android:text="Apply to group" />
+
+        <Spinner
+            android:id="@+id/groupListSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/applyToGroupCheckbox"
+            android:layout_alignEnd="@+id/okButton"
+            android:layout_alignTop="@+id/applyToGroupCheckbox"
+            android:layout_toEndOf="@+id/applyToGroupCheckbox" />
     </RelativeLayout>
 
 </LinearLayout>

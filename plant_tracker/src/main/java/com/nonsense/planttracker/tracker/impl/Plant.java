@@ -14,6 +14,8 @@ import java.util.Iterator;
 
 public class Plant implements Serializable {
 
+    private static final long serialVersionUID = 2153335460648792L;
+
     public enum VegFlower   {
         Veg,
         Flower
@@ -28,8 +30,8 @@ public class Plant implements Serializable {
     private Calendar flowerStartDate;
     private boolean isFromSeed;
     private boolean isArchived;
+    private ArrayList<Long> groupIds;
 
-    // TODO add grouping
     // TODO store grouping auto-complete as part of settings
 
     private transient ArrayList<IPlantUpdateListener> updateListeners;
@@ -42,6 +44,7 @@ public class Plant implements Serializable {
         vegFlowerState = VegFlower.Veg;
         updateListeners = new ArrayList<>();
         this.isFromSeed = isFromSeed;
+        groupIds = new ArrayList<>();
     }
 
     public void addUpdateListener(IPlantUpdateListener pul) {
@@ -276,4 +279,28 @@ public class Plant implements Serializable {
     public boolean isArchived() {
         return isArchived;
     }
+
+    public void regeneratePlantId() {
+        plantId = System.currentTimeMillis();
+    }
+
+    @Override
+    public boolean equals(Object p)  {
+        return ((Plant)p).getPlantId() == getPlantId();
+    }
+
+    public void addGroup(long groupId)  {
+        if (!groupIds.contains(groupId))    {
+            groupIds.add(groupId);
+        }
+    }
+
+    public void removeGroup(long groupId)   {
+        groupIds.remove(groupId);
+    }
+
+    public ArrayList<Long> getGroups() {
+        return groupIds;
+    }
+
 }

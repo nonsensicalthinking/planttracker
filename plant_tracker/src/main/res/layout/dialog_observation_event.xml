@@ -7,6 +7,22 @@
         android:layout_width="308dp"
         android:layout_height="476dp">
 
+        <CheckBox
+            android:id="@+id/applyToGroupCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apply to group"
+            android:layout_below="@+id/observationNotesEditText"
+            android:layout_alignEnd="@+id/tempMaxEditText" />
+
+        <Spinner
+            android:id="@+id/groupListSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/applyToGroupCheckbox"
+            android:layout_below="@+id/observationNotesEditText"
+            android:layout_toEndOf="@+id/applyToGroupCheckbox" />
+
         <TextView
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
@@ -84,7 +100,7 @@
         <EditText
             android:id="@+id/observationNotesEditText"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="150dp"
             android:layout_alignEnd="@+id/textView8"
             android:layout_alignLeft="@+id/textView9"
             android:layout_alignRight="@+id/textView8"
@@ -97,11 +113,10 @@
             android:id="@+id/cancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/observationNotesEditText"
+            android:text="Cancel"
+            android:layout_alignParentBottom="true"
             android:layout_alignStart="@+id/observationNotesEditText"
-            android:layout_below="@+id/observationNotesEditText"
-            android:layout_marginTop="14dp"
-            android:text="Cancel" />
+            android:layout_marginBottom="15dp" />
 
         <Button
             android:id="@+id/okButton"

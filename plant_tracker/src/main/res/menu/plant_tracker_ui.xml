@@ -1,8 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:andoird="http://schemas.android.com/tools"
     android:id="@+id/individual_plant_menu">
     <group>
+        <item
+            android:id="@+id/action_groups"
+            android:checkable="false"
+            android:enabled="true"
+            android:orderInCategory="100"
+            android:title="Groups"
+            android:visible="true"
+            app:showAsAction="never">
+            <menu>
+                <item
+                    android:id="@+id/add_group"
+                    android:checkable="false"
+                    android:enabled="true"
+                    android:orderInCategory="0"
+                    android:title="Add Group"
+                    android:visible="true"
+                    app:showAsAction="never"/>
+                <item
+                    android:id="@+id/rename_group"
+                    android:checkable="false"
+                    android:enabled="true"
+                    android:orderInCategory="0"
+                    android:title="Rename Group"
+                    android:visible="true"
+                    app:showAsAction="never">
+                    <menu></menu>
+                </item>
+                <item
+                    android:id="@+id/delete_group"
+                    android:checkable="false"
+                    android:enabled="true"
+                    android:orderInCategory="0"
+                    android:title="Delete Group"
+                    android:visible="true"
+                    app:showAsAction="never">
+                    <menu></menu>
+                </item>
+            </menu>
+        </item>
         <item
             android:id="@+id/action_clone_plant"
             android:checkable="false"

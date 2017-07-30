@@ -4,7 +4,23 @@
 
     <RelativeLayout
         android:layout_width="265dp"
-        android:layout_height="250dp">
+        android:layout_height="300dp">
+
+        <CheckBox
+            android:id="@+id/applyToGroupCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apply to group"
+            android:layout_below="@+id/feedStrengthEditText"
+            android:layout_alignStart="@+id/feedStrengthEditText" />
+
+        <Spinner
+            android:id="@+id/groupListSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/applyToGroupCheckbox"
+            android:layout_alignTop="@+id/applyToGroupCheckbox"
+            android:layout_toEndOf="@+id/applyToGroupCheckbox" />
 
         <Button
             android:id="@+id/feedOkButton"
@@ -19,10 +35,9 @@
             android:id="@+id/feedCancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/feedStrengthEditText"
+            android:layout_alignParentBottom="true"
             android:layout_alignStart="@+id/feedStrengthEditText"
-            android:layout_below="@+id/feedStrengthEditText"
-            android:layout_marginTop="13dp"
+            android:layout_marginBottom="15dp"
             android:text="Cancel" />
 
         <TextView

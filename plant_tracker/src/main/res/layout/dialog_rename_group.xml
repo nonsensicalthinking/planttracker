@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="298dp"
+        android:layout_height="179dp">
+
+        <TextView
+            android:id="@+id/textView30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="21dp"
+            android:text="Rename:" />
+
+        <TextView
+            android:id="@+id/groupNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/textView30"
+            android:layout_marginStart="17dp"
+            android:layout_toEndOf="@+id/textView30"
+            android:text="GroupNameHere" />
+
+        <TextView
+            android:id="@+id/textView32"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/textView30"
+            android:layout_below="@+id/textView30"
+            android:layout_marginTop="19dp"
+            android:text="To: " />
+
+        <EditText
+            android:id="@+id/groupNameEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView30"
+            android:layout_marginStart="13dp"
+            android:layout_toEndOf="@+id/textView32"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/textView32"
+            android:layout_below="@+id/groupNameEditText"
+            android:layout_marginTop="29dp"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/okButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/groupNameEditText"
+            android:layout_alignTop="@+id/cancelButton"
+            android:text="Ok" />
+    </RelativeLayout>
+</LinearLayout>
