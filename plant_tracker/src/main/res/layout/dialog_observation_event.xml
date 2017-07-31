@@ -4,16 +4,16 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:layout_width="308dp"
+        android:layout_width="match_parent"
         android:layout_height="476dp">
 
         <CheckBox
             android:id="@+id/applyToGroupCheckbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Apply to group"
+            android:layout_alignEnd="@+id/tempMaxEditText"
             android:layout_below="@+id/observationNotesEditText"
-            android:layout_alignEnd="@+id/tempMaxEditText" />
+            android:text="Apply to group" />
 
         <Spinner
             android:id="@+id/groupListSpinner"
@@ -101,31 +101,31 @@
             android:id="@+id/observationNotesEditText"
             android:layout_width="wrap_content"
             android:layout_height="150dp"
-            android:layout_alignEnd="@+id/textView8"
             android:layout_alignLeft="@+id/textView9"
-            android:layout_alignRight="@+id/textView8"
             android:layout_alignStart="@+id/textView9"
             android:layout_below="@+id/textView9"
             android:ems="10"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine"
+            android:layout_alignEnd="@+id/okButton" />
 
         <Button
             android:id="@+id/cancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
             android:layout_alignParentBottom="true"
             android:layout_alignStart="@+id/observationNotesEditText"
-            android:layout_marginBottom="15dp" />
+            android:layout_marginBottom="15dp"
+            android:text="Cancel" />
 
         <Button
             android:id="@+id/okButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/observationNotesEditText"
-            android:layout_alignRight="@+id/observationNotesEditText"
-            android:layout_alignTop="@+id/cancelButton"
-            android:text="Ok" />
+            android:text="Ok"
+            android:layout_alignBaseline="@+id/cancelButton"
+            android:layout_alignBottom="@+id/cancelButton"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="27dp" />
 
     </RelativeLayout>
 </LinearLayout>

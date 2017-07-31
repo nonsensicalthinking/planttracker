@@ -6,15 +6,15 @@
     android:weightSum="1">
 
     <RelativeLayout
-        android:layout_width="259dp"
+        android:layout_width="match_parent"
         android:layout_height="415dp"
         android:layout_weight="0.51">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/relativeLayout7"
-            android:layout_above="@+id/relativeLayout11">
+            android:layout_above="@+id/relativeLayout11"
+            android:layout_below="@+id/relativeLayout7">
 
             <CheckBox
                 android:id="@+id/applyToGroupCheckbox"
@@ -127,12 +127,12 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/relativeLayout11"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:id="@+id/relativeLayout11">
+            android:layout_alignParentStart="true">
 
             <Button
                 android:id="@+id/cancelButton"
