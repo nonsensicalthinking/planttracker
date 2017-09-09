@@ -264,11 +264,11 @@ public class PlantTrackerUi extends AppCompatActivity
 
         if (!currentPlant.isFromSeed() && currentPlant.getParentPlantId() > 0) {
             if (parentPlant == null)    {
-                parentPlantTextView.setText("Parent Plant: " + parentPlant.getPlantName());
+                parentPlantTextView.setText("Record not found");
             }
             else    {
                 // couldn't find the parent plant
-                parentPlantTextView.setText("Parent Plant: " + currentPlant.getParentPlantId());
+                parentPlantTextView.setText(currentPlant.getPlantName());
             }
 
             parentPlantTableRow.setVisibility(View.VISIBLE);
