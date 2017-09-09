@@ -23,15 +23,14 @@
             android:id="@+id/renameEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/textView11"
             android:layout_alignLeft="@+id/textView11"
+            android:layout_alignRight="@+id/textView11"
             android:layout_alignStart="@+id/textView11"
             android:layout_below="@+id/textView11"
             android:layout_marginTop="13dp"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Name"
-            android:layout_alignRight="@+id/textView11"
-            android:layout_alignEnd="@+id/textView11" />
+            android:inputType="textPersonName" />
 
         <Button
             android:id="@+id/cancelButton"

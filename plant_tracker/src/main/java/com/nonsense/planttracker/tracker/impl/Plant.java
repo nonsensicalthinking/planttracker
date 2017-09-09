@@ -303,4 +303,9 @@ public class Plant implements Serializable {
         return groupIds;
     }
 
+    public Recordable removeRecordableEvent(int pos)  {
+        Recordable r = recordableEvents.remove(pos);
+        notifyUpdateListeners();
+        return r;
+    }
 }

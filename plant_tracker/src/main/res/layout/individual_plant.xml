@@ -52,14 +52,14 @@
             android:id="@+id/fromSeedTextView"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:paddingLeft="5dp"
-            android:text="From Seed"
-            android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/growStartTextView"
-            android:layout_toStartOf="@+id/growStartTextView" />
+            android:layout_toStartOf="@+id/growStartTextView"
+            android:gravity="bottom"
+            android:paddingLeft="5dp"
+            android:text="From Seed" />
 
         <TextView
             android:id="@+id/parentPlantIdTextView"

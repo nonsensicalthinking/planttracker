@@ -7,7 +7,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="207dp">
+        android:layout_height="244dp">
 
         <TextView
             android:id="@+id/textView2"
@@ -38,20 +38,20 @@
             android:id="@+id/cancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/okButton"
-            android:layout_alignBottom="@+id/okButton"
+            android:text="Cancel"
+            android:layout_alignParentBottom="true"
             android:layout_alignStart="@+id/applyToGroupCheckbox"
-            android:text="Cancel" />
+            android:layout_marginBottom="13dp" />
 
         <Button
             android:id="@+id/okButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@+id/groupListSpinner"
-            android:layout_marginEnd="18dp"
-            android:layout_marginTop="14dp"
-            android:text="Ok" />
+            android:layout_marginEnd="17dp"
+            android:text="Ok"
+            android:layout_alignBaseline="@+id/cancelButton"
+            android:layout_alignBottom="@+id/cancelButton"
+            android:layout_alignParentEnd="true" />
 
         <CheckBox
             android:id="@+id/applyToGroupCheckbox"
@@ -65,10 +65,9 @@
             android:id="@+id/groupListSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/applyToGroupCheckbox"
-            android:layout_alignEnd="@+id/okButton"
-            android:layout_alignTop="@+id/applyToGroupCheckbox"
-            android:layout_toEndOf="@+id/applyToGroupCheckbox" />
+            android:layout_alignStart="@+id/applyToGroupCheckbox"
+            android:layout_below="@+id/applyToGroupCheckbox"
+            android:layout_alignEnd="@+id/okButton" />
     </RelativeLayout>
 
 </LinearLayout>

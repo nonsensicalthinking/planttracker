@@ -110,7 +110,6 @@
                 android:gravity="bottom"
                 android:inputType="textPersonName"
                 android:paddingLeft="3dp"
-                android:text="Name"
                 android:textSize="14sp" />
 
         </RelativeLayout>

@@ -5,11 +5,13 @@ package com.nonsense.planttracker;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -34,6 +36,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -80,6 +83,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private TextView growStartTextView;
     private TextView fromSeedTextView;
     private ListView recordableEventListView;
+    private TableRow parentPlantTableRow;
     private CheckBox floweringCheckBox;
     private Button waterButton;
     private Button feedButton;
@@ -100,6 +104,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private PlantTracker tracker;
     private Plant currentPlant;
     private long groupIdViewFilter;
+    private long currentlySelectedGroup;
 
     private enum PlantDisplay   {
         All,
@@ -156,7 +161,8 @@ public class PlantTrackerUi extends AppCompatActivity
         growStartTextView = (TextView)findViewById(R.id.growStartTextView);
         fromSeedTextView = (TextView)findViewById(R.id.fromSeedTextView);
         recordableEventListView = (ListView)findViewById(R.id.recordableEventListView);
-        generalButton = (Button)findViewById(R.id.generalEventButton);
+        parentPlantTableRow = (TableRow)findViewById(R.id.parentPlantTableRow);
+/*      generalButton = (Button)findViewById(R.id.generalEventButton);
 
         generalButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,7 +196,7 @@ public class PlantTrackerUi extends AppCompatActivity
         });
 
         floweringCheckBox = (CheckBox)findViewById(R.id.floweringCheckBox);
-    }
+*/    }
 
     private void fillViewWithPlants()   {
         switch(plantDisplay)    {
@@ -239,11 +245,11 @@ public class PlantTrackerUi extends AppCompatActivity
     private void fillIndividualPlantView()  {
         plantNameTextView.setText(currentPlant.getPlantName());
         daysSinceGrowStartTextView.setText("" + currentPlant.getDaysFromStart());
-        daysSinceFlowerStartTextView.setText("" + currentPlant.getDaysFromFlowerStart());
+//        daysSinceFlowerStartTextView.setText("" + currentPlant.getDaysFromFlowerStart());
         weeksSinceGrowStartTextView.setText("" + currentPlant.getWeeksFromStart());
-        weeksSinceFlowerStartTextView.setText("" + currentPlant.getWeeksFromFlowerStart());
-        growStartTextView.setText("" + formatDate(currentPlant.getPlantStartDate()));
-        fromSeedTextView.setText("" + (currentPlant.isFromSeed()?"From Seed on":"Cloned on"));
+//        weeksSinceFlowerStartTextView.setText("" + currentPlant.getWeeksFromFlowerStart());
+//        growStartTextView.setText("" + formatDate(currentPlant.getPlantStartDate()));
+        fromSeedTextView.setText("" + (currentPlant.isFromSeed()?"Seed":"Clone"));
 
         final Plant parentPlant = tracker.getPlantById(currentPlant.getParentPlantId());
         TextView parentPlantTextView = (TextView)findViewById(R.id.parentPlantIdTextView);
@@ -265,13 +271,13 @@ public class PlantTrackerUi extends AppCompatActivity
                 parentPlantTextView.setText("Parent Plant: " + currentPlant.getParentPlantId());
             }
 
-            parentPlantTextView.setVisibility(View.VISIBLE);
+            parentPlantTableRow.setVisibility(View.VISIBLE);
         }
         else    {
-            parentPlantTextView.setVisibility(View.INVISIBLE);
+            parentPlantTableRow.setVisibility(View.GONE);
         }
 
-        floweringCheckBox.setOnCheckedChangeListener(null);
+/*        floweringCheckBox.setOnCheckedChangeListener(null);
         floweringCheckBox.setChecked(currentPlant.getVegFlowerState() == Plant.VegFlower.Flower);
         floweringCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -287,7 +293,7 @@ public class PlantTrackerUi extends AppCompatActivity
                 }
             }
         });
-
+*/
         plantRecordableAdapter = new PlantRecordableTileArrayAdapter(
                 getBaseContext(), R.layout.plant_recordable_tile,
                 currentPlant.getAllRecordableEvents(), currentPlant);
@@ -297,6 +303,36 @@ public class PlantTrackerUi extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 presentRecordableEventSummaryDialog(i);
+            }
+        });
+
+        recordableEventListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
+                builder.setTitle(R.string.app_name);
+                builder.setMessage("Are you sure you want to delete this event?");
+                builder.setIcon(R.drawable.ic_growing_plant);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        plantRecordableAdapter.remove(currentPlant.removeRecordableEvent(position));
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+
+
+
+
+
+                return true;
             }
         });
     }
@@ -584,8 +620,6 @@ public class PlantTrackerUi extends AppCompatActivity
 
         return true;
     }
-
-    private long currentlySelectedGroup;
 
     private void presentRenameGroupDialog(long groupId) {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:weightSum="1">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="476dp">
+        android:layout_height="476dp"
+        android:layout_weight="0.61">
 
         <CheckBox
             android:id="@+id/applyToGroupCheckbox"
@@ -19,9 +21,9 @@
             android:id="@+id/groupListSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/applyToGroupCheckbox"
-            android:layout_below="@+id/observationNotesEditText"
-            android:layout_toEndOf="@+id/applyToGroupCheckbox" />
+            android:layout_alignStart="@+id/cancelButton"
+            android:layout_alignEnd="@+id/okButton"
+            android:layout_below="@+id/applyToGroupCheckbox" />
 
         <TextView
             android:id="@+id/textView7"

@@ -50,7 +50,7 @@
 
             <include
                 android:id="@+id/individualPlantViewLayout"
-                layout="@layout/individual_plant"
+                layout="@layout/individual_plant_2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"></include>
 
