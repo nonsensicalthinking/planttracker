@@ -1,5 +1,7 @@
 package com.nonsense.planttracker.tracker.impl;
 
+import java.util.Calendar;
+
 /**
  * Created by Derek Brooks on 6/30/2017.
  */
@@ -12,8 +14,8 @@ public class ObservationRecord extends Recordable {
     private  String notes;
 
     public ObservationRecord(long dayCount, long weekCount, int rhLow, int rhHigh, int tempLow,
-                             int tempHigh, String notes)  {
-        super(dayCount, weekCount);
+                             int tempHigh, String notes, Calendar cal)  {
+        super(dayCount, weekCount, cal);
         this.rhHigh = rhHigh;
         this.rhLow = rhLow;
         this.tempHigh = tempHigh;

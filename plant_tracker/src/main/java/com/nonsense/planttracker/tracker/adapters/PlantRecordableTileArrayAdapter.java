@@ -51,23 +51,13 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<Recordable> {
         }
 
         Calendar plantStartDate = currentPlant.getPlantStartDate();
-        Calendar flowerStartDate = currentPlant.getFlowerStartDate();
+        //Calendar flowerStartDate = currentPlant.getFlowerStartDate();
 
         Recordable p = getItem(position);
         long growWeekCount = p.weeksSinceDate(plantStartDate);
-        long flowerWeekCount = 0;
-
-        if (flowerStartDate != null)    {
-            flowerWeekCount = p.weeksSinceDate(flowerStartDate);
-        }
 
         String weekDisplay = "";
-        if (currentPlant.isFlowering()) {
-            weekDisplay = "(W" + growWeekCount + "/" + flowerWeekCount + ") ";
-        }
-        else    {
-            weekDisplay = "(W" + growWeekCount + ") ";
-        }
+        weekDisplay = "(W" + growWeekCount + ") ";
 
         if (p != null) {
             TextView eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);

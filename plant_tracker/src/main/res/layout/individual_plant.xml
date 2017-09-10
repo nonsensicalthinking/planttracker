@@ -110,6 +110,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Flowering"
+                        android:textColor="@android:color/holo_blue_light"
                         android:textSize="18sp" />
                 </TableRow>
 
@@ -227,16 +228,10 @@
                 android:id="@+id/addEventSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <Button
-                android:id="@+id/changeStateButton"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:layout_alignParentBottom="true"
-                android:layout_toEndOf="@+id/tableLayout"
                 android:layout_weight="1"
-                android:text="Change State" />
+                android:elevation="5dp"
+                android:fadeScrollbars="false" />
+
         </LinearLayout>
 
         <ListView

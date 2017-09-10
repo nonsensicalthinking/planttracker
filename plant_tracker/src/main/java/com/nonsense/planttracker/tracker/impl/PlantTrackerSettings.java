@@ -19,12 +19,14 @@ public class PlantTrackerSettings implements Serializable {
     private ArrayList<String> keys;
     private TreeMap<String, String> genericEventKeyValuePairs;
     private ArrayList<Group> groups;
+    private ArrayList<String> stateAutoComplete;
 
 
     public PlantTrackerSettings()   {
         keys = new ArrayList<String>();
         genericEventKeyValuePairs = new TreeMap<String,String>();
         groups = new ArrayList<Group>();
+        stateAutoComplete = new ArrayList<String>();
     }
 
     public ArrayList<String> getAutoCompleteKeys()  {
@@ -78,6 +80,22 @@ public class PlantTrackerSettings implements Serializable {
 
     public ArrayList<Group> getGroups() {
         return groups;
+    }
+
+    public void addStateAutoComplete(String stateName)  {
+        if (stateAutoComplete == null)  {
+            stateAutoComplete = new ArrayList<String>();
+        }
+
+        if (!stateAutoComplete.contains(stateName))  {
+            stateAutoComplete.add(stateName);
+        }
+
+        settingsChanged();
+    }
+
+    public ArrayList<String> getStateAutoComplete() {
+        return stateAutoComplete;
     }
 }
 

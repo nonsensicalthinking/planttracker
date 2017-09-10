@@ -7,6 +7,7 @@ import java.util.Calendar;
  * Created by Derek Brooks on 6/30/2017.
  */
 
+// FIXME rework this to be poly, there are too many points to remember to change like this
 public class EventRecord extends Recordable {
 
     public enum PlantEvent  {
@@ -18,7 +19,8 @@ public class EventRecord extends Recordable {
         FloweringState,
         ChangePlantingDate,
         ChangeFloweringDate,
-        GeneralEvent
+        GeneralEvent,
+        State
     }
 
     private PlantEvent event;
@@ -32,33 +34,43 @@ public class EventRecord extends Recordable {
     private String eventNotes;
 
     // for other style events
-    public EventRecord(long dayCount, long weekCount, PlantEvent e)    {
-        super(dayCount, weekCount);
+    public EventRecord(long dayCount, long weekCount, PlantEvent e, Calendar cal)    {
+        super(dayCount, weekCount, cal);
         event = e;
     }
 
     // for date change event types
-    public EventRecord(long dayCount, long weekCount, PlantEvent e, Calendar timestamp) {
-        super(dayCount, weekCount);
+    public EventRecord(long dayCount, long weekCount, PlantEvent e, Calendar cal,
+                       Calendar timestamp) {
+        super(dayCount, weekCount, cal);
         event = e;
         dateChangedTo = timestamp;
     }
 
     // for food/water events
-    public EventRecord(long dayCount, long weekCount, PlantEvent e, double foodStrength, double pH){
-        super(dayCount, weekCount);
+    public EventRecord(long dayCount, long weekCount, PlantEvent e, double foodStrength, double pH,
+                       Calendar cal){
+        super(dayCount, weekCount, cal);
         this.event = e;
         this.foodStrength = foodStrength;
         this.pH = pH;
     }
 
+    // for generic events
     public EventRecord(long dayCount, long weekCount, String generalEventName,
-                       String generalEventAbbrev, String eventNotes)   {
-        super(dayCount, weekCount);
+                       String generalEventAbbrev, String eventNotes, Calendar cal)   {
+        super(dayCount, weekCount, cal);
         this.event = PlantEvent.GeneralEvent;
         this.generalEventName = generalEventName;
         this.generalEventAbbrev = generalEventAbbrev;
         this.eventNotes = eventNotes;
+    }
+
+    // for state change
+    public EventRecord(long dayCount, long weekCount, String stateName, Calendar cal)   {
+        super(dayCount, weekCount, cal);
+        this.event = PlantEvent.State;
+        this.eventNotes = stateName;
     }
 
     public double getFoodStrength() {
@@ -93,6 +105,8 @@ public class EventRecord extends Recordable {
                 return "Changed flowering date";
             case GeneralEvent:
                 return generalEventName;
+            case State:
+                return "Changed state to: ";
             default:
                 return "";
         }
@@ -110,6 +124,8 @@ public class EventRecord extends Recordable {
                 return "to: " + getDateChangedToAsString();
             case GeneralEvent:
                 return eventNotes;
+            case State:
+                return eventNotes;
             default:
                 return "";
         }
@@ -123,7 +139,6 @@ public class EventRecord extends Recordable {
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
         return sdf.format(c.getTime());
     }
-
 
     @Override
     public String Summary() {
@@ -148,6 +163,8 @@ public class EventRecord extends Recordable {
                 return "CPD";
             case ChangeFloweringDate:
                 return "CFL";
+            case State:
+                return "SC";
             case GeneralEvent:
                 return generalEventAbbrev;
             default:

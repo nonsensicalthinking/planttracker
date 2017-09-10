@@ -41,7 +41,7 @@
                     android:orientation="vertical">
 
                     <DatePicker
-                        android:id="@+id/datePicker3"
+                        android:id="@+id/eventDatePicker"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -55,7 +55,7 @@
                     android:orientation="vertical">
 
                     <TimePicker
-                        android:id="@+id/timePicker2"
+                        android:id="@+id/eventTimePicker"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:headerBackground="@drawable/side_nav_bar" />
@@ -86,6 +86,10 @@
                     layout="@layout/dialog_feed_event"
                     android:visibility="gone" />
 
+                <include
+                    android:id="@+id/dialogChangeStateEventLayout"
+                    layout="@layout/dialog_current_state_event"
+                    android:visibility="gone" />
 
             </FrameLayout>
         </LinearLayout>

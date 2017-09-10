@@ -15,12 +15,13 @@
 
     <string-array name="plant_event_options">
         <item>Add Event</item>
-        <item>Observe</item>
-        <item>Water</item>
+        <item>Change State</item>
         <item>Feed</item>
-        <item>Trim</item>
-        <item>Top</item>
+        <item>Observe</item>
         <item>Repot</item>
+        <item>Top</item>
+        <item>Trim</item>
+        <item>Water</item>
         <item>New Event...</item>
     </string-array>
 </resources>
