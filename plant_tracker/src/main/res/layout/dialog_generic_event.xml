@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <TabHost
+        android:id="@+id/tabHost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/tab1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:weightSum="1">
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tab2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <DatePicker
+                        android:id="@+id/datePicker3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:headerBackground="@drawable/side_nav_bar" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tab3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TimePicker
+                        android:id="@+id/timePicker2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:headerBackground="@drawable/side_nav_bar" />
+                </LinearLayout>
+
+                <include
+                    android:id="@+id/generalEventTabLayout"
+                    layout="@layout/dialog_general_event"
+                    android:visibility="gone" />
+
+                <include
+                    android:id="@+id/genericEventTabLayout"
+                    layout="@layout/generic_tab"
+                    android:visibility="gone" />
+
+                <include
+                    android:id="@+id/dialogWaterEventLayout"
+                    layout="@layout/dialog_water_event"
+                    android:visibility="gone" />
+
+                <include
+                    android:id="@+id/dialogObservationEventLayout"
+                    layout="@layout/dialog_observation_event"
+                    android:visibility="gone" />
+
+                <include
+                    android:id="@+id/dialogFeedingEventLayout"
+                    layout="@layout/dialog_feed_event"
+                    android:visibility="gone" />
+
+
+            </FrameLayout>
+        </LinearLayout>
+    </TabHost>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <CheckBox
+            android:id="@+id/applyToGroupCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:text="Apply to group"
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/groupListSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="193dp"
+            android:layout_height="wrap_content"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/okButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="OK" />
+    </LinearLayout>
+
+</LinearLayout>

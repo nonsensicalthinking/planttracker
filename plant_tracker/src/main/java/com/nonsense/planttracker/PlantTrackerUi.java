@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -22,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -36,6 +38,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+import android.widget.TabHost;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -48,6 +52,8 @@ import com.nonsense.planttracker.tracker.adapters.PlantTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.Plant;
 import com.nonsense.planttracker.tracker.impl.PlantTracker;
 import com.nonsense.planttracker.tracker.impl.Recordable;
+import com.nonsense.planttracker.tracker.interf.IDialogHandler;
+import com.nonsense.planttracker.tracker.interf.IPlantEventDoer;
 
 import org.w3c.dom.Text;
 
@@ -84,11 +90,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private TextView fromSeedTextView;
     private ListView recordableEventListView;
     private TableRow parentPlantTableRow;
-    private CheckBox floweringCheckBox;
-    private Button waterButton;
-    private Button feedButton;
-    private Button observationButton;
-    private Button generalButton;
+    private Spinner addEventSpinner;
     private Menu individualPlantMenu;
     private SubMenu addToGroup;
     private SubMenu removeFromGroup;
@@ -155,48 +157,15 @@ public class PlantTrackerUi extends AppCompatActivity
     private void bindIndividualPlantView()  {
         plantNameTextView = (TextView)findViewById(R.id.plantNameTextView);
         daysSinceGrowStartTextView = (TextView)findViewById(R.id.daysSinceGrowStartTextView);
-        daysSinceFlowerStartTextView = (TextView)findViewById(R.id.daysSinceFlowerStartTextView);
+//        daysSinceFlowerStartTextView = (TextView)findViewById(R.id.daysSinceFlowerStartTextView);
         weeksSinceGrowStartTextView = (TextView)findViewById(R.id.weeksSinceGrowStartTextView);
-        weeksSinceFlowerStartTextView = (TextView)findViewById(R.id.weeksSinceFlowerStartTextView);
-        growStartTextView = (TextView)findViewById(R.id.growStartTextView);
+//        weeksSinceFlowerStartTextView = (TextView)findViewById(R.id.weeksSinceFlowerStartTextView);
+//        growStartTextView = (TextView)findViewById(R.id.growStartTextView);
         fromSeedTextView = (TextView)findViewById(R.id.fromSeedTextView);
         recordableEventListView = (ListView)findViewById(R.id.recordableEventListView);
         parentPlantTableRow = (TableRow)findViewById(R.id.parentPlantTableRow);
-/*      generalButton = (Button)findViewById(R.id.generalEventButton);
-
-        generalButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                presentGeneralEventDialog();
-            }
-        });
-
-        waterButton = (Button)findViewById(R.id.waterButton);
-        waterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                presentWateringDialog();
-            }
-        });
-
-        feedButton = (Button)findViewById(R.id.feedButton);
-        feedButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            presentFeedingDialog();
-            }
-        });
-
-        observationButton = (Button)findViewById(R.id.observeButton);
-        observationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                presentAddObservationDialog();
-            }
-        });
-
-        floweringCheckBox = (CheckBox)findViewById(R.id.floweringCheckBox);
-*/    }
+        addEventSpinner = (Spinner)findViewById(R.id.addEventSpinner);
+   }
 
     private void fillViewWithPlants()   {
         switch(plantDisplay)    {
@@ -245,11 +214,74 @@ public class PlantTrackerUi extends AppCompatActivity
     private void fillIndividualPlantView()  {
         plantNameTextView.setText(currentPlant.getPlantName());
         daysSinceGrowStartTextView.setText("" + currentPlant.getDaysFromStart());
-//        daysSinceFlowerStartTextView.setText("" + currentPlant.getDaysFromFlowerStart());
         weeksSinceGrowStartTextView.setText("" + currentPlant.getWeeksFromStart());
-//        weeksSinceFlowerStartTextView.setText("" + currentPlant.getWeeksFromFlowerStart());
-//        growStartTextView.setText("" + formatDate(currentPlant.getPlantStartDate()));
-        fromSeedTextView.setText("" + (currentPlant.isFromSeed()?"Seed":"Clone"));
+
+        fromSeedTextView.setText((currentPlant.isFromSeed() ? R.string.seed : R.string.clone));
+
+        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.plant_event_options, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        addEventSpinner.setAdapter(adapter);
+        addEventSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                String selectedItem = adapter.getItem(position).toString();
+
+                switch(selectedItem)    {
+                    case "Change State":
+                        // TODO adjust current state to be whatever the most recent current state
+                        // TODO on the plant is
+                        break;
+
+                    case "Observe":
+                        presentGenericEventDialog(R.id.dialogObservationEventLayout,
+                                getObservationDialogHandler());
+                        break;
+
+                    case "Water":
+                        presentGenericEventDialog(R.id.dialogWaterEventLayout,
+                                getWaterDialogHandler());
+                        break;
+
+                    case "Feed":
+                        presentGenericEventDialog(R.id.dialogFeedingEventLayout,
+                                getFeedingDialogHandler());
+                        break;
+
+                    case "Trim":
+                        presentGenericEventDialog("TR", "Trim", R.id.genericEventTabLayout,
+                                getGeneralEventDialogHandler("TR", "Trim"));
+                        break;
+
+                    case "Top":
+                        presentGenericEventDialog("TP", "Top", R.id.generalEventTabLayout,
+                                getGeneralEventDialogHandler("TP", "Top"));
+                        break;
+
+                    case "Repot":
+                        presentGenericEventDialog("RP", "Repot", R.id.generalEventTabLayout,
+                                getGeneralEventDialogHandler("RP", "Repot"));
+                        break;
+
+                    case "New Event...":
+                        presentGenericEventDialog(R.id.generalEventTabLayout,
+                                getGeneralEventDialogHandler());
+                        break;
+
+                    case "Add Event":
+                    default:
+                }
+
+                addEventSpinner.setSelection(0);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         final Plant parentPlant = tracker.getPlantById(currentPlant.getParentPlantId());
         TextView parentPlantTextView = (TextView)findViewById(R.id.parentPlantIdTextView);
@@ -263,12 +295,12 @@ public class PlantTrackerUi extends AppCompatActivity
         });
 
         if (!currentPlant.isFromSeed() && currentPlant.getParentPlantId() > 0) {
-            if (parentPlant == null)    {
-                parentPlantTextView.setText("Record not found");
+            if (parentPlant != null)    {
+                parentPlantTextView.setText(parentPlant.getPlantName());
             }
             else    {
                 // couldn't find the parent plant
-                parentPlantTextView.setText(currentPlant.getPlantName());
+                parentPlantTextView.setText(R.string.record_not_found);
             }
 
             parentPlantTableRow.setVisibility(View.VISIBLE);
@@ -277,23 +309,6 @@ public class PlantTrackerUi extends AppCompatActivity
             parentPlantTableRow.setVisibility(View.GONE);
         }
 
-/*        floweringCheckBox.setOnCheckedChangeListener(null);
-        floweringCheckBox.setChecked(currentPlant.getVegFlowerState() == Plant.VegFlower.Flower);
-        floweringCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b)  {
-                    currentPlant.switchToFlower();
-                    fillIndividualPlantView();
-                }
-                else    {
-                    currentPlant.switchToVeg();
-                    fillIndividualPlantView();
-
-                }
-            }
-        });
-*/
         plantRecordableAdapter = new PlantRecordableTileArrayAdapter(
                 getBaseContext(), R.layout.plant_recordable_tile,
                 currentPlant.getAllRecordableEvents(), currentPlant);
@@ -309,7 +324,6 @@ public class PlantTrackerUi extends AppCompatActivity
         recordableEventListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
                 builder.setTitle(R.string.app_name);
                 builder.setMessage("Are you sure you want to delete this event?");
@@ -320,21 +334,53 @@ public class PlantTrackerUi extends AppCompatActivity
                         dialog.dismiss();
                     }
                 });
+
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                     }
                 });
+
                 AlertDialog alert = builder.create();
                 alert.show();
-
-
-
-
 
                 return true;
             }
         });
+    }
+
+    private void bindGroupListSpinner(Dialog dialog) {
+        Spinner groupListSpinner = (Spinner)dialog.findViewById(R.id.groupListSpinner);
+
+        final ArrayList<Group> groups = tracker.getGroupsPlantIsMemberOf(currentPlant.getPlantId());
+        final ArrayList<String> groupNames = new ArrayList<>();
+
+        for(Group g : groups)   {
+            groupNames.add(g.getGroupName());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_dropdown_item, groupNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupListSpinner.setAdapter(adapter);
+        groupListSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String name = groupNames.get(position);
+                for (Group g : groups)  {
+                    if (g.getGroupName().equals(name))  {
+                        currentlySelectedGroup = g.getGroupId();
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                currentlySelectedGroup = 0;
+            }
+        });
+
     }
 
     @Override
@@ -375,12 +421,6 @@ public class PlantTrackerUi extends AppCompatActivity
         switch(id)  {
             case R.id.action_rename:
                 presentRenameDialog();
-                break;
-            case R.id.action_change_start_date:
-                presentChangePlantDateDialog();
-                break;
-            case R.id.action_change_flower_date:
-                presentChangeFlowerDateDialog();
                 break;
             case R.id.action_delete_plant_really:
                 tracker.deletePlant(currentPlant);
@@ -621,44 +661,36 @@ public class PlantTrackerUi extends AppCompatActivity
         return true;
     }
 
-    private void presentRenameGroupDialog(long groupId) {
+    private void presentGenericEventDialog(int layoutId, IDialogHandler dialogHandler)  {
+        presentGenericEventDialog("", "", layoutId, dialogHandler);
+    }
+
+    private void presentGenericEventDialog(String code, String displayName, int layoutId,
+                                           IDialogHandler dialogHandler) {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
-        dialog.setContentView(R.layout.dialog_rename_group);
+        dialog.setContentView(R.layout.dialog_generic_event);
+        TabHost tabs = (TabHost) dialog.findViewById(R.id.tabHost);
+        tabs.setup();
+        tabs.setCurrentTab(0);
 
-        final EditText groupNameEditText = (EditText)dialog.findViewById(R.id.groupNameEditText);
-        final TextView groupNameTextView = (TextView)dialog.findViewById(R.id.groupNameTextView);
-        groupNameTextView.setText(tracker.getGroup(groupId).getGroupName());
+        TabHost.TabSpec dialogTab = tabs.newTabSpec("Tab1");
+        dialogTab.setIndicator("Info");
+        dialogTab.setContent(layoutId);
+        tabs.addTab(dialogTab);
 
-        final long localGroupId = groupId;
+        TabHost.TabSpec changeDateTab = tabs.newTabSpec("Tab2");
+        changeDateTab.setIndicator("Change Date");
+        changeDateTab.setContent(R.id.tab2);
+        tabs.addTab(changeDateTab);
 
-        Button okButton = (Button)dialog.findViewById(R.id.okButton);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (groupNameEditText.getText().toString().isEmpty())   {
-                    return;
-                }
+        TabHost.TabSpec changeTimeTab = tabs.newTabSpec("Tab3");
+        changeTimeTab.setIndicator("Change Time");
+        changeTimeTab.setContent(R.id.tab3);
+        tabs.addTab(changeTimeTab);
 
-                tracker.renameGroup(localGroupId, groupNameEditText.getText().toString());
-                refreshDrawerGroups();
-                dialog.dismiss();
-            }
-        });
+        dialogHandler.bindDialog(dialog);
 
-        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
-        cancelButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        try {
-            dialog.show();
-        }
-        catch(Exception e)  {
-            e.printStackTrace();
-        }
+        dialog.show();
     }
 
     private void presentImportDialog()  {
@@ -737,123 +769,350 @@ public class PlantTrackerUi extends AppCompatActivity
         }
     }
 
-    private void presentGeneralEventDialog()    {
-        final Dialog dialog = new Dialog(PlantTrackerUi.this);
-        dialog.setContentView(R.layout.dialog_general_event);
 
-        Spinner groupListSpinner = (Spinner)dialog.findViewById(R.id.groupListSpinner);
+    private IDialogHandler getGeneralEventDialogHandler()   {
+        return getGeneralEventDialogHandler("", "");
+    }
 
-        final ArrayList<Group> groups = tracker.getGroupsPlantIsMemberOf(currentPlant.getPlantId());
-        final ArrayList<String> groupNames = new ArrayList<>();
-
-        for(Group g : groups)   {
-            groupNames.add(g.getGroupName());
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter(this,
-                android.R.layout.simple_spinner_dropdown_item, groupNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        groupListSpinner.setAdapter(adapter);
-        groupListSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    private IDialogHandler getGeneralEventDialogHandler(final String code, final String name) {
+        IDialogHandler handler = new IDialogHandler() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String name = groupNames.get(position);
-                for (Group g : groups)  {
-                    if (g.getGroupName().equals(name))  {
-                        currentlySelectedGroup = g.getGroupId();
-                        break;
+            public void bindDialog(final Dialog dialog) {
+                bindGroupListSpinner(dialog);
+
+                final CheckBox applyToGroupCheckBox = (CheckBox)dialog.findViewById(
+                        R.id.applyToGroupCheckbox);
+
+                final AutoCompleteTextView generalEventNameAbbrevEditText =
+                        (AutoCompleteTextView)dialog.findViewById(R.id.generalEventAbbrevTextView);
+
+                final AutoCompleteTextView generalEventName = (AutoCompleteTextView)dialog.findViewById(
+                        R.id.generalEventNameTextView);
+
+                generalEventNameAbbrevEditText.setText(code);
+                generalEventName.setText(name);
+
+                generalEventNameAbbrevEditText.setAdapter(new ArrayAdapter<String>(
+                        getBaseContext(), android.R.layout.simple_list_item_1,
+                        tracker.getPlantTrackerSettings().getAutoCompleteKeys()));
+
+                generalEventNameAbbrevEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                        String selectedAbbreviation = (String)arg0.getItemAtPosition(arg2);
+                        if (tracker.getPlantTrackerSettings().getAutoCompleteKeys()
+                                .contains(selectedAbbreviation))    {
+
+                            generalEventName.setText(tracker.getPlantTrackerSettings()
+                                    .getAutoCompleteValueForKey(selectedAbbreviation));
+                        }
                     }
-                }
-            }
+                });
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                currentlySelectedGroup = 0;
-            }
-        });
+                generalEventNameAbbrevEditText.setThreshold(1);
 
-        final CheckBox applyToGroupCheckBox = (CheckBox)dialog.findViewById(
-                R.id.applyToGroupCheckbox);
+                final TextView eventNotesEditText = (TextView)dialog.findViewById(
+                        R.id.eventNotesEditText);
 
-        final AutoCompleteTextView generalEventName = (AutoCompleteTextView)dialog.findViewById(
-                R.id.generalEventNameTextView);
-        final AutoCompleteTextView generalEventNameAbbrevEditText =
-                (AutoCompleteTextView)dialog.findViewById(R.id.generalEventAbbrevTextView);
+                Button okButton = (Button)dialog.findViewById(R.id.okButton);
+                okButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (generalEventName.getText().toString().equals("") ||
+                                generalEventNameAbbrevEditText.getText().toString().equals("")) {
+                            return;
+                        }
 
-        generalEventNameAbbrevEditText.setAdapter(new ArrayAdapter<String>(
-                getBaseContext(), android.R.layout.simple_list_item_1,
-                tracker.getPlantTrackerSettings().getAutoCompleteKeys()));
+                        IPlantEventDoer doer = new IPlantEventDoer() {
+                            @Override
+                            public void doEventToPlant(Plant p) {
+                                p.addGeneralEvent(generalEventName.getText().toString(),
+                                        generalEventNameAbbrevEditText.getText().toString(),
+                                        eventNotesEditText.getText().toString());
+                            }
+                        };
 
-        generalEventNameAbbrevEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                String selectedAbbreviation = (String)arg0.getItemAtPosition(arg2);
-                if (tracker.getPlantTrackerSettings().getAutoCompleteKeys()
-                        .contains(selectedAbbreviation))    {
+                        if (applyToGroupCheckBox.isChecked() && currentlySelectedGroup > 0) {
+                            tracker.performEventForPlantsInGroup(currentlySelectedGroup, doer);
+                        }
+                        else    {
+                            doer.doEventToPlant(currentPlant);
+                        }
 
-                    generalEventName.setText(tracker.getPlantTrackerSettings()
-                            .getAutoCompleteValueForKey(selectedAbbreviation));
-                }
-            }
-        });
+                        dialog.dismiss();
 
-        generalEventNameAbbrevEditText.setThreshold(1);
+                        if (!tracker.getPlantTrackerSettings().getAutoCompleteKeys().contains(
+                                generalEventNameAbbrevEditText.getText().toString()))   {
 
-        final TextView eventNotesEditText = (TextView)dialog.findViewById(
-                R.id.eventNotesEditText);
+                            tracker.getPlantTrackerSettings().addAutoCompleteKeyValuePair(
+                                    generalEventNameAbbrevEditText.getText().toString(),
+                                    generalEventName.getText().toString());
+                        }
 
-        Button okButton = (Button)dialog.findViewById(R.id.okButton);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (generalEventName.getText().toString().equals("") ||
-                        generalEventNameAbbrevEditText.getText().toString().equals("")) {
-                    return;
-                }
-
-                if (applyToGroupCheckBox.isChecked() && currentlySelectedGroup > 0) {
-                    ArrayList<Plant> plantMembers = tracker.getMembersOfGroup(
-                            currentlySelectedGroup);
-
-                    for (Plant p : plantMembers) {
-                        p.addGeneralEvent(generalEventName.getText().toString(),
-                                generalEventNameAbbrevEditText.getText().toString(),
-                                eventNotesEditText.getText().toString());
+                        fillIndividualPlantView();
                     }
+                });
+
+                Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+
+                try {
+                    dialog.show();
                 }
-                else {
-                    currentPlant.addGeneralEvent(generalEventName.getText().toString(),
-                            generalEventNameAbbrevEditText.getText().toString(),
-                            eventNotesEditText.getText().toString());
-                }
-                dialog.dismiss();
-
-                if (!tracker.getPlantTrackerSettings().getAutoCompleteKeys().contains(
-                        generalEventNameAbbrevEditText.getText().toString()))   {
-
-                    tracker.getPlantTrackerSettings().addAutoCompleteKeyValuePair(
-                            generalEventNameAbbrevEditText.getText().toString(),
-                            generalEventName.getText().toString());
+                catch(Exception e)  {
+                    e.printStackTrace();
                 }
 
-
-                fillIndividualPlantView();
             }
-        });
+        };
 
-        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
+        return handler;
+    }
+
+    private IDialogHandler getWaterDialogHandler()    {
+        IDialogHandler handler = new IDialogHandler() {
             @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
+            public void bindDialog(final Dialog dialog) {
+                bindGroupListSpinner(dialog);
 
-        try {
-            dialog.show();
-        }
-        catch(Exception e)  {
-            e.printStackTrace();
-        }
+                final CheckBox applyToGroupCheckBox = (CheckBox)dialog.findViewById(R.id.applyToGroupCheckbox);
+
+                Button okButton = (Button)dialog.findViewById(R.id.okButton);
+                okButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EditText pHEditText = (EditText)dialog.findViewById(R.id.pHEditText);
+                        String phInput = pHEditText.getText().toString();
+
+                        double d = 0.0;
+                        try {
+                            d = Double.parseDouble(phInput);
+                        }
+                        catch (Exception e) {
+                            return;
+                        }
+
+                        final double pH = d;
+                        IPlantEventDoer doer = new IPlantEventDoer() {
+                            @Override
+                            public void doEventToPlant(Plant p) {
+                                p.waterPlant(pH);
+                            }
+                        };
+
+                        if (applyToGroupCheckBox.isChecked() && currentlySelectedGroup > 0)   {
+                            tracker.performEventForPlantsInGroup(currentlySelectedGroup, doer);
+                        }
+                        else    {
+                            doer.doEventToPlant(currentPlant);
+                        }
+
+                        dialog.dismiss();
+
+                        fillIndividualPlantView();
+                    }
+                });
+
+                Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+
+                try {
+                    dialog.show();
+                }
+                catch(Exception e)  {
+                    e.printStackTrace();
+                }            }
+        };
+
+        return handler;
+    }
+
+    private IDialogHandler getObservationDialogHandler() {
+        IDialogHandler handler = new IDialogHandler() {
+            @Override
+            public void bindDialog(final Dialog dialog) {
+                bindGroupListSpinner(dialog);
+
+                final CheckBox applyToGroupCheckBox = (CheckBox)dialog.findViewById(
+                        R.id.applyToGroupCheckbox);
+
+                Button okButton = (Button)dialog.findViewById(R.id.okButton);
+                okButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EditText rhMinEditText = (EditText)dialog.findViewById(R.id.rhMinEditText);
+                        EditText rhMaxEditText = (EditText)dialog.findViewById(R.id.rhMaxEditText);
+                        EditText tempMinEditText = (EditText)dialog.findViewById(R.id.tempMinEditText);
+                        EditText tempMaxEditText = (EditText)dialog.findViewById(R.id.tempMaxEditText);
+                        EditText observationsEditText = (EditText)dialog.findViewById(
+                                R.id.observationNotesEditText);
+
+                        String rhMin = rhMinEditText.getText().toString();
+                        String rhMax = rhMaxEditText.getText().toString();
+                        String tempMin = tempMinEditText.getText().toString();
+                        String tempMax = tempMaxEditText.getText().toString();
+
+                        int minTemp = 0;
+                        int maxTemp = 0;
+                        int minRh = 0;
+                        int maxRh = 0;
+
+                        try {
+                            minTemp = Integer.parseInt(tempMin);
+                        }
+                        catch (Exception e) {
+                            return;
+                        }
+
+                        try {
+                            maxTemp = Integer.parseInt(tempMax);
+                        }
+                        catch (Exception e) {
+                            return;
+                        }
+
+                        try {
+                            minRh = Integer.parseInt(rhMin);
+                        }
+                        catch (Exception e) {
+                            return;
+                        }
+
+                        try {
+                            maxRh = Integer.parseInt(rhMax);
+                        }
+                        catch (Exception e) {
+                            return;
+                        }
+
+                        String observations = observationsEditText.getText().toString();
+
+                        final int finMaxRh = maxRh;
+                        final int finMinRh = minRh;
+                        final int finMaxTemp = maxTemp;
+                        final int finMinTemp = minTemp;
+                        final String finObservations = observations;
+
+                        IPlantEventDoer doer = new IPlantEventDoer() {
+                            @Override
+                            public void doEventToPlant(Plant p) {
+                                p.addObservation(finMaxRh, finMinRh, finMaxTemp, finMinTemp, finObservations);
+                            }
+                        };
+
+                        if (applyToGroupCheckBox.isChecked() && currentlySelectedGroup > 0) {
+                            tracker.performEventForPlantsInGroup(currentlySelectedGroup, doer);
+                        }
+                        else    {
+                            doer.doEventToPlant(currentPlant);
+                        }
+
+                        fillIndividualPlantView();
+                        dialog.dismiss();
+                    }
+                });
+
+                Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+
+                try {
+                    dialog.show();
+                }
+                catch(Exception e)  {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+
+        return handler;
+    }
+
+    private IDialogHandler getFeedingDialogHandler() {
+        return new IDialogHandler() {
+            @Override
+            public void bindDialog(final Dialog dialog) {
+                final CheckBox applyToGroupCheckBox = (CheckBox)dialog.findViewById(
+                        R.id.applyToGroupCheckbox);
+
+                Button okButton = (Button)dialog.findViewById(R.id.okButton);
+                okButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EditText pHEditText = (EditText)dialog.findViewById(R.id.feedPhEditText);
+                        String phInput = pHEditText.getText().toString();
+                        double ph = 0.0;
+                        try {
+                            ph = Double.parseDouble(phInput);
+                        }
+                        catch (Exception e) {
+                            return;
+                        }
+
+                        EditText feedStrengthEditText = (EditText)dialog.findViewById(
+                                R.id.feedStrengthEditText);
+                        String feedStrengthInput = feedStrengthEditText.getText().toString();
+                        double str = 0.0;
+                        try {
+                            str = Double.parseDouble(feedStrengthInput);
+                        }
+                        catch (Exception e) {
+                            return;
+                        }
+
+                        final double finStr = str;
+                        final double finPh = ph;
+
+                        IPlantEventDoer doer = new IPlantEventDoer() {
+                            @Override
+                            public void doEventToPlant(Plant p) {
+                                p.feedPlant(finStr, finPh);
+                            }
+                        };
+
+                        if (applyToGroupCheckBox.isChecked() && currentlySelectedGroup > 0) {
+                            tracker.performEventForPlantsInGroup(currentlySelectedGroup, doer);
+                        }
+                        else    {
+                            doer.doEventToPlant(currentPlant);
+                        }
+
+                        dialog.dismiss();
+
+                        fillIndividualPlantView();
+                    }
+                });
+
+                Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+
+                try {
+                    dialog.show();
+                }
+                catch(Exception e)  {
+                    e.printStackTrace();
+                }
+            }
+        };
     }
 
     private void presentDeleteAllPlantsDialog() {
@@ -874,316 +1133,6 @@ public class PlantTrackerUi extends AppCompatActivity
                 else    {
                     fillViewWithPlants();
                 }
-            }
-        });
-
-        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        try {
-            dialog.show();
-        }
-        catch(Exception e)  {
-            e.printStackTrace();
-        }
-    }
-
-    private void presentFeedingDialog() {
-        final Dialog dialog = new Dialog(PlantTrackerUi.this);
-        dialog.setContentView(R.layout.dialog_feed_event);
-        Spinner groupListSpinner = (Spinner)dialog.findViewById(R.id.groupListSpinner);
-
-        final ArrayList<Group> groups = tracker.getGroupsPlantIsMemberOf(currentPlant.getPlantId());
-        final ArrayList<String> groupNames = new ArrayList<>();
-
-        for(Group g : groups)   {
-            groupNames.add(g.getGroupName());
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter(this,
-                android.R.layout.simple_spinner_dropdown_item, groupNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        groupListSpinner.setAdapter(adapter);
-        groupListSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String name = groupNames.get(position);
-                for (Group g : groups)  {
-                    if (g.getGroupName().equals(name))  {
-                        currentlySelectedGroup = g.getGroupId();
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                currentlySelectedGroup = 0;
-            }
-        });
-
-        final CheckBox applyToGroupCheckBox = (CheckBox)dialog.findViewById(
-                R.id.applyToGroupCheckbox);
-
-        Button okButton = (Button)dialog.findViewById(R.id.feedOkButton);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditText pHEditText = (EditText)dialog.findViewById(R.id.feedPhEditText);
-                String phInput = pHEditText.getText().toString();
-                double ph = 0.0;
-                try {
-                    ph = Double.parseDouble(phInput);
-                }
-                catch (Exception e) {
-                    return;
-                }
-
-                EditText feedStrengthEditText = (EditText)dialog.findViewById(
-                        R.id.feedStrengthEditText);
-                String feedStrengthInput = feedStrengthEditText.getText().toString();
-                double str = 0.0;
-                try {
-                    str = Double.parseDouble(feedStrengthInput);
-                }
-                catch (Exception e) {
-                    return;
-                }
-
-                if (applyToGroupCheckBox.isChecked() && currentlySelectedGroup > 0) {
-                    ArrayList<Plant> plantMembers = tracker.getMembersOfGroup(
-                            currentlySelectedGroup);
-
-                    for (Plant p : plantMembers) {
-                        p.feedPlant(str, ph);
-                    }
-                }
-                else    {
-                    currentPlant.feedPlant(str, ph);
-                }
-
-                dialog.dismiss();
-
-                fillIndividualPlantView();
-            }
-        });
-
-        Button cancelButton = (Button)dialog.findViewById(R.id.feedCancelButton);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        try {
-            dialog.show();
-        }
-        catch(Exception e)  {
-            e.printStackTrace();
-        }
-    }
-
-    private void presentWateringDialog()    {
-        final Dialog dialog = new Dialog(PlantTrackerUi.this);
-        dialog.setContentView(R.layout.dialog_water_event);
-
-        Spinner groupListSpinner = (Spinner)dialog.findViewById(R.id.groupListSpinner);
-
-        final ArrayList<Group> groups = tracker.getGroupsPlantIsMemberOf(currentPlant.getPlantId());
-        final ArrayList<String> groupNames = new ArrayList<>();
-
-        for(Group g : groups)   {
-            groupNames.add(g.getGroupName());
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter(this,
-                android.R.layout.simple_spinner_dropdown_item, groupNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        groupListSpinner.setAdapter(adapter);
-        groupListSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String name = groupNames.get(position);
-                for (Group g : groups)  {
-                    if (g.getGroupName().equals(name))  {
-                        currentlySelectedGroup = g.getGroupId();
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                currentlySelectedGroup = 0;
-            }
-        });
-
-        final CheckBox applyToGroupCheckBox = (CheckBox)dialog.findViewById(R.id.applyToGroupCheckbox);
-
-        Button okButton = (Button)dialog.findViewById(R.id.okButton);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditText pHEditText = (EditText)dialog.findViewById(R.id.pHEditText);
-                String phInput = pHEditText.getText().toString();
-
-                double d = 0.0;
-                try {
-                    d = Double.parseDouble(phInput);
-                }
-                catch (Exception e) {
-                    return;
-                }
-
-                if (applyToGroupCheckBox.isChecked() && currentlySelectedGroup > 0)   {
-                    ArrayList<Plant> plantMembers = tracker.getMembersOfGroup(
-                            currentlySelectedGroup);
-
-                    for(Plant p : plantMembers) {
-                        p.waterPlant(d);
-                    }
-
-                    currentlySelectedGroup = 0;
-                }
-                else    {
-                    currentPlant.waterPlant(d);
-                }
-
-
-                dialog.dismiss();
-
-                fillIndividualPlantView();
-
-            }
-        });
-
-        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        try {
-            dialog.show();
-        }
-        catch(Exception e)  {
-            e.printStackTrace();
-        }
-    }
-
-    private void presentAddObservationDialog()  {
-        final Dialog dialog = new Dialog(PlantTrackerUi.this);
-        dialog.setContentView(R.layout.dialog_observation_event);
-
-        Spinner groupListSpinner = (Spinner)dialog.findViewById(R.id.groupListSpinner);
-
-        final ArrayList<Group> groups = tracker.getGroupsPlantIsMemberOf(currentPlant.getPlantId());
-        final ArrayList<String> groupNames = new ArrayList<>();
-
-        for(Group g : groups)   {
-            groupNames.add(g.getGroupName());
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter(this,
-                android.R.layout.simple_spinner_dropdown_item, groupNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        groupListSpinner.setAdapter(adapter);
-        groupListSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String name = groupNames.get(position);
-                for (Group g : groups)  {
-                    if (g.getGroupName().equals(name))  {
-                        currentlySelectedGroup = g.getGroupId();
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                currentlySelectedGroup = 0;
-            }
-        });
-
-        final CheckBox applyToGroupCheckBox = (CheckBox)dialog.findViewById(
-                R.id.applyToGroupCheckbox);
-
-        Button okButton = (Button)dialog.findViewById(R.id.okButton);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditText rhMinEditText = (EditText)dialog.findViewById(R.id.rhMinEditText);
-                EditText rhMaxEditText = (EditText)dialog.findViewById(R.id.rhMaxEditText);
-                EditText tempMinEditText = (EditText)dialog.findViewById(R.id.tempMinEditText);
-                EditText tempMaxEditText = (EditText)dialog.findViewById(R.id.tempMaxEditText);
-                EditText observationsEditText = (EditText)dialog.findViewById(
-                        R.id.observationNotesEditText);
-
-                String rhMin = rhMinEditText.getText().toString();
-                String rhMax = rhMaxEditText.getText().toString();
-                String tempMin = tempMinEditText.getText().toString();
-                String tempMax = tempMaxEditText.getText().toString();
-
-                int minTemp = 0;
-                int maxTemp = 0;
-                int minRh = 0;
-                int maxRh = 0;
-
-                try {
-                    minTemp = Integer.parseInt(tempMin);
-                }
-                catch (Exception e) {
-                    return;
-                }
-
-                try {
-                    maxTemp = Integer.parseInt(tempMax);
-                }
-                catch (Exception e) {
-                    return;
-                }
-
-                try {
-                    minRh = Integer.parseInt(rhMin);
-                }
-                catch (Exception e) {
-                    return;
-                }
-
-                try {
-                    maxRh = Integer.parseInt(rhMax);
-                }
-                catch (Exception e) {
-                    return;
-                }
-
-                String observations = observationsEditText.getText().toString();
-
-                if (applyToGroupCheckBox.isChecked() && currentlySelectedGroup > 0) {
-                    ArrayList<Plant> plantMembers = tracker.getMembersOfGroup(
-                            currentlySelectedGroup);
-
-                    for(Plant p : plantMembers) {
-                        p.addObservation(maxRh, minRh, maxTemp, minTemp, observations);
-                    }
-                }
-                else    {
-                    currentPlant.addObservation(maxRh, minRh, maxTemp, minTemp, observations);
-                }
-
-                dialog.dismiss();
-
-                fillIndividualPlantView();
-
             }
         });
 
@@ -1368,7 +1317,7 @@ public class PlantTrackerUi extends AppCompatActivity
             e.printStackTrace();
         }
     }
-
+/*
     private void presentChangePlantDateDialog() {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
         dialog.setContentView(R.layout.dialog_change_date);
@@ -1448,7 +1397,7 @@ public class PlantTrackerUi extends AppCompatActivity
             e.printStackTrace();
         }
     }
-
+*/
     private void presentAboutDialog()   {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
         dialog.setContentView(R.layout.dialog_about);
@@ -1486,6 +1435,47 @@ public class PlantTrackerUi extends AppCompatActivity
 
         dialog.show();
     }
+
+    private void presentRenameGroupDialog(long groupId) {
+        final Dialog dialog = new Dialog(PlantTrackerUi.this);
+        dialog.setContentView(R.layout.dialog_rename_group);
+
+        final EditText groupNameEditText = (EditText)dialog.findViewById(R.id.groupNameEditText);
+        final TextView groupNameTextView = (TextView)dialog.findViewById(R.id.groupNameTextView);
+        groupNameTextView.setText(tracker.getGroup(groupId).getGroupName());
+
+        final long localGroupId = groupId;
+
+        Button okButton = (Button)dialog.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (groupNameEditText.getText().toString().isEmpty())   {
+                    return;
+                }
+
+                tracker.renameGroup(localGroupId, groupNameEditText.getText().toString());
+                refreshDrawerGroups();
+                dialog.dismiss();
+            }
+        });
+
+        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        try {
+            dialog.show();
+        }
+        catch(Exception e)  {
+            e.printStackTrace();
+        }
+    }
+
 
     private void refreshDrawerGroups()   {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);

@@ -1,92 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="350dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true">
-
-        <CheckBox
-            android:id="@+id/applyToGroupCheckbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Apply to group"
-            android:layout_below="@+id/feedStrengthEditText"
-            android:layout_alignStart="@+id/feedStrengthEditText"
-            android:layout_marginTop="22dp" />
-
-        <Spinner
-            android:id="@+id/groupListSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/applyToGroupCheckbox"
-            android:layout_alignEnd="@+id/feedOkButton"
-            android:layout_alignStart="@+id/applyToGroupCheckbox" />
-
-        <Button
-            android:id="@+id/feedOkButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/feedCancelButton"
-            android:layout_alignBottom="@+id/feedCancelButton"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="19dp"
-            android:text="Ok" />
-
-        <Button
-            android:id="@+id/feedCancelButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignStart="@+id/feedStrengthEditText"
-            android:layout_marginBottom="15dp"
-            android:text="Cancel" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/feedPhEditText"
-            android:layout_alignStart="@+id/feedPhEditText"
-            android:layout_below="@+id/feedPhEditText"
-            android:layout_marginTop="15dp"
-            android:text="Strength of the feeding as a ratio of 1" />
+            android:paddingLeft="5dp"
+            android:text="Food pH"
+            android:layout_weight="0.39" />
 
         <EditText
             android:id="@+id/feedPhEditText"
-            android:layout_width="wrap_content"
+            android:layout_width="85dp"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/textView3"
-            android:layout_alignStart="@+id/textView3"
-            android:layout_below="@+id/textView3"
-            android:layout_marginTop="14dp"
+            android:layout_weight="0.00"
             android:ems="10"
             android:inputType="numberDecimal" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:text="Food Strength (0 to 1)"
+            android:layout_weight="0.06" />
 
         <EditText
             android:id="@+id/feedStrengthEditText"
-            android:layout_width="wrap_content"
+            android:layout_width="84dp"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/textView4"
-            android:layout_alignStart="@+id/textView4"
-            android:layout_below="@+id/textView4"
-            android:layout_marginTop="15dp"
             android:ems="10"
             android:inputType="numberDecimal" />
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="19dp"
-            android:layout_marginStart="19dp"
-            android:layout_marginTop="13dp"
-            android:text="pH of the food provided to the plant" />
-    </RelativeLayout>
-
-</RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

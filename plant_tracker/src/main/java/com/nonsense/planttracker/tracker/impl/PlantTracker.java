@@ -2,6 +2,7 @@ package com.nonsense.planttracker.tracker.impl;
 
 import com.nonsense.planttracker.tracker.exceptions.GroupNotFoundException;
 import com.nonsense.planttracker.tracker.exceptions.PlantNotFoundException;
+import com.nonsense.planttracker.tracker.interf.IPlantEventDoer;
 import com.nonsense.planttracker.tracker.interf.IPlantUpdateListener;
 import com.nonsense.planttracker.tracker.interf.ISettingsChangedListener;
 
@@ -380,5 +381,12 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         Group g = getGroup(groupId);
         g.setGroupName(name);
         settingsChanged();
+    }
+
+    public void performEventForPlantsInGroup(long groupId, IPlantEventDoer doer)  {
+        ArrayList<Plant> plants = getMembersOfGroup(groupId);
+        for(Plant p : plants)   {
+            doer.doEventToPlant(p);
+        }
     }
 }
