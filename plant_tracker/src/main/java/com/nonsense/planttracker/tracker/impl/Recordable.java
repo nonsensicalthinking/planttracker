@@ -10,10 +10,10 @@ import java.util.Date;
 
 
 
-public abstract class Recordable extends Datable implements Serializable {
-    Calendar timestamp;
-    private long dayCount;
-    private long weekCount;
+public abstract class Recordable extends Datable {
+    public Calendar timestamp;
+    public long dayCount;
+    public long weekCount;
 
     public Recordable(long dayCount, long weekCount) {
         this(dayCount, weekCount, Calendar.getInstance());
