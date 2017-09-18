@@ -15,7 +15,8 @@ public class PlantData {
     public boolean isArchived;
     public Calendar currentStateStartDate;
     public String currentStateName;
-    public ArrayList<Recordable> recordableEvents;
+    public ArrayList<EventRecord> recordableEvents;
+    public ArrayList<ObservationRecord> observationRecords;
     public ArrayList<Long> groupIds;
 
     public PlantData()  {

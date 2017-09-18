@@ -39,6 +39,7 @@ public class Plant {
         plantData.plantId = System.currentTimeMillis();
         plantData.startDate = growStartDate;
         plantData.recordableEvents = new ArrayList<>();
+        plantData.observationRecords = new ArrayList<>();
         plantData.isFromSeed = isFromSeed;
         plantData.groupIds = new ArrayList<>();
     }
@@ -82,8 +83,21 @@ public class Plant {
         return plantData.recordableEvents.size();
     }
 
+    // FixMe we need to handle this better. Dirty hack to get json objects working
+    // we don't need to sort like this, the problem could be resolved with a json exlcusion on the
+    // sorted list
     public ArrayList<Recordable> getAllRecordableEvents()  {
-        return plantData.recordableEvents;
+        ArrayList<Recordable> rec = new ArrayList<>();
+
+        for(EventRecord er : plantData.recordableEvents)    {
+            rec.add((Recordable)er);
+        }
+
+        for(ObservationRecord or : plantData.observationRecords) {
+            rec.add((Recordable)or);
+        }
+
+        return sortEvents(rec);
     }
 
     public void startGrow(Calendar c) {
@@ -127,7 +141,7 @@ public class Plant {
         long currentDay = calcDaysFromTime(cal);
         long currentWeek = calcWeeksFromTime(cal);
 
-        plantData.recordableEvents.add(new ObservationRecord(currentDay, currentWeek, rhHigh, rhLow,
+        plantData.observationRecords.add(new ObservationRecord(currentDay, currentWeek, rhHigh, rhLow,
                 tempHigh, tempLow, notes, cal));
 
         sortEvents();
@@ -221,6 +235,17 @@ public class Plant {
                 return o1.getTimestamp().compareTo(o2.getTimestamp());
             }
         });
+    }
+
+    private ArrayList<Recordable> sortEvents(ArrayList<Recordable> recordables) {
+        recordables.sort(new Comparator<Recordable>() {
+            @Override
+            public int compare(Recordable o1, Recordable o2) {
+                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            }
+        });
+
+        return recordables;
     }
 
     private void notifyUpdateListeners()    {

@@ -41,7 +41,7 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     private transient ArrayList<Plant> archivedPlants;
     private String plantFolderPath;
 
-    private static final String FILE_EXTENSION = ".ser";
+    private static final String FILE_EXTENSION = ".json";
     private static final String SETTINGS_FOLDER = "/settings/";
     private static final String SETTINGS_FILE = "tracker_settings.ser";
     private static final String PLANTS_FOLDER = "/plants/";
@@ -148,6 +148,9 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
             BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
             Gson g = new Gson();
             String json = g.toJson(p.getPlantData());
+
+            System.out.println("plant json: " + json);
+
             bw.write(json);
             bw.close();
         }
@@ -212,13 +215,20 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
 
         try
         {
-
-
             Plant p = new Plant();
             BufferedReader br = new BufferedReader(new FileReader(filePath));
             Gson g = new Gson();
-            Type fooType = new TypeToken<PlantData>() {}.getType();
-            PlantData plantData = g.fromJson(br, fooType);
+
+            Type plantType = new TypeToken<PlantData>(){}.getType();
+
+            StringBuilder sb = new StringBuilder();
+            while(br.ready())   {
+                sb.append(br.readLine());
+            }
+
+            System.out.println("Json object: " + sb.toString());
+
+            PlantData plantData = g.fromJson(sb.toString(), plantType);
             p.setPlantData(plantData);
 
             return p;
