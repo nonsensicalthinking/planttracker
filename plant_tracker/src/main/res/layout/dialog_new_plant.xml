@@ -108,7 +108,7 @@
                 android:layout_below="@+id/textView10"
                 android:ems="10"
                 android:gravity="bottom"
-                android:inputType="textPersonName"
+                android:inputType="textCapWords"
                 android:paddingLeft="3dp"
                 android:textSize="14sp" />
 

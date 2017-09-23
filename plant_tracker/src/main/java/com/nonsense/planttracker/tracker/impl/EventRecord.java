@@ -23,15 +23,19 @@ public class EventRecord extends Recordable {
         State
     }
 
-    private PlantEvent event;
-    private double foodStrength;
-    private double pH;
-    private Calendar dateChangedTo;
+    public PlantEvent event;
+    public double foodStrength;
+    public double pH;
+    public Calendar dateChangedTo;
 
     // general event
-    private String generalEventName;
-    private String generalEventAbbrev;
-    private String eventNotes;
+    public String generalEventName;
+    public String generalEventAbbrev;
+    public String eventNotes;
+
+    public EventRecord()    {
+
+    }
 
     // for other style events
     public EventRecord(long dayCount, long weekCount, PlantEvent e, Calendar cal)    {

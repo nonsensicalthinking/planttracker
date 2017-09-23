@@ -10,10 +10,14 @@ import java.util.Date;
 
 
 
-public abstract class Recordable extends Datable implements Serializable {
-    Calendar timestamp;
-    private long dayCount;
-    private long weekCount;
+public class Recordable extends Datable {
+    public Calendar timestamp;
+    public long dayCount;
+    public long weekCount;
+
+    public Recordable() {
+
+    }
 
     public Recordable(long dayCount, long weekCount) {
         this(dayCount, weekCount, Calendar.getInstance());
@@ -37,9 +41,13 @@ public abstract class Recordable extends Datable implements Serializable {
         return weekCount;
     }
 
-    public abstract String Summary();
+    public String Summary() {
+        return "";
+    }
 
-    public abstract String getEventTypeString();
+    public String getEventTypeString()  {
+        return "";
+    }
 
     // Calculate where this event is on a timeline
     public long weeksSinceDate(Calendar date)   {

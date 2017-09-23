@@ -30,7 +30,7 @@
             android:layout_below="@+id/textView11"
             android:layout_marginTop="13dp"
             android:ems="10"
-            android:inputType="textPersonName" />
+            android:inputType="textCapWords" />
 
         <Button
             android:id="@+id/cancelButton"

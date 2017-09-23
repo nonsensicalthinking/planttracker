@@ -1,19 +1,28 @@
 package com.nonsense.planttracker.tracker.impl;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nonsense.planttracker.tracker.exceptions.GroupNotFoundException;
 import com.nonsense.planttracker.tracker.exceptions.PlantNotFoundException;
 import com.nonsense.planttracker.tracker.interf.IPlantEventDoer;
 import com.nonsense.planttracker.tracker.interf.IPlantUpdateListener;
 import com.nonsense.planttracker.tracker.interf.ISettingsChangedListener;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Dictionary;
@@ -32,7 +41,7 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     private transient ArrayList<Plant> archivedPlants;
     private String plantFolderPath;
 
-    private static final String FILE_EXTENSION = ".ser";
+    private static final String FILE_EXTENSION = ".json";
     private static final String SETTINGS_FOLDER = "/settings/";
     private static final String SETTINGS_FILE = "tracker_settings.ser";
     private static final String PLANTS_FOLDER = "/plants/";
@@ -135,12 +144,15 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
 
         try
         {
-            FileOutputStream fos = new FileOutputStream(plantFolderPath + PLANTS_FOLDER +
-                    p.getPlantId() + FILE_EXTENSION);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(p);
-            oos.close();
-            fos.close();
+            String filePath = plantFolderPath + PLANTS_FOLDER + p.getPlantId() + FILE_EXTENSION;
+            BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
+            Gson g = new Gson();
+            String json = g.toJson(p.getPlantData());
+
+            System.out.println("plant json: " + json);
+
+            bw.write(json);
+            bw.close();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -199,17 +211,32 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     }
 
     private Plant loadPlant(File file)    {
+        String filePath = plantFolderPath + PLANTS_FOLDER + file.getName();
+
         try
         {
-            FileInputStream fis = new FileInputStream(plantFolderPath + PLANTS_FOLDER +
-                    file.getName());
-            ObjectInputStream ois = new ObjectInputStream(fis);
+            Plant p = new Plant();
+            BufferedReader br = new BufferedReader(new FileReader(filePath));
+            Gson g = new Gson();
 
-            Plant p = (Plant)ois.readObject();
+            Type plantType = new TypeToken<PlantData>(){}.getType();
+
+            StringBuilder sb = new StringBuilder();
+            while(br.ready())   {
+                sb.append(br.readLine());
+            }
+
+            System.out.println("Json object: " + sb.toString());
+
+            PlantData plantData = g.fromJson(sb.toString(), plantType);
+            p.setPlantData(plantData);
+
             return p;
         }
         catch (Exception e) {
             e.printStackTrace();
+            File f = new File(filePath);
+           // f.delete();
             return null;
         }
     }

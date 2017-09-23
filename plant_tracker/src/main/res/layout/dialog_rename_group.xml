@@ -43,7 +43,7 @@
             android:layout_marginStart="13dp"
             android:layout_toEndOf="@+id/textView32"
             android:ems="10"
-            android:inputType="textPersonName" />
+            android:inputType="textCapWords" />
 
         <Button
             android:id="@+id/cancelButton"

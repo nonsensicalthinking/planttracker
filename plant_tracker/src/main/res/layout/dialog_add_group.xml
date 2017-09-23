@@ -33,7 +33,7 @@
             android:layout_below="@+id/textView26"
             android:layout_toEndOf="@+id/textView26"
             android:ems="10"
-            android:inputType="textPersonName" />
+            android:inputType="textCapWords" />
 
         <Button
             android:id="@+id/cancelButton"
