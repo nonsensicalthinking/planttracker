@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.view.SubMenu;
@@ -78,6 +79,8 @@ public class PlantTrackerUi extends AppCompatActivity
     private LinearLayout allPlantsView;
     private LinearLayout individualPlantView;
     private Toolbar toolbar;
+
+    private int currentListView = 1;
 
     // All plants view
     private ListView plantListView;
@@ -191,6 +194,16 @@ public class PlantTrackerUi extends AppCompatActivity
     private void fillViewWithPlants()   {
         setEmptyViewCaption("No Plants Found");
 
+        currentListView = 1;
+
+        setFloatingButtonTextAndAction("+ Plant", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presentAddPlantDialog(0);
+                fillViewWithPlants();
+            }
+        });
+
         switch(plantDisplay)    {
             case All:
                 currentDisplayArray = tracker.getAllPlants();
@@ -237,6 +250,15 @@ public class PlantTrackerUi extends AppCompatActivity
 
     private void fillViewWithGroups()   {
         toolbar.setSubtitle("Group Management");
+
+        currentListView = 2;
+
+        setFloatingButtonTextAndAction("+ Group", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presentAddGroupDialog();
+            }
+        });
 
         final ArrayList<Group> groups = tracker.getAllGroups();
 
@@ -286,6 +308,14 @@ public class PlantTrackerUi extends AppCompatActivity
 
     private void fillViewWithCustomEvents() {
         toolbar.setSubtitle("Custom Event Management");
+
+        setFloatingButtonTextAndAction("+ Event", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Display the add custom event dialog
+                // TODO actually, create an add custom event only dialog
+            }
+        });
 
         final ArrayList<Map.Entry<String, String>> events = new ArrayList<>();
         events.addAll(tracker.getPlantTrackerSettings().getAutoCompleteCustomEventEntrySet());
@@ -338,8 +368,21 @@ public class PlantTrackerUi extends AppCompatActivity
         });
     }
 
+    private void setFloatingButtonTextAndAction(String text, View.OnClickListener listener) {
+        FloatingActionButton floatingButton = (FloatingActionButton)findViewById(R.id.floatingButton);
+        floatingButton.setOnClickListener(listener);
+    }
+
     private void fillViewWithPlantStates() {
         toolbar.setSubtitle("Plant State Management");
+
+        setFloatingButtonTextAndAction("+ State", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO create add state dialog
+                //TODO display the add state dialog
+            }
+        });
 
         final ArrayList<String> plantStates = new ArrayList<>();
         plantStates.addAll(tracker.getPlantTrackerSettings().getStateAutoComplete());
@@ -1804,17 +1847,35 @@ public class PlantTrackerUi extends AppCompatActivity
 
     @Override
     public void plantUpdated() {
-
+        refreshListView();
     }
 
     @Override
     public void plantsUpdated() {
-
+        refreshListView();
     }
 
     @Override
     public void groupsUpdated() {
         refreshDrawerGroups();
+        refreshListView();
+    }
+
+    public void refreshListView()   {
+        switch(currentListView) {
+            case 1:
+                fillViewWithPlants();
+                break;
+            case 2:
+                fillViewWithGroups();
+                break;
+            case 3: // custom events
+                fillViewWithCustomEvents();
+                break;
+            case 4: // plant state
+                fillViewWithPlantStates();
+                break;
+        }
     }
 
 }

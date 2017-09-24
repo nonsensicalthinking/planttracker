@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="149dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView26"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="16dp"
-            android:text="Add new group" />
+            android:text="Add new group"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/textView28"
@@ -23,25 +25,32 @@
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/textView26"
             android:layout_below="@+id/textView26"
-            android:layout_marginTop="16dp"
-            android:text="Group Name" />
+            android:layout_marginTop="15dp"
+            android:text="Group Name"
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/groupNameEditText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView26"
             android:layout_toEndOf="@+id/textView26"
             android:ems="10"
             android:inputType="textCapWords" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/cancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/groupNameEditText"
-            android:layout_marginTop="10dp"
             android:layout_toStartOf="@+id/groupNameEditText"
+            android:layout_weight="1"
             android:text="Cancel" />
 
         <Button
@@ -50,7 +59,9 @@
             android:layout_height="wrap_content"
             android:layout_alignEnd="@+id/groupNameEditText"
             android:layout_alignTop="@+id/cancelButton"
+            android:layout_weight="1"
             android:text="Ok" />
 
-    </RelativeLayout>
+    </LinearLayout>
+
 </LinearLayout>
