@@ -13,4 +13,10 @@
         android:id="@+id/plantListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <include
+        android:id="@+id/emptyPlantListView"
+        layout="@layout/empty_plant_list"
+        android:visibility="gone" />
+
 </LinearLayout>

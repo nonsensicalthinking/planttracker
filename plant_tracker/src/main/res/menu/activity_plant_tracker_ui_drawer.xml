@@ -15,18 +15,15 @@
             <item
                 android:id="@+id/nav_active_plants"
                 android:icon="@drawable/ic_growing_plant"
-                android:title="Plants: Active"
-                android:orderInCategory="500" />
+                android:title="Plants: Active" />
             <item
                 android:id="@+id/nav_archived_plants"
                 android:icon="@drawable/ic_growing_plant"
-                android:title="Plants: Archived"
-                android:orderInCategory="500" />
+                android:title="Plants: Archived" />
             <item
                 android:id="@+id/nav_all_plants"
                 android:icon="@drawable/ic_growing_plant"
-                android:title="Plants: All"
-                android:orderInCategory="500" />
+                android:title="Plants: All" />
         </menu>
     </item>
 

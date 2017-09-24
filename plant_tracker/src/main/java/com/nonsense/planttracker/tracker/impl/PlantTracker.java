@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.nonsense.planttracker.tracker.exceptions.GroupNotFoundException;
 import com.nonsense.planttracker.tracker.exceptions.PlantNotFoundException;
 import com.nonsense.planttracker.tracker.interf.IPlantEventDoer;
+import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 import com.nonsense.planttracker.tracker.interf.IPlantUpdateListener;
 import com.nonsense.planttracker.tracker.interf.ISettingsChangedListener;
 
@@ -37,6 +38,7 @@ import java.util.TreeSet;
 public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListener {
     private PlantTrackerSettings settings;
     private ArrayList<Plant> plants;
+    private transient IPlantTrackerListener uiListener;
     private transient ArrayList<Plant> activePlants;
     private transient ArrayList<Plant> archivedPlants;
     private String plantFolderPath;
@@ -165,10 +167,11 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         File[] files = new File(plantFolderPath + PLANTS_FOLDER).listFiles();
         if (files != null)  {
             for (File file : files) {
-                try
-                {
-                    Plant p = loadPlant(file);
-                    attachPlant(p);
+                try {
+                    if (file.getName().endsWith(FILE_EXTENSION)) {
+                        Plant p = loadPlant(file);
+                        attachPlant(p);
+                    }
                 }
                 catch (Exception e) {
                     e.printStackTrace();
@@ -292,11 +295,14 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         }
 
         plants.clear();
+
+        settingsChanged();
     }
 
     private void deletePlantFileData(Plant p)   {
         File plantFile = new File(plantFolderPath + PLANTS_FOLDER + p.getPlantId() +
                 FILE_EXTENSION);
+
         if (plantFile.exists() && plantFile.isFile())   {
             plantFile.delete();
         }
@@ -334,6 +340,8 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         Group g = new Group(groupId, groupName);
         settings.addGroup(g);
 
+        uiListener.groupsUpdated();
+
         return g.getGroupId();
     }
 
@@ -344,6 +352,8 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
                 savePlant(p);
             }
         }
+
+        uiListener.groupsUpdated();
     }
 
     public void addMemberToGroup(long plantId, long groupId) {
@@ -351,6 +361,7 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         Plant p = getPlantById(plantId);
         p.addGroup(g.getGroupId());
         savePlant(p);
+        uiListener.groupsUpdated();
     }
 
     public void removeMemberFromGroup(long plantId, long groupId)   {
@@ -358,6 +369,7 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         Plant p = getPlantById(plantId);
         p.removeGroup(g.getGroupId());
         savePlant(p);
+        uiListener.groupsUpdated();
     }
 
     public ArrayList<Group> getGroupsPlantIsNotMemberOf(long plantId)   {
@@ -393,6 +405,42 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         return settings.getGroups();
     }
 
+    public final ArrayList<Group> getEmptyGroups()    {
+        ArrayList<Group> groups = settings.getGroups();
+        ArrayList<Group> emptyGroups = new ArrayList<>();
+
+        for(Group g : groups)   {
+            if (getMemberCountOfGroup(g.getGroupId()) == 0) {
+                emptyGroups.add(g);
+            }
+        }
+
+        return emptyGroups;
+    }
+
+    public final ArrayList<Group> getNonEmptyGroups()   {
+        ArrayList<Group> groups = new ArrayList<>();
+        ArrayList<Group> emptyGroups = getEmptyGroups();
+
+        groups.addAll(settings.getGroups());
+
+        groups.removeAll(emptyGroups);
+
+        return groups;
+    }
+
+    private int getMemberCountOfGroup(long groupId) {
+        int total = 0;
+        ArrayList<Plant> activeGroupMembers = new ArrayList<>();
+        for(Plant p : getActivePlants())    {
+            if (p.getGroups().contains(groupId))    {
+                total++;
+            }
+        }
+
+        return total;
+    }
+
     public ArrayList<Plant> getMembersOfGroup(long groupId) {
         ArrayList<Plant> activeGroupMembers = new ArrayList<>();
         for(Plant p : getActivePlants())    {
@@ -415,5 +463,9 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         for(Plant p : plants)   {
             doer.doEventToPlant(p);
         }
+    }
+
+    public void setPlantTrackerListener(IPlantTrackerListener listener) {
+        uiListener = listener;
     }
 }

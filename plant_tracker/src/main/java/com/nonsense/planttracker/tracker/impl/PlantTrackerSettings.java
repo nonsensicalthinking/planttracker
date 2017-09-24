@@ -5,6 +5,7 @@ import com.nonsense.planttracker.tracker.interf.ISettingsChangedListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -33,15 +34,40 @@ public class PlantTrackerSettings implements Serializable {
         return keys;
     }
 
-    public void addAutoCompleteKeyValuePair(String key, String value)   {
+    public ArrayList<String> getAutoCompleteValues() {
+        ArrayList<String> list = new ArrayList<>();
+        list.addAll(genericEventKeyValuePairs.values());
+
+        return list;
+    }
+
+    public boolean addAutoCompleteKeyValuePair(String key, String value)   {
+        if (genericEventKeyValuePairs.containsKey(key) ||
+                genericEventKeyValuePairs.containsValue(value)) {
+            return false;
+        }
+
         keys.add(key);
         genericEventKeyValuePairs.put(key, value);
         settingsChanged();
+
+        return true;
     }
 
     public String getAutoCompleteValueForKey(String key)  {
         return genericEventKeyValuePairs.get(key);
     }
+
+    public String getAutoCompleteKeyForValue(String value)  {
+        for(Map.Entry<String, String> entry : genericEventKeyValuePairs.entrySet()) {
+            if (entry.getValue().equals(value)) {
+                return entry.getKey();
+            }
+        }
+
+        return null;
+    }
+
 
     public void setListener(ISettingsChangedListener l) {
         listener = l;
@@ -78,7 +104,7 @@ public class PlantTrackerSettings implements Serializable {
         throw new GroupNotFoundException("Unable to locate group with id: " + groupId);
     }
 
-    public ArrayList<Group> getGroups() {
+    public final ArrayList<Group> getGroups() {
         return groups;
     }
 
