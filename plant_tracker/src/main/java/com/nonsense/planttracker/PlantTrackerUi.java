@@ -1,7 +1,8 @@
 package com.nonsense.planttracker;
 
 // Additional source attribution for icon:
-// website http://www.freepik.com/free-icon/plant-growing_743982.htm
+// Plant Icon website http://www.freepik.com/free-icon/plant-growing_743982.htm
+// Bundle of Hay http://ic8.link/5291
 
 import android.app.Dialog;
 import android.content.Context;
@@ -98,7 +99,6 @@ public class PlantTrackerUi extends AppCompatActivity
     private SubMenu addToGroup;
     private SubMenu removeFromGroup;
 
-    //private PlantTileArrayAdapter plantTileAdapter;
     private PlantRecordableTileArrayAdapter plantRecordableAdapter;
 
     // Data
@@ -118,6 +118,9 @@ public class PlantTrackerUi extends AppCompatActivity
         Group
     }
 
+    /*
+     *** View Population ***
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -177,18 +180,6 @@ public class PlantTrackerUi extends AppCompatActivity
                         getChangeStateDialogHandler());
             }
         });
-    }
-
-    private void setEmptyViewCaption(String caption)    {
-
-        View emptyPlantListView = findViewById(R.id.emptyPlantListView);
-        TextView itemNotFoundCaptionText = (TextView)emptyPlantListView.findViewById(R.id.itemNotFoundCaptionText);
-
-        if (itemNotFoundCaptionText != null)    {
-            itemNotFoundCaptionText.setText(caption);
-        }
-
-        emptyPlantListView.invalidate();
     }
 
     private void fillViewWithPlants()   {
@@ -275,7 +266,7 @@ public class PlantTrackerUi extends AppCompatActivity
                 AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
                 builder.setTitle(R.string.app_name);
                 builder.setMessage("Are you sure you want to delete this group?");
-                builder.setIcon(R.drawable.ic_growing_plant);
+                builder.setIcon(R.drawable.ic_bundle_of_hay);
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         tracker.removeGroup(groups.get(position).getGroupId());
@@ -366,11 +357,6 @@ public class PlantTrackerUi extends AppCompatActivity
                 // TODO a way to add more
             }
         });
-    }
-
-    private void setFloatingButtonTextAndAction(String text, View.OnClickListener listener) {
-        FloatingActionButton floatingButton = (FloatingActionButton)findViewById(R.id.floatingButton);
-        floatingButton.setOnClickListener(listener);
     }
 
     private void fillViewWithPlantStates() {
@@ -653,6 +639,26 @@ public class PlantTrackerUi extends AppCompatActivity
 
     }
 
+    private void setFloatingButtonTextAndAction(String text, View.OnClickListener listener) {
+        FloatingActionButton floatingButton = (FloatingActionButton)findViewById(R.id.floatingButton);
+        floatingButton.setOnClickListener(listener);
+    }
+
+    private void setEmptyViewCaption(String caption)    {
+
+        View emptyPlantListView = findViewById(R.id.emptyPlantListView);
+        TextView itemNotFoundCaptionText = (TextView)emptyPlantListView.findViewById(R.id.itemNotFoundCaptionText);
+
+        if (itemNotFoundCaptionText != null)    {
+            itemNotFoundCaptionText.setText(caption);
+        }
+
+        emptyPlantListView.invalidate();
+    }
+
+    /*
+     *** Primany UI View Event handling ***
+     */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -718,6 +724,11 @@ public class PlantTrackerUi extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Drawer navigation handling
+     * @param item  - selected item
+     * @return
+     */
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -836,6 +847,11 @@ public class PlantTrackerUi extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Individual plant view elipisis menu
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu)  {
         if (currentPlant != null)   {
@@ -960,10 +976,22 @@ public class PlantTrackerUi extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Overload. See other descriptions.
+     * @param layoutId
+     * @param dialogHandler
+     */
     private void presentGenericEventDialog(int layoutId, IDialogHandler dialogHandler)  {
         presentGenericEventDialog("", "", layoutId, dialogHandler);
     }
 
+    /**
+     * Generic tabbed dialog box for anything which requires the collection of date/time information
+     * @param code          - Abbreviation of event
+     * @param displayName   - Display name for event
+     * @param layoutId      - Layout to populate on the first tab
+     * @param dialogHandler - Handler for the ok/cancel buttons found on the page
+     */
     private void presentGenericEventDialog(String code, String displayName, int layoutId,
                                            IDialogHandler dialogHandler) {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
@@ -992,6 +1020,88 @@ public class PlantTrackerUi extends AppCompatActivity
         dialog.show();
     }
 
+    private Calendar getEventCalendar(final Dialog dialog) {
+        final DatePicker datePicker = (DatePicker)dialog.findViewById(R.id.
+                eventDatePicker);
+
+        final TimePicker timePicker = (TimePicker)dialog.findViewById(R.id.eventTimePicker);
+
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(datePicker.getYear(), datePicker.getMonth(),
+                datePicker.getDayOfMonth(), timePicker.getHour(),
+                timePicker.getMinute());
+
+        return cal;
+    }
+
+    private String formatDate(Calendar c)   {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
+        return sdf.format(c.getTime());
+    }
+
+    private void refreshDrawerGroups()   {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        int count = 400;
+        Menu drawerMenu = navigationView.getMenu();
+        MenuItem sm = drawerMenu.findItem(R.id.viewsMenuItem);
+        sm.getSubMenu().removeGroup(334);
+
+        ArrayList<Group> allGroups = tracker.getNonEmptyGroups();
+        allGroups.sort(new Comparator<Group>() {
+            @Override
+            public int compare(Group o1, Group o2) {
+                return o1.getGroupName().compareTo(o2.getGroupName());
+            }
+        });
+
+        for(Group g : allGroups)    {
+            MenuItem groupMenuItem = sm.getSubMenu().add(334, count, count, "Group: " +
+                    g.getGroupName());
+            groupMenuItem.setIcon(R.drawable.ic_bundle_of_hay);
+            menuItemToGroupIdMapping.put(groupMenuItem.getItemId(), g.getGroupId());
+            count++;
+        }
+    }
+
+    // switch to all plants
+    private void switcherToPrevious()    {
+        parentPlantViewStack.clear();   // clear the view stack
+        switcher.showPrevious();
+        individualPlantMenu.setGroupVisible(0, false);
+        individualPlantMenu.setGroupVisible(1, false);
+        fillViewWithPlants();
+    }
+
+    // switch to individual plant
+    private void switcherToNext()   {
+        switcher.showNext();
+        individualPlantMenu.setGroupVisible(0, true);
+        individualPlantMenu.setGroupVisible(1, true);
+    }
+
+    public void refreshListView()   {
+        switch(currentListView) {
+            case 1:
+                fillViewWithPlants();
+                break;
+            case 2:
+                fillViewWithGroups();
+                break;
+            case 3: // custom events
+                fillViewWithCustomEvents();
+                break;
+            case 4: // plant state
+                fillViewWithPlantStates();
+                break;
+        }
+    }
+
+    /*
+     *** Dialog display prepartion ***
+     */
     private void presentImportDialog()  {
         File downloadDirectory = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS);
@@ -1066,21 +1176,6 @@ public class PlantTrackerUi extends AppCompatActivity
         catch(Exception e)  {
             e.printStackTrace();
         }
-    }
-
-    private Calendar getEventCalendar(final Dialog dialog) {
-        final DatePicker datePicker = (DatePicker)dialog.findViewById(R.id.
-                eventDatePicker);
-
-        final TimePicker timePicker = (TimePicker)dialog.findViewById(R.id.eventTimePicker);
-
-
-        Calendar cal = Calendar.getInstance();
-        cal.set(datePicker.getYear(), datePicker.getMonth(),
-                datePicker.getDayOfMonth(), timePicker.getHour(),
-                timePicker.getMinute());
-
-        return cal;
     }
 
     private IDialogHandler getGeneralEventDialogHandler()   {
@@ -1768,53 +1863,6 @@ public class PlantTrackerUi extends AppCompatActivity
         }
     }
 
-    private void refreshDrawerGroups()   {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        int count = 400;
-        Menu drawerMenu = navigationView.getMenu();
-        MenuItem sm = drawerMenu.findItem(R.id.viewsMenuItem);
-        sm.getSubMenu().removeGroup(334);
-
-        ArrayList<Group> allGroups = tracker.getNonEmptyGroups();
-        allGroups.sort(new Comparator<Group>() {
-            @Override
-            public int compare(Group o1, Group o2) {
-                return o1.getGroupName().compareTo(o2.getGroupName());
-            }
-        });
-
-        for(Group g : allGroups)    {
-            MenuItem groupMenuItem = sm.getSubMenu().add(334, count, count, "Group: " +
-                    g.getGroupName());
-            groupMenuItem.setIcon(R.drawable.ic_group_plants);
-            menuItemToGroupIdMapping.put(groupMenuItem.getItemId(), g.getGroupId());
-            count++;
-        }
-    }
-
-    // switch to all plants
-    private void switcherToPrevious()    {
-        parentPlantViewStack.clear();   // clear the view stack
-        switcher.showPrevious();
-        individualPlantMenu.setGroupVisible(0, false);
-        individualPlantMenu.setGroupVisible(1, false);
-        fillViewWithPlants();
-    }
-
-    // switch to individual plant
-    private void switcherToNext()   {
-        switcher.showNext();
-        individualPlantMenu.setGroupVisible(0, true);
-        individualPlantMenu.setGroupVisible(1, true);
-    }
-
-    private String formatDate(Calendar c)   {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
-        return sdf.format(c.getTime());
-    }
-
     // email files
     public void email(Context context, String emailTo, String emailCC,
                              String subject, String emailText, List<String> filePaths) {
@@ -1844,39 +1892,21 @@ public class PlantTrackerUi extends AppCompatActivity
         context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
     }
 
+    /* Begin IPlantTrackerListener */
+    @Override
+    public void plantUpdated () {
+    refreshListView();
+}
 
     @Override
-    public void plantUpdated() {
-        refreshListView();
-    }
+    public void plantsUpdated () {
+    refreshListView();
+}
 
     @Override
-    public void plantsUpdated() {
-        refreshListView();
-    }
-
-    @Override
-    public void groupsUpdated() {
-        refreshDrawerGroups();
-        refreshListView();
-    }
-
-    public void refreshListView()   {
-        switch(currentListView) {
-            case 1:
-                fillViewWithPlants();
-                break;
-            case 2:
-                fillViewWithGroups();
-                break;
-            case 3: // custom events
-                fillViewWithCustomEvents();
-                break;
-            case 4: // plant state
-                fillViewWithPlantStates();
-                break;
-        }
-    }
-
+    public void groupsUpdated () {
+    refreshDrawerGroups();
+    refreshListView();
+}
 }
 

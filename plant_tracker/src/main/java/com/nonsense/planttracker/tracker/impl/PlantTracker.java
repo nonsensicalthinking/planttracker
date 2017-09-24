@@ -229,8 +229,6 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
                 sb.append(br.readLine());
             }
 
-            System.out.println("Json object: " + sb.toString());
-
             PlantData plantData = g.fromJson(sb.toString(), plantType);
             p.setPlantData(plantData);
 

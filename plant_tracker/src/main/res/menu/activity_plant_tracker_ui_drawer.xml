@@ -34,7 +34,7 @@
                 android:title="Events"/>
             <item
                 android:id="@+id/nav_manage_groups"
-                android:icon="@drawable/ic_group_plants"
+                android:icon="@drawable/ic_bundle_of_hay"
                 android:title="Groups"/>
             <item
                 android:id="@+id/nav_manage_states"

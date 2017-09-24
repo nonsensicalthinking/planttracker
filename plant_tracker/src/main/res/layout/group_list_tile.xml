@@ -39,7 +39,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentTop="true"
             android:layout_marginRight="6dip"
-            android:src="@drawable/ic_growing_plant" />
+            android:src="@drawable/ic_bundle_of_hay" />
     </RelativeLayout>
 
     <RelativeLayout
