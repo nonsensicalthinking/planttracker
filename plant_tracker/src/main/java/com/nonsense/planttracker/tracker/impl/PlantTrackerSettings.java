@@ -5,7 +5,9 @@ import com.nonsense.planttracker.tracker.interf.ISettingsChangedListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -41,6 +43,10 @@ public class PlantTrackerSettings implements Serializable {
         return list;
     }
 
+    public Set<Map.Entry<String, String>> getAutoCompleteCustomEventEntrySet() {
+        return genericEventKeyValuePairs.entrySet();
+    }
+
     public boolean addAutoCompleteKeyValuePair(String key, String value)   {
         if (genericEventKeyValuePairs.containsKey(key) ||
                 genericEventKeyValuePairs.containsValue(value)) {
@@ -52,6 +58,15 @@ public class PlantTrackerSettings implements Serializable {
         settingsChanged();
 
         return true;
+    }
+
+    public boolean removeAutoCompleteKeyValuePair(String key)   {
+        if (genericEventKeyValuePairs.containsKey(key)) {
+            genericEventKeyValuePairs.remove(key);
+            return true;
+        }
+
+        return false;
     }
 
     public String getAutoCompleteValueForKey(String key)  {
@@ -122,6 +137,10 @@ public class PlantTrackerSettings implements Serializable {
 
     public ArrayList<String> getStateAutoComplete() {
         return stateAutoComplete;
+    }
+
+    public void removeStateAutoComplete(String key) {
+        stateAutoComplete.remove(key);
     }
 }
 

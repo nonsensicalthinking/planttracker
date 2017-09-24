@@ -4,30 +4,14 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/noPlantsFoundLayout"
+    <TextView
+        android:id="@+id/itemNotFoundCaptionText"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="No Plants Found"
+        android:textSize="26sp"
+        android:textStyle="bold|italic" />
 
-        <TextView
-            android:id="@+id/textView14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="67dp"
-            android:layout_marginTop="221dp"
-            android:text="No Plants Found"
-            android:textSize="26sp" />
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/textView14"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="44dp"
-            android:layout_toStartOf="@+id/textView14"
-            app:srcCompat="@drawable/ic_no_plants_found" />
-    </RelativeLayout>
 </LinearLayout>

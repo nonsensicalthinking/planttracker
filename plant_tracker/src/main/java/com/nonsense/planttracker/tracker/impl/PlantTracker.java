@@ -468,4 +468,31 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     public void setPlantTrackerListener(IPlantTrackerListener listener) {
         uiListener = listener;
     }
+
+    public void removeCustomEvent(String key) {
+        getPlantTrackerSettings().removeAutoCompleteKeyValuePair(key);
+
+        settingsChanged();
+    }
+
+    public void removePlantState(String key)    {
+        getPlantTrackerSettings().removeStateAutoComplete(key);
+
+        settingsChanged();
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -26,6 +26,22 @@
                 android:title="Plants: All" />
         </menu>
     </item>
+    <item android:title="Manage">
+        <menu>
+            <item
+                android:id="@+id/nav_manage_groups"
+                android:icon="@drawable/ic_group_plants"
+                android:title="Groups"/>
+            <item
+                android:id="@+id/nav_manage_events"
+                android:icon="@drawable/ic_group_plants"
+                android:title="Events"/>
+            <item
+                android:id="@+id/nav_manage_states"
+                android:icon="@drawable/ic_group_plants"
+                android:title="Plant States"/>
+        </menu>
+    </item>
 
     <item android:title="Communicate">
         <menu>

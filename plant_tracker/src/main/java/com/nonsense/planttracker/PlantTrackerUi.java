@@ -41,6 +41,9 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ViewSwitcher;
 
+import com.nonsense.planttracker.tracker.adapters.CustomEventTileArrayAdapter;
+import com.nonsense.planttracker.tracker.adapters.GroupTileArrayAdapter;
+import com.nonsense.planttracker.tracker.adapters.PlantStateTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.EventRecord;
 import com.nonsense.planttracker.tracker.impl.Group;
 import com.nonsense.planttracker.tracker.impl.ObservationRecord;
@@ -60,6 +63,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 
@@ -171,7 +176,21 @@ public class PlantTrackerUi extends AppCompatActivity
         });
     }
 
+    private void setEmptyViewCaption(String caption)    {
+
+        View emptyPlantListView = findViewById(R.id.emptyPlantListView);
+        TextView itemNotFoundCaptionText = (TextView)emptyPlantListView.findViewById(R.id.itemNotFoundCaptionText);
+
+        if (itemNotFoundCaptionText != null)    {
+            itemNotFoundCaptionText.setText(caption);
+        }
+
+        emptyPlantListView.invalidate();
+    }
+
     private void fillViewWithPlants()   {
+        setEmptyViewCaption("No Plants Found");
+
         switch(plantDisplay)    {
             case All:
                 currentDisplayArray = tracker.getAllPlants();
@@ -204,6 +223,7 @@ public class PlantTrackerUi extends AppCompatActivity
                 R.layout.plant_list_tile, currentDisplayArray);
 
         plantListView.setAdapter(adapter);
+        plantListView.setOnItemLongClickListener(null);
         plantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -211,6 +231,160 @@ public class PlantTrackerUi extends AppCompatActivity
                 toolbar.setSubtitle("");
                 fillIndividualPlantView();
                 switcherToNext();
+            }
+        });
+    }
+
+    private void fillViewWithGroups()   {
+        toolbar.setSubtitle("Group Management");
+
+        final ArrayList<Group> groups = tracker.getAllGroups();
+
+        GroupTileArrayAdapter adapter = new GroupTileArrayAdapter(getBaseContext(),
+                R.layout.group_list_tile, groups);
+
+        setEmptyViewCaption("No Groups Found");
+
+        plantListView.setAdapter(adapter);
+
+        plantListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
+                builder.setTitle(R.string.app_name);
+                builder.setMessage("Are you sure you want to delete this group?");
+                builder.setIcon(R.drawable.ic_growing_plant);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        tracker.removeGroup(groups.get(position).getGroupId());
+                        fillViewWithGroups();
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alert = builder.create();
+                alert.show();
+
+                return true;
+            }
+        });
+
+        plantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // TODO display group information view with all current group members and
+                // TODO a way to add more
+            }
+        });
+    }
+
+    private void fillViewWithCustomEvents() {
+        toolbar.setSubtitle("Custom Event Management");
+
+        final ArrayList<Map.Entry<String, String>> events = new ArrayList<>();
+        events.addAll(tracker.getPlantTrackerSettings().getAutoCompleteCustomEventEntrySet());
+
+        CustomEventTileArrayAdapter adapter = new CustomEventTileArrayAdapter(getBaseContext(),
+                R.layout.custom_event_list_tile, events);
+
+        setEmptyViewCaption("No Custom Events Found");
+
+        plantListView.setAdapter(adapter);
+
+        plantListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
+                builder.setTitle(R.string.app_name);
+                builder.setMessage("Are you sure you want to delete this custom event?");
+                builder.setIcon(R.drawable.ic_growing_plant);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        tracker.getPlantTrackerSettings().removeAutoCompleteKeyValuePair(
+                                events.get(position).getKey());
+
+                        tracker.removeCustomEvent(events.get(position).getKey());
+
+                        fillViewWithCustomEvents();
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alert = builder.create();
+                alert.show();
+
+                return true;
+            }
+        });
+
+        plantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // TODO display custom event information view and
+                // TODO a way to add more
+            }
+        });
+    }
+
+    private void fillViewWithPlantStates() {
+        toolbar.setSubtitle("Plant State Management");
+
+        final ArrayList<String> plantStates = new ArrayList<>();
+        plantStates.addAll(tracker.getPlantTrackerSettings().getStateAutoComplete());
+
+        PlantStateTileArrayAdapter adapter = new PlantStateTileArrayAdapter(getBaseContext(),
+                R.layout.plant_state_list_tile, plantStates);
+
+        setEmptyViewCaption("No Plant States Found");
+
+        plantListView.setAdapter(adapter);
+
+        plantListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
+                builder.setTitle(R.string.app_name);
+                builder.setMessage("Are you sure you want to delete this custom event?");
+                builder.setIcon(R.drawable.ic_growing_plant);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        tracker.removePlantState(plantStates.get(position));
+
+                        fillViewWithPlantStates();
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alert = builder.create();
+                alert.show();
+
+                return true;
+            }
+        });
+
+        plantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // TODO display custom event information view and
+                // TODO a way to add more
             }
         });
     }
@@ -475,19 +649,24 @@ public class PlantTrackerUi extends AppCompatActivity
             case R.id.action_rename:
                 presentRenameDialog();
                 break;
+
             case R.id.action_delete_plant_really:
                 tracker.deletePlant(currentPlant);
                 switcherToPrevious();
                 break;
+
             case R.id.action_archive_plant:
                 currentPlant.archivePlant();
                 break;
+
             case R.id.action_unarchive_plant:
                 currentPlant.unarchivePlant();
                 break;
+
             case R.id.action_clone_plant:
                 presentAddPlantDialog(currentPlant.getPlantId());
                 break;
+
             case R.id.add_group:
                 presentAddGroupDialog();
                 break;
@@ -501,73 +680,112 @@ public class PlantTrackerUi extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_all_plants) {
-            plantDisplay = PlantDisplay.All;
-            if (switcher.getCurrentView() != allPlantsView) {
-                switcherToPrevious();
-            }
-            else    {
-                fillViewWithPlants();
-            }
-        }
-        else if (id == R.id.nav_active_plants)  {
-            plantDisplay = PlantDisplay.Active;
-            if (switcher.getCurrentView() != allPlantsView) {
-                switcherToPrevious();
-            }
-            else    {
-                fillViewWithPlants();
-            }
-        }
-        else if (id == R.id.nav_archived_plants)    {
-            plantDisplay = PlantDisplay.Archived;
-            if (switcher.getCurrentView() != allPlantsView) {
-                switcherToPrevious();
-            }
-            else    {
-                fillViewWithPlants();
-            }
-        }
-        else if (id == R.id.nav_delete) {
-            presentDeleteAllPlantsDialog();
-        }
-        else if (id == R.id.nav_add_plant)  {
-            presentAddPlantDialog(0);
-            MenuItem activeMenuItem = (MenuItem)toolbar.findViewById(R.id.nav_about_plant_tracker);
-        }
-        else if (id == R.id.nav_about_plant_tracker)    {
-            presentAboutDialog();
-        }
-        else if (id == R.id.nav_export)   {
-            if (switcher.getCurrentView() == individualPlantView)   {
-                ArrayList<String> files = new ArrayList<>();
-                files.add(getFilesDir() + "/plants/" + currentPlant.getPlantId() +
-                        PT_FILE_EXTENSION);
-                email(PlantTrackerUi.this, "", "", "Plant Tracker Export", "Plant Tracker Export",
-                        files);
-            }
-            else    {
-                ArrayList<Plant> allPlants = tracker.getAllPlants();
-                ArrayList<String> files = new ArrayList<>();
-                String filesDir = getFilesDir().toString();
-                for(Plant p : allPlants)    {
-                    files.add(filesDir + "/plants/" + p.getPlantId() + PT_FILE_EXTENSION);
+        switch(id)  {
+            case R.id.nav_all_plants:
+                plantDisplay = PlantDisplay.All;
+                if (switcher.getCurrentView() != allPlantsView) {
+                    switcherToPrevious();
                 }
-                email(PlantTrackerUi.this, "", "", "Plant Tracker Export", "Plant Tracker Export",
-                        files);
-            }
-        }
-        else if (id == R.id.nav_import) {
-            presentImportDialog();
-        }
-        else    {
-            if (switcher.getCurrentView() == individualPlantView)   {
-                switcherToPrevious();
-            }
+                else    {
+                    fillViewWithPlants();
+                }
+                break;
 
-            groupIdViewFilter = menuItemToGroupIdMapping.get(item.getItemId());
-            plantDisplay = PlantDisplay.Group;
-            fillViewWithPlants();
+            case R.id.nav_active_plants:
+                plantDisplay = PlantDisplay.Active;
+                if (switcher.getCurrentView() != allPlantsView) {
+                    switcherToPrevious();
+                }
+                else    {
+                    fillViewWithPlants();
+                }
+                break;
+
+            case R.id.nav_archived_plants:
+                plantDisplay = PlantDisplay.Archived;
+                if (switcher.getCurrentView() != allPlantsView) {
+                    switcherToPrevious();
+                }
+                else    {
+                    fillViewWithPlants();
+                }
+                break;
+
+            case R.id.nav_manage_groups:
+                if (switcher.getCurrentView() != allPlantsView) {
+                    switcherToPrevious();
+                    fillViewWithGroups();
+                }
+                else    {
+                    fillViewWithGroups();
+                }
+                break;
+
+            case R.id.nav_manage_events:
+                if (switcher.getCurrentView() != allPlantsView) {
+                    switcherToPrevious();
+                    fillViewWithCustomEvents();
+                }
+                else    {
+                    fillViewWithCustomEvents();
+                }
+                break;
+
+            case R.id.nav_manage_states:
+                if (switcher.getCurrentView() != allPlantsView) {
+                    switcherToPrevious();
+                    fillViewWithPlantStates();
+                }
+                else    {
+                    fillViewWithPlantStates();
+                }
+                break;
+
+            case R.id.nav_delete:
+                presentDeleteAllPlantsDialog();
+                break;
+
+            case R.id.nav_add_plant:
+                presentAddPlantDialog(0);
+                break;
+
+            case R.id.nav_about_plant_tracker:
+                presentAboutDialog();
+                break;
+
+            case R.id.nav_export:
+                if (switcher.getCurrentView() == individualPlantView)   {
+                    ArrayList<String> files = new ArrayList<>();
+                    files.add(getFilesDir() + "/plants/" + currentPlant.getPlantId() +
+                            PT_FILE_EXTENSION);
+                    email(PlantTrackerUi.this, "", "", "Plant Tracker Export", "Plant Tracker Export",
+                            files);
+                }
+                else    {
+                    ArrayList<Plant> allPlants = tracker.getAllPlants();
+                    ArrayList<String> files = new ArrayList<>();
+                    String filesDir = getFilesDir().toString();
+                    for(Plant p : allPlants)    {
+                        files.add(filesDir + "/plants/" + p.getPlantId() + PT_FILE_EXTENSION);
+                    }
+                    email(PlantTrackerUi.this, "", "", "Plant Tracker Export", "Plant Tracker Export",
+                            files);
+                }
+                break;
+
+            case R.id.nav_import:
+                presentImportDialog();
+                break;
+
+            default:
+                if (switcher.getCurrentView() == individualPlantView)   {
+                    switcherToPrevious();
+                }
+
+                groupIdViewFilter = menuItemToGroupIdMapping.get(item.getItemId());
+                plantDisplay = PlantDisplay.Group;
+                fillViewWithPlants();
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer_layout);
