@@ -30,7 +30,7 @@
         <menu>
             <item
                 android:id="@+id/nav_manage_events"
-                android:icon="@drawable/ic_group_plants"
+                android:icon="@drawable/ic_event"
                 android:title="Events"/>
             <item
                 android:id="@+id/nav_manage_groups"
@@ -38,8 +38,8 @@
                 android:title="Groups"/>
             <item
                 android:id="@+id/nav_manage_states"
-                android:icon="@drawable/ic_group_plants"
-                android:title="Plant States"/>
+                android:icon="@drawable/ic_moon_phase"
+                android:title="Plant Phases"/>
         </menu>
     </item>
 

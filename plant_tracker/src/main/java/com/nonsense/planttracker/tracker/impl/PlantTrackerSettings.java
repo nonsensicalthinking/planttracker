@@ -123,16 +123,18 @@ public class PlantTrackerSettings implements Serializable {
         return groups;
     }
 
-    public void addStateAutoComplete(String stateName)  {
+    public boolean addStateAutoComplete(String stateName)  {
         if (stateAutoComplete == null)  {
             stateAutoComplete = new ArrayList<String>();
         }
 
         if (!stateAutoComplete.contains(stateName))  {
             stateAutoComplete.add(stateName);
+            settingsChanged();
+            return true;
         }
 
-        settingsChanged();
+        return false;
     }
 
     public ArrayList<String> getStateAutoComplete() {

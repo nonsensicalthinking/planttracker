@@ -102,7 +102,7 @@
                         android:id="@+id/textView38"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="State"
+                        android:text="Phase"
                         android:textSize="18sp" />
 
                     <TextView
@@ -126,7 +126,7 @@
                         android:layout_height="wrap_content"
                         android:lineSpacingExtra="24sp"
                         android:paddingRight="10dp"
-                        android:text="State Wk."
+                        android:text="Phase Wk."
                         android:textSize="18sp" />
 
                     <TextView
@@ -147,7 +147,7 @@
                         android:id="@+id/textView42"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="State Day"
+                        android:text="Phase Day"
                         android:textSize="18sp" />
 
                     <TextView

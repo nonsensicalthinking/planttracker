@@ -51,7 +51,7 @@ public class CustomEventTileArrayAdapter extends ArrayAdapter<Map.Entry<String, 
             //TextView archivedTextView = (TextView)v.findViewById(R.id.archivedTextView);
 
             if (customEventTextView != null) {
-                customEventTextView.setText( "[" + entry.getKey() + "] " + entry.getValue() );
+                customEventTextView.setText( "(" + entry.getKey() + ") " + entry.getValue() );
             }
 
             /*if (groupSummaryTextView != null) {
