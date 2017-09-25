@@ -126,6 +126,12 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         plants.remove(plantIndex);
     }
 
+    public void removePlant(Plant p)    {
+        deletePlantFileData(p);
+        plants.remove(p);
+    }
+
+
     public void saveAllPlants()    {
         File folder = new File(plantFolderPath);
         if (!folder.exists())   {

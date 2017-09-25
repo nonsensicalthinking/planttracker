@@ -192,8 +192,20 @@ public class PlantTrackerUi extends AppCompatActivity
         });
     }
 
+    private void showFloatingActionButton() {
+        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.floatingButton);
+        fab.setVisibility(View.VISIBLE);
+    }
+
+    private void hideFloatingActionButton() {
+        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.floatingButton);
+        fab.setVisibility(View.GONE);
+    }
+
     private void fillViewWithPlants()   {
         setEmptyViewCaption("No Plants Found");
+
+        showFloatingActionButton();
 
         currentListView = ListDisplay.Plants;
 
@@ -237,7 +249,33 @@ public class PlantTrackerUi extends AppCompatActivity
                 R.layout.plant_list_tile, currentDisplayArray);
 
         plantListView.setAdapter(adapter);
-        plantListView.setOnItemLongClickListener(null);
+        plantListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
+                builder.setTitle(R.string.app_name);
+                builder.setMessage("Are you sure you want to delete this plant?");
+                builder.setIcon(R.drawable.ic_growing_plant);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        tracker.removePlant(currentDisplayArray.get(position));
+                        fillViewWithPlants();
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alert = builder.create();
+                alert.show();
+
+                return true;
+            }
+        });
         plantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -251,6 +289,8 @@ public class PlantTrackerUi extends AppCompatActivity
 
     private void fillViewWithGroups()   {
         toolbar.setSubtitle("Group Management");
+
+        showFloatingActionButton();
 
         currentListView = ListDisplay.Groups;
 
@@ -309,6 +349,8 @@ public class PlantTrackerUi extends AppCompatActivity
 
     private void fillViewWithCustomEvents() {
         toolbar.setSubtitle("Custom Event Management");
+
+        showFloatingActionButton();
 
         currentListView = ListDisplay.CustomEvents;
 
@@ -380,6 +422,8 @@ public class PlantTrackerUi extends AppCompatActivity
     private void fillViewWithPlantPhases() {
         toolbar.setSubtitle("Plant Phase Management");
 
+        showFloatingActionButton();
+
         currentListView = ListDisplay.Phases;
 
         setFloatingButtonTextAndAction(new View.OnClickListener() {
@@ -444,6 +488,9 @@ public class PlantTrackerUi extends AppCompatActivity
     }
 
     private void fillIndividualPlantView()  {
+
+        hideFloatingActionButton();
+
         plantNameTextView.setText(currentPlant.getPlantName());
         daysSinceGrowStartTextView.setText("" + currentPlant.getDaysFromStart());
         weeksSinceGrowStartTextView.setText("" + currentPlant.getWeeksFromStart());
