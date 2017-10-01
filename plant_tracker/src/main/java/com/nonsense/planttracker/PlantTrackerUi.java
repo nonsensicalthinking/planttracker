@@ -1165,19 +1165,24 @@ public class PlantTrackerUi extends AppCompatActivity
     }
 
     public void refreshListView()   {
-        switch(currentListView) {
-            case Plants:
-                fillViewWithPlants();
-                break;
-            case Groups:
-                fillViewWithGroups();
-                break;
-            case CustomEvents: // custom events
-                fillViewWithCustomEvents();
-                break;
-            case Phases: // plant phase
-                fillViewWithPlantPhases();
-                break;
+        if (switcher.getCurrentView() == individualPlantView) {
+            fillIndividualPlantView();
+        }
+        else    {
+            switch(currentListView) {
+                case Plants:
+                    fillViewWithPlants();
+                    break;
+                case Groups:
+                    fillViewWithGroups();
+                    break;
+                case CustomEvents: // custom events
+                    fillViewWithCustomEvents();
+                    break;
+                case Phases: // plant phase
+                    fillViewWithPlantPhases();
+                    break;
+            }
         }
     }
 
