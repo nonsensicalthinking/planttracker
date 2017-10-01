@@ -66,6 +66,31 @@
                         android:headerBackground="@drawable/side_nav_bar" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/tab4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/openCameraButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Open Camera" />
+
+                    <Button
+                        android:id="@+id/attachImagesButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Attach..." />
+
+                    <ListView
+                        android:id="@+id/attachedImagesListView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </LinearLayout>
+
                 <include
                     android:id="@+id/generalEventTabLayout"
                     layout="@layout/dialog_general_event"

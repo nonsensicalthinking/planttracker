@@ -9,15 +9,20 @@ package com.nonsense.planttracker;
 // https://www.iconfinder.com/icons/248569/cloud_clouds_cloudy_crescent_forecast_moon_night_phase_phases_waning_weather_icon
 
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -28,6 +33,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -35,6 +41,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -721,6 +728,26 @@ public class PlantTrackerUi extends AppCompatActivity
 
     }
 
+    private void bindAttachImagesControls(Dialog dialog)    {
+        Button openCameraButton = (Button)dialog.findViewById(R.id.openCameraButton);
+        openCameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presentCamera();
+            }
+        });
+
+        Button attachImagesButton = (Button)dialog.findViewById(R.id.attachImagesButton);
+        attachImagesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presentImageChooser();
+            }
+        });
+
+        attachedImagesListView = (ListView)dialog.findViewById(R.id.attachedImagesListView);
+    }
+
     private void setFloatingButtonTextAndAction(View.OnClickListener listener) {
         FloatingActionButton floatingButton = (FloatingActionButton)findViewById(R.id.floatingButton);
         floatingButton.setOnClickListener(listener);
@@ -1074,7 +1101,7 @@ public class PlantTrackerUi extends AppCompatActivity
      * @param layoutId      - Layout to populate on the first tab
      * @param dialogHandler - Handler for the ok/cancel buttons found on the page
      */
-    private void presentGenericEventDialog(String code, String displayName, int layoutId,
+    private void presentGenericEventDialog(String code, String displayName, final int layoutId,
                                            IDialogHandler dialogHandler) {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
         dialog.setContentView(R.layout.dialog_generic_event);
@@ -1096,6 +1123,31 @@ public class PlantTrackerUi extends AppCompatActivity
         changeTimeTab.setIndicator("Set Time");
         changeTimeTab.setContent(R.id.tab3);
         tabs.addTab(changeTimeTab);
+
+        TabHost.TabSpec attachImagesTab = tabs.newTabSpec("Tab4");
+        attachImagesTab.setIndicator("Attach Images");
+        attachImagesTab.setContent(R.id.tab4);
+        tabs.addTab(attachImagesTab);
+
+        tabs.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                // Hide the keyboard if we're on any of the static tabs
+                if (!tabId.equals("Tab1"))  {
+                    View view = dialog.getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm =
+                                (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
+            }
+        });
+
+        bindGroupListSpinner(dialog);
+
+        bindAttachImagesControls(dialog);
 
         dialogHandler.bindDialog(dialog);
 
@@ -1197,8 +1249,6 @@ public class PlantTrackerUi extends AppCompatActivity
         return new IDialogHandler() {
             @Override
             public void bindDialog(final Dialog dialog) {
-                bindGroupListSpinner(dialog);
-
                 final CheckBox applyToGroupCheckBox = (CheckBox)dialog.findViewById(
                         R.id.applyToGroupCheckbox);
 
@@ -1296,8 +1346,6 @@ public class PlantTrackerUi extends AppCompatActivity
         return new IDialogHandler() {
             @Override
             public void bindDialog(final Dialog dialog) {
-                bindGroupListSpinner(dialog);
-
                 final CheckBox applyToGroupCheckBox = (CheckBox)dialog.findViewById(R.id.applyToGroupCheckbox);
 
                 Button okButton = (Button)dialog.findViewById(R.id.okButton);
@@ -1357,8 +1405,6 @@ public class PlantTrackerUi extends AppCompatActivity
         return new IDialogHandler() {
             @Override
             public void bindDialog(final Dialog dialog) {
-                bindGroupListSpinner(dialog);
-
                 final CheckBox applyToGroupCheckBox = (CheckBox)dialog.findViewById(
                         R.id.applyToGroupCheckbox);
 
@@ -1462,8 +1508,6 @@ public class PlantTrackerUi extends AppCompatActivity
         return new IDialogHandler() {
             @Override
             public void bindDialog(final Dialog dialog) {
-                bindGroupListSpinner(dialog);
-
                 final CheckBox applyToGroupCheckBox = (CheckBox)dialog.findViewById(
                         R.id.applyToGroupCheckbox);
 
@@ -1537,8 +1581,6 @@ public class PlantTrackerUi extends AppCompatActivity
         return new IDialogHandler() {
             @Override
             public void bindDialog(final Dialog dialog) {
-                bindGroupListSpinner(dialog);
-
                 final AutoCompleteTextView stateName = (AutoCompleteTextView) dialog.findViewById(
                         R.id.stateNameAutoCompleteTextView);
 
@@ -1953,6 +1995,83 @@ public class PlantTrackerUi extends AppCompatActivity
         catch(Exception e)  {
             e.printStackTrace();
         }
+    }
+
+    /* Camera and image selection work in progress */
+    private static final int TAKE_PICTURES = 0;
+    private static final int IMAGE_CHOOSER_INTENT = 1;
+
+    private ListView attachedImagesListView;
+
+    private void presentCamera()    {
+        Intent cameraIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
+        cameraIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
+        startActivityForResult(cameraIntent, TAKE_PICTURES);
+    }
+
+    private void presentImageChooser() {
+        Intent imageChooserIntent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        imageChooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
+        startActivityForResult(imageChooserIntent , IMAGE_CHOOSER_INTENT);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        switch(requestCode) {
+            case TAKE_PICTURES:
+                presentImageChooser();
+                break;
+
+            case IMAGE_CHOOSER_INTENT:
+                if(resultCode == RESULT_OK){
+                    if (imageReturnedIntent.getClipData() != null) {
+                        ClipData clipData = imageReturnedIntent.getClipData();
+                        ArrayList<Uri> selectionUris = new ArrayList<Uri>();
+                        for (int i = 0; i < clipData.getItemCount(); i++) {
+                            ClipData.Item item = clipData.getItemAt(i);
+                            Uri uri = item.getUri();
+                            selectionUris.add(uri);
+
+                            //TODO determine selected image source and set the variable to indicate
+                            // what we have. Eg, Gallery, Application Folder, etc...
+                        }
+
+                        ImageView imageView = (ImageView)findViewById(R.id.lastCaptureImageView);
+                        imageView.setImageURI(selectionUris.get(selectionUris.size()-1));
+
+                        updateAttachImagesView(selectionUris);
+                    }
+                }
+                break;
+        }
+    }
+
+    protected void updateAttachImagesView(ArrayList<Uri> selectedImages) {
+        ArrayList<String> fileNames = new ArrayList<>();
+        for(Uri uri : selectedImages)   {
+            String fullPath = convertUriToFilePath(uri);
+            fileNames.add(fullPath.substring(fullPath.lastIndexOf('/')+1));
+        }
+
+        ArrayAdapter<String> images = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, fileNames);
+        attachedImagesListView.setAdapter(images);
+    }
+
+    protected String convertUriToFilePath(Uri uri)  {
+        String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
+        // Move to first row
+        cursor.moveToFirst();
+
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String imagePath = cursor.getString(columnIndex);
+        cursor.close();
+
+        return imagePath;
     }
 
     /* Import / export */
