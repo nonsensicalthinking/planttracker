@@ -687,6 +687,16 @@ public class PlantTrackerUi extends AppCompatActivity
             groupNames.add(g.getGroupName());
         }
 
+        if (groupNames.size() == 0)  {
+            groupListSpinner.setEnabled(false);
+            groupNames.add("No Groups");
+
+            CheckBox applyToGroupCheckBox =
+                    (CheckBox)dialog.findViewById(R.id.applyToGroupCheckbox);
+
+            applyToGroupCheckBox.setEnabled(false);
+        }
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_dropdown_item, groupNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -1190,8 +1200,8 @@ public class PlantTrackerUi extends AppCompatActivity
                 final AutoCompleteTextView generalEventNameAbbrevEditText =
                         (AutoCompleteTextView)dialog.findViewById(R.id.generalEventAbbrevTextView);
 
-                final AutoCompleteTextView generalEventName = (AutoCompleteTextView)dialog.findViewById(
-                        R.id.generalEventNameTextView);
+                final AutoCompleteTextView generalEventName =
+                        (AutoCompleteTextView)dialog.findViewById(R.id.generalEventNameTextView);
 
                 generalEventNameAbbrevEditText.setText(code);
                 generalEventName.setText(name);
