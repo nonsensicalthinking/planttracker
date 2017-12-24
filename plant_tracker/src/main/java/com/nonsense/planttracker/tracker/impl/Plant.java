@@ -134,6 +134,13 @@ public class Plant {
         return record;
     }
 
+    public GenericRecord getPhaseChangeRecord() {
+        GenericRecord record = new GenericRecord("Change Phase");
+        record.setDataPoint("Name", new String());
+
+        return record;
+    }
+
     public void finalizeRecord(GenericRecord record)    {
         plantData.genericRecords.add(record);
 

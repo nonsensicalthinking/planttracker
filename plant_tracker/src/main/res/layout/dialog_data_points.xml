@@ -92,38 +92,8 @@
                 </LinearLayout>
 
                 <include
-                    android:id="@+id/generalEventTabLayout"
-                    layout="@layout/dialog_general_event"
-                    android:visibility="gone" />
-
-                <include
-                    android:id="@+id/genericEventTabLayout"
-                    layout="@layout/generic_tab"
-                    android:visibility="gone" />
-
-                <include
-                    android:id="@+id/dialogWaterEventLayout"
-                    layout="@layout/dialog_water_event"
-                    android:visibility="gone" />
-
-                <include
-                    android:id="@+id/dialogObservationEventLayout"
-                    layout="@layout/dialog_observation_event"
-                    android:visibility="gone" />
-
-                <include
-                    android:id="@+id/dialogFeedingEventLayout"
-                    layout="@layout/dialog_feed_event"
-                    android:visibility="gone" />
-
-                <include
                     android:id="@+id/dialogChangeStateEventLayout"
                     layout="@layout/dialog_current_state_event"
-                    android:visibility="gone" />
-
-                <include
-                    android:id="@+id/dialogNewPlantLayout"
-                    layout="@layout/dialog_new_plant"
                     android:visibility="gone" />
 
             </FrameLayout>

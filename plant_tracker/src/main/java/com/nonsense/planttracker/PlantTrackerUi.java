@@ -66,6 +66,7 @@ import com.nonsense.planttracker.tracker.impl.PlantTracker;
 import com.nonsense.planttracker.tracker.impl.Recordable;
 import com.nonsense.planttracker.tracker.interf.IDialogHandler;
 import com.nonsense.planttracker.tracker.interf.IDoIt;
+import com.nonsense.planttracker.tracker.interf.IPlantEventDoer;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 
 import java.io.File;
@@ -196,8 +197,7 @@ public class PlantTrackerUi extends AppCompatActivity
         stateNameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presentGenericEventDialog(R.id.dialogChangeStateEventLayout,
-                        getChangeStateDialogHandler());
+                launchCollectPlantDataIntent(currentPlant.getPhaseChangeRecord(), true);
             }
         });
     }
@@ -367,12 +367,7 @@ public class PlantTrackerUi extends AppCompatActivity
         setFloatingButtonTextAndAction(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presentAddCustomEventDialog(new IDoIt() {
-                    @Override
-                    public void doIt() {
-                        fillViewWithCustomEvents();
-                    }
-                });
+                //TODO create new recordable activity
             }
         });
 
@@ -508,15 +503,9 @@ public class PlantTrackerUi extends AppCompatActivity
 
         ArrayList<String> eventOptions = new ArrayList<>();
         eventOptions.add("Add Event");
-        eventOptions.add("Create New Event Type...");
         eventOptions.add("Change State");
-        eventOptions.add("Observe");
         eventOptions.add("Water");
         eventOptions.add("Feed");
-        eventOptions.add("Trim");
-        eventOptions.add("Top");
-        eventOptions.add("Report");
-        eventOptions.addAll(tracker.getPlantTrackerSettings().getAutoCompleteValues());
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, eventOptions);
@@ -532,71 +521,18 @@ public class PlantTrackerUi extends AppCompatActivity
 
                 switch (selectedItem) {
                     case "Change State":
-                        presentGenericEventDialog(R.id.dialogChangeStateEventLayout,
-                                getChangeStateDialogHandler());
+                        launchCollectPlantDataIntent(currentPlant.getPhaseChangeRecord(), true);
                         break;
-
-                    case "Observe":
-                        presentGenericEventDialog(R.id.dialogObservationEventLayout,
-                                getObservationDialogHandler());
-                        break;
-
                     case "Water":
-                        Intent water = new Intent(PlantTrackerUi.this,
-                                CollectPlantData.class);
-
-                        TreeMap<String, Long> availableGroups = new TreeMap<>();
-                        for (Long key : currentPlant.getGroups()) {
-                            Group g = tracker.getGroup(key);
-                            availableGroups.put(g.getGroupName(), g.getGroupId());
-                        }
-
-                        water.putExtra("availableGroups", availableGroups);
-                        water.putExtra("genericRecord", currentPlant.getWaterPlantRecord());
-                        water.putExtra("showNotes", true);
-
-                        startActivityForResult(water, GENERIC_RECORD_INTENT);
+                        launchCollectPlantDataIntent(currentPlant.getWaterPlantRecord(), true);
                         break;
 
                     case "Feed":
-                        presentGenericEventDialog(R.id.dialogFeedingEventLayout,
-                                getFeedingDialogHandler());
-                        break;
-
-                    case "Trim":
-                        presentGenericEventDialog("TR", "Trim", R.id.genericEventTabLayout,
-                                getGeneralEventDialogHandler("TR", "Trim"));
-                        break;
-
-                    case "Top":
-                        presentGenericEventDialog("TP", "Top", R.id.generalEventTabLayout,
-                                getGeneralEventDialogHandler("TP", "Top"));
-                        break;
-
-                    case "Repot":
-                        presentGenericEventDialog("RP", "Repot", R.id.generalEventTabLayout,
-                                getGeneralEventDialogHandler("RP", "Repot"));
-                        break;
-
-                    case "Create New Event Type...":
-                        presentGenericEventDialog(R.id.generalEventTabLayout,
-                                getGeneralEventDialogHandler());
-                        break;
-
-                    case "Add Event":
-                        break;
-
-                    default:
-                        String key = tracker.getPlantTrackerSettings().
-                                getAutoCompleteKeyForValue(selectedItem);
-
-                        presentGenericEventDialog(key, selectedItem, R.id.generalEventTabLayout,
-                                getGeneralEventDialogHandler(key, selectedItem));
+                        launchCollectPlantDataIntent(currentPlant.getFeedPlantRecord(), true);
                         break;
                 }
 
                 addEventSpinner.setSelection(0);
-
             }
 
             @Override
@@ -694,53 +630,23 @@ public class PlantTrackerUi extends AppCompatActivity
         });
     }
 
+    private void launchCollectPlantDataIntent(GenericRecord record, boolean showNotes) {
+        Intent intent = new Intent(PlantTrackerUi.this, CollectPlantData.class);
+        intent.putExtra("availableGroups", getAvailableGroupsForPlant(currentPlant));
+        intent.putExtra("genericRecord", record);
+        intent.putExtra("showNotes", showNotes);
 
-    private void bindGroupListSpinner(Dialog dialog) {
-        if (currentPlant == null) {
-            return;
+        startActivityForResult(intent, GENERIC_RECORD_INTENT);
+    }
+
+    private TreeMap<String, Long> getAvailableGroupsForPlant(Plant p)   {
+        TreeMap<String, Long> availableGroups = new TreeMap<>();
+        for (Long key : p.getGroups()) {
+            Group g = tracker.getGroup(key);
+            availableGroups.put(g.getGroupName(), g.getGroupId());
         }
 
-        Spinner groupListSpinner = (Spinner) dialog.findViewById(R.id.groupListSpinner);
-
-        final ArrayList<Group> groups = tracker.getGroupsPlantIsMemberOf(currentPlant.getPlantId());
-        final ArrayList<String> groupNames = new ArrayList<>();
-
-        for (Group g : groups) {
-            groupNames.add(g.getGroupName());
-        }
-
-        if (groupNames.size() == 0) {
-            groupListSpinner.setEnabled(false);
-            groupNames.add("No Groups");
-
-            CheckBox applyToGroupCheckBox =
-                    (CheckBox) dialog.findViewById(R.id.applyToGroupCheckbox);
-
-            applyToGroupCheckBox.setEnabled(false);
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_dropdown_item, groupNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        groupListSpinner.setAdapter(adapter);
-        groupListSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String name = groupNames.get(position);
-                for (Group g : groups) {
-                    if (g.getGroupName().equals(name)) {
-                        currentlySelectedGroup = g.getGroupId();
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                currentlySelectedGroup = 0;
-            }
-        });
-
+        return availableGroups;
     }
 
     private void bindAttachImagesControls(Dialog dialog) {
@@ -845,12 +751,7 @@ public class PlantTrackerUi extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Drawer navigation handling
-     *
-     * @param item - selected item
-     * @return
-     */
+    // Drawer nav
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -962,12 +863,7 @@ public class PlantTrackerUi extends AppCompatActivity
         return true;
     }
 
-    /**
-     * Individual plant view elipisis menu
-     *
-     * @param menu
-     * @return
-     */
+    // Individual plant menu
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (currentPlant != null) {
@@ -1089,24 +985,10 @@ public class PlantTrackerUi extends AppCompatActivity
         return true;
     }
 
-    /**
-     * Overload. See other descriptions.
-     *
-     * @param layoutId
-     * @param dialogHandler
-     */
     private void presentGenericEventDialog(int layoutId, IDialogHandler dialogHandler) {
         presentGenericEventDialog("", "", layoutId, dialogHandler);
     }
 
-    /**
-     * Generic tabbed dialog box for anything which requires the collection of date/time information
-     *
-     * @param code          - Abbreviation of event
-     * @param displayName   - Display name for event
-     * @param layoutId      - Layout to populate on the first tab
-     * @param dialogHandler - Handler for the ok/cancel buttons found on the page
-     */
     private void presentGenericEventDialog(String code, String displayName, final int layoutId,
                                            IDialogHandler dialogHandler) {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
@@ -1150,8 +1032,6 @@ public class PlantTrackerUi extends AppCompatActivity
                 }
             }
         });
-
-        bindGroupListSpinner(dialog);
 
         bindAttachImagesControls(dialog);
 
@@ -1243,331 +1123,6 @@ public class PlantTrackerUi extends AppCompatActivity
         }
     }
 
-    /*
-     *** Dialog display prepartion ***
-     */
-    private IDialogHandler getGeneralEventDialogHandler() {
-        return getGeneralEventDialogHandler("", "");
-    }
-
-    private IDialogHandler getGeneralEventDialogHandler(final String code, final String name) {
-        return new IDialogHandler() {
-            @Override
-            public void bindDialog(final Dialog dialog) {
-                final CheckBox applyToGroupCheckBox = (CheckBox) dialog.findViewById(
-                        R.id.applyToGroupCheckbox);
-
-                final AutoCompleteTextView generalEventNameAbbrevEditText =
-                        (AutoCompleteTextView) dialog.findViewById(R.id.generalEventAbbrevTextView);
-
-                final AutoCompleteTextView generalEventName =
-                        (AutoCompleteTextView) dialog.findViewById(R.id.generalEventNameTextView);
-
-                generalEventNameAbbrevEditText.setText(code);
-                generalEventName.setText(name);
-
-                generalEventNameAbbrevEditText.setAdapter(new ArrayAdapter<String>(
-                        getBaseContext(), android.R.layout.simple_list_item_1,
-                        tracker.getPlantTrackerSettings().getAutoCompleteKeys()));
-
-                generalEventNameAbbrevEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                        String selectedAbbreviation = (String) arg0.getItemAtPosition(arg2);
-                        if (tracker.getPlantTrackerSettings().getAutoCompleteKeys()
-                                .contains(selectedAbbreviation)) {
-
-                            generalEventName.setText(tracker.getPlantTrackerSettings()
-                                    .getAutoCompleteValueForKey(selectedAbbreviation));
-                        }
-                    }
-                });
-
-                generalEventNameAbbrevEditText.setThreshold(1);
-
-                final TextView eventNotesEditText = (TextView) dialog.findViewById(
-                        R.id.eventNotesEditText);
-
-
-                Button okButton = (Button) dialog.findViewById(R.id.okButton);
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (generalEventName.getText().toString().equals("") ||
-                                generalEventNameAbbrevEditText.getText().toString().equals("")) {
-                            return;
-                        }
-/*
-                        IPlantEventDoer doer = new IPlantEventDoer() {
-                            @Override
-                            public void doEventToPlant(Plant p) {
-                                p.addGeneralEvent(generalEventName.getText().toString(),
-                                        generalEventNameAbbrevEditText.getText().toString(),
-                                        eventNotesEditText.getText().toString(),
-                                        getEventCalendar(dialog));
-                            }
-                        };
-
-                        if (applyToGroupCheckBox.isChecked() && currentlySelectedGroup > 0) {
-                            tracker.performEventForPlantsInGroup(currentlySelectedGroup, doer);
-                        }
-                        else    {
-                            doer.doEventToPlant(currentPlant);
-                        }
-*/
-                        dialog.dismiss();
-
-                        if (!tracker.getPlantTrackerSettings().getAutoCompleteKeys().contains(
-                                generalEventNameAbbrevEditText.getText().toString())) {
-
-                            tracker.getPlantTrackerSettings().addAutoCompleteKeyValuePair(
-                                    generalEventNameAbbrevEditText.getText().toString(),
-                                    generalEventName.getText().toString());
-                        }
-
-                        fillIndividualPlantView();
-                    }
-                });
-
-                Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                    }
-                });
-
-                try {
-                    dialog.show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-        };
-    }
-
-    private IDialogHandler getObservationDialogHandler() {
-        return new IDialogHandler() {
-            @Override
-            public void bindDialog(final Dialog dialog) {
-                final CheckBox applyToGroupCheckBox = (CheckBox) dialog.findViewById(
-                        R.id.applyToGroupCheckbox);
-
-                Button okButton = (Button) dialog.findViewById(R.id.okButton);
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        EditText rhMinEditText = (EditText) dialog.findViewById(R.id.rhMinEditText);
-                        EditText rhMaxEditText = (EditText) dialog.findViewById(R.id.rhMaxEditText);
-                        EditText tempMinEditText = (EditText) dialog.findViewById(R.id.tempMinEditText);
-                        EditText tempMaxEditText = (EditText) dialog.findViewById(R.id.tempMaxEditText);
-                        EditText observationsEditText = (EditText) dialog.findViewById(
-                                R.id.observationNotesEditText);
-
-                        String rhMin = rhMinEditText.getText().toString();
-                        String rhMax = rhMaxEditText.getText().toString();
-                        String tempMin = tempMinEditText.getText().toString();
-                        String tempMax = tempMaxEditText.getText().toString();
-
-                        int minTemp = 0;
-                        int maxTemp = 0;
-                        int minRh = 0;
-                        int maxRh = 0;
-
-                        try {
-                            minTemp = Integer.parseInt(tempMin);
-                        } catch (Exception e) {
-                            return;
-                        }
-
-                        try {
-                            maxTemp = Integer.parseInt(tempMax);
-                        } catch (Exception e) {
-                            return;
-                        }
-
-                        try {
-                            minRh = Integer.parseInt(rhMin);
-                        } catch (Exception e) {
-                            return;
-                        }
-
-                        try {
-                            maxRh = Integer.parseInt(rhMax);
-                        } catch (Exception e) {
-                            return;
-                        }
-
-                        String observations = observationsEditText.getText().toString();
-
-                        final int finMaxRh = maxRh;
-                        final int finMinRh = minRh;
-                        final int finMaxTemp = maxTemp;
-                        final int finMinTemp = minTemp;
-                        final String finObservations = observations;
-/*
-                        IPlantEventDoer doer = new IPlantEventDoer() {
-                            @Override
-                            public void doEventToPlant(Plant p) {
-                                p.addObservation(finMaxRh, finMinRh, finMaxTemp, finMinTemp,
-                                        finObservations, getEventCalendar(dialog));
-                            }
-                        };
-
-                        if (applyToGroupCheckBox.isChecked() && currentlySelectedGroup > 0) {
-                            tracker.performEventForPlantsInGroup(currentlySelectedGroup, doer);
-                        }
-                        else    {
-                            doer.doEventToPlant(currentPlant);
-                        }
-*/
-                        fillIndividualPlantView();
-                        dialog.dismiss();
-                    }
-                });
-
-                Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                    }
-                });
-
-                try {
-                    dialog.show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-        };
-    }
-
-    private IDialogHandler getFeedingDialogHandler() {
-        return new IDialogHandler() {
-            @Override
-            public void bindDialog(final Dialog dialog) {
-                final CheckBox applyToGroupCheckBox = (CheckBox) dialog.findViewById(
-                        R.id.applyToGroupCheckbox);
-
-                Button okButton = (Button) dialog.findViewById(R.id.okButton);
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        EditText pHEditText = (EditText) dialog.findViewById(R.id.feedPhEditText);
-                        String phInput = pHEditText.getText().toString();
-                        double ph = 0.0;
-                        try {
-                            ph = Double.parseDouble(phInput);
-                        } catch (Exception e) {
-                            return;
-                        }
-
-                        EditText feedStrengthEditText = (EditText) dialog.findViewById(
-                                R.id.feedStrengthEditText);
-                        String feedStrengthInput = feedStrengthEditText.getText().toString();
-                        double str = 0.0;
-                        try {
-                            str = Double.parseDouble(feedStrengthInput);
-                        } catch (Exception e) {
-                            return;
-                        }
-
-                        final double finStr = str;
-                        final double finPh = ph;
-/*
-                        IPlantEventDoer doer = new IPlantEventDoer() {
-                            @Override
-                            public void doEventToPlant(Plant p) {
-                                p.feedPlant(finStr, finPh, getEventCalendar(dialog));
-                            }
-                        };
-
-                        if (applyToGroupCheckBox.isChecked() && currentlySelectedGroup > 0) {
-                            tracker.performEventForPlantsInGroup(currentlySelectedGroup, doer);
-                        }
-                        else    {
-                            doer.doEventToPlant(currentPlant);
-                        }
-*/
-                        dialog.dismiss();
-
-                        fillIndividualPlantView();
-                    }
-                });
-
-                Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                    }
-                });
-
-                try {
-                    dialog.show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-    }
-
-    private IDialogHandler getChangeStateDialogHandler() {
-        return new IDialogHandler() {
-            @Override
-            public void bindDialog(final Dialog dialog) {
-                final AutoCompleteTextView stateName = (AutoCompleteTextView) dialog.findViewById(
-                        R.id.stateNameAutoCompleteTextView);
-
-                stateName.setAdapter(new ArrayAdapter<String>(
-                        getBaseContext(), android.R.layout.simple_list_item_1,
-                        tracker.getPlantTrackerSettings().getStateAutoComplete()));
-
-                stateName.setThreshold(1);
-
-                final CheckBox applyToGroupCheckBox = (CheckBox) dialog.findViewById(
-                        R.id.applyToGroupCheckbox);
-
-                Button okButton = (Button) dialog.findViewById(R.id.okButton);
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-/*                        IPlantEventDoer doer = new IPlantEventDoer() {
-                            @Override
-                            public void doEventToPlant(Plant p) {
-                                p.changePlantState(getEventCalendar(dialog),
-                                        stateName.getText().toString());
-                            }
-                        };
-
-                        if (applyToGroupCheckBox.isChecked() && currentlySelectedGroup > 0) {
-                            tracker.performEventForPlantsInGroup(currentlySelectedGroup, doer);
-                        }
-                        else  {
-                            doer.doEventToPlant(currentPlant);
-                        }
-*/
-                        tracker.getPlantTrackerSettings().addStateAutoComplete(stateName.getText()
-                                .toString());
-
-                        fillIndividualPlantView();
-                        dialog.hide();
-                    }
-                });
-
-                Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.hide();
-                    }
-                });
-            }
-        };
-    }
-
     private IDialogHandler getAddPlantDialogHandler(final long parentPlantId) {
         return new IDialogHandler() {
             @Override
@@ -1633,7 +1188,6 @@ public class PlantTrackerUi extends AppCompatActivity
             }
         };
     }
-
 
     private void presentDeleteAllPlantsDialog() {
 
@@ -1844,46 +1398,6 @@ public class PlantTrackerUi extends AppCompatActivity
         }
     }
 
-    private void presentAddCustomEventDialog(final IDoIt successfulAction) {
-        final Dialog dialog = new Dialog(PlantTrackerUi.this);
-        dialog.setContentView(R.layout.dialog_add_custom_event);
-
-        final EditText eventAbbreviationEditText = (EditText) dialog.findViewById(
-                R.id.eventAbbreviationEditText);
-        final TextView eventDisplayNameEditText = (TextView) dialog.findViewById(
-                R.id.eventDisplayNameEditText);
-
-        Button okButton = (Button) dialog.findViewById(R.id.okButton);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!tracker.getPlantTrackerSettings().addAutoCompleteKeyValuePair(
-                        eventAbbreviationEditText.getText().toString(),
-                        eventDisplayNameEditText.getText().toString())) {
-                    //TODO display error
-                    return;
-                }
-
-                dialog.dismiss();
-                successfulAction.doIt();
-            }
-        });
-
-        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        try {
-            dialog.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void presentAddPlantPhaseDialog(final IDoIt successfulAction) {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
         dialog.setContentView(R.layout.dialog_add_phase);
@@ -1921,8 +1435,6 @@ public class PlantTrackerUi extends AppCompatActivity
             e.printStackTrace();
         }
     }
-
-
 
     private ListView attachedImagesListView;
 
