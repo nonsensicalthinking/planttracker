@@ -10,7 +10,7 @@ import java.util.Date;
 
 
 
-public class Recordable extends Datable {
+public class Recordable extends Datable implements Serializable {
     public Calendar timestamp;
     public long dayCount;
     public long weekCount;

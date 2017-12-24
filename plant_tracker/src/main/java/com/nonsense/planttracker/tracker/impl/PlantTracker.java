@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nonsense.planttracker.tracker.exceptions.GroupNotFoundException;
 import com.nonsense.planttracker.tracker.exceptions.PlantNotFoundException;
+import com.nonsense.planttracker.tracker.impl.PlantActions.PlantAction;
 import com.nonsense.planttracker.tracker.interf.IPlantEventDoer;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 import com.nonsense.planttracker.tracker.interf.IPlantUpdateListener;
@@ -462,10 +463,10 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         settingsChanged();
     }
 
-    public void performEventForPlantsInGroup(long groupId, IPlantEventDoer doer)  {
+    public void performEventForPlantsInGroup(long groupId, PlantAction action)  {
         ArrayList<Plant> plants = getMembersOfGroup(groupId);
         for(Plant p : plants)   {
-            doer.doEventToPlant(p);
+            action.runAction(p);
         }
     }
 

@@ -1,16 +1,11 @@
 package com.nonsense.planttracker.tracker.impl;
 
-import com.google.gson.Gson;
 import com.nonsense.planttracker.tracker.interf.IPlantUpdateListener;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 
 /**
  * Created by Derek Brooks on 6/30/2017.
@@ -124,15 +119,25 @@ public class Plant {
         notifyUpdateListeners();
     }
 
-    public void waterPlant(double pH, Calendar cal)   {
-        long currentDay = calcDaysFromTime(cal);
-        long currentWeek = calcWeeksFromTime(cal);
+    public GenericRecord getWaterPlantRecord()   {
+        GenericRecord record = new GenericRecord("Water");
+        record.setDataPoint("pH", new Double(6.5));
 
-        plantData.recordableEvents.add(new EventRecord(currentDay, currentWeek, EventRecord.PlantEvent.Water,
-                0.0, pH, cal));
+        return record;
+    }
+
+    public GenericRecord getFeedPlantRecord()   {
+        GenericRecord record = new GenericRecord("Feeding");
+        record.setDataPoint("pH", new Double(6.5));
+        record.setDataPoint("Food Strength", new Double(0.5));
+
+        return record;
+    }
+
+    public void finalizeRecord(GenericRecord record)    {
+        plantData.genericRecords.add(record);
 
         sortEvents();
-
         notifyUpdateListeners();
     }
 
@@ -249,8 +254,10 @@ public class Plant {
     }
 
     private void notifyUpdateListeners()    {
-        for(IPlantUpdateListener pul : updateListeners) {
-            pul.plantUpdate(this);
+        if (updateListeners != null)    {
+            for(IPlantUpdateListener pul : updateListeners) {
+                pul.plantUpdate(this);
+            }
         }
     }
 
