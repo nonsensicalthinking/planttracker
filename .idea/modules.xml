@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PlantTracker.iml" filepath="$PROJECT_DIR$/PlantTracker.iml" />
+      <module fileurl="file://C:\Users\Derek Brooks\AndroidStudioProjects\PlantTracker\PlantTracker.iml" filepath="C:\Users\Derek Brooks\AndroidStudioProjects\PlantTracker\PlantTracker.iml" />
       <module fileurl="file://$PROJECT_DIR$/plant_tracker/plant_tracker.iml" filepath="$PROJECT_DIR$/plant_tracker/plant_tracker.iml" />
+      <module fileurl="file://C:\Users\Derek Brooks\AndroidStudioProjects\PlantTracker\plant_tracker\plant_tracker.iml" filepath="C:\Users\Derek Brooks\AndroidStudioProjects\PlantTracker\plant_tracker\plant_tracker.iml" />
     </modules>
   </component>
 </project>
