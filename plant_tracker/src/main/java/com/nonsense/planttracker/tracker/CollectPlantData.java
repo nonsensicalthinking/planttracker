@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
-import android.text.Layout;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -29,8 +27,6 @@ import android.widget.TimePicker;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
-import com.nonsense.planttracker.tracker.impl.Plant;
-import com.nonsense.planttracker.tracker.impl.PlantData;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -167,13 +163,13 @@ public class CollectPlantData extends AppCompatActivity {
         for(String dataPoint : record.dataPoints.keySet())  {
             Object dpo = record.getDataPoint(dataPoint);
             if (dpo instanceof String)   {
-                tab1.addView(addStringInput(dataPoint, (String)dpo));
+                tab1.addView(bindStringInput(dataPoint, (String)dpo));
             }
             else if (dpo instanceof Integer)    {
-                tab1.addView(addIntegerInput(dataPoint, (Integer)dpo));
+                tab1.addView(bindIntegerInput(dataPoint, (Integer)dpo));
             }
             else if (dpo instanceof  Double)    {
-                tab1.addView(addDoubleInput(dataPoint, (Double)dpo));
+                tab1.addView(bindDoubleInput(dataPoint, (Double)dpo));
             }
         }
     }
@@ -240,7 +236,7 @@ public class CollectPlantData extends AppCompatActivity {
         });
     }
 
-    private LinearLayout addStringInput(final String key, String value)   {
+    private LinearLayout bindStringInput(final String key, String value)   {
         final LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.HORIZONTAL);
 
@@ -263,7 +259,7 @@ public class CollectPlantData extends AppCompatActivity {
         return layout;
     }
 
-    private LinearLayout addIntegerInput(final String key, Integer value)   {
+    private LinearLayout bindIntegerInput(final String key, Integer value)   {
         final LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.HORIZONTAL);
 
@@ -290,7 +286,7 @@ public class CollectPlantData extends AppCompatActivity {
         return layout;
     }
 
-    private LinearLayout addDoubleInput(final String key, Double value) {
+    private LinearLayout bindDoubleInput(final String key, Double value) {
         final LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.HORIZONTAL);
 

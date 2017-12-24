@@ -8,83 +8,85 @@ package com.nonsense.planttracker;
 // Moon phase icon by Haikinator https://www.iconfinder.com/Haikinator
 // https://www.iconfinder.com/icons/248569/cloud_clouds_cloudy_crescent_forecast_moon_night_phase_phases_waning_weather_icon
 
-        import android.app.Activity;
-        import android.app.Dialog;
-        import android.content.Context;
-        import android.content.DialogInterface;
-        import android.content.Intent;
-        import android.database.Cursor;
-        import android.net.Uri;
-        import android.os.Bundle;
-        import android.os.Environment;
-        import android.provider.MediaStore;
-        import android.support.design.widget.FloatingActionButton;
-        import android.support.v4.content.FileProvider;
-        import android.support.v7.app.AlertDialog;
-        import android.view.SubMenu;
-        import android.view.View;
-        import android.support.design.widget.NavigationView;
-        import android.support.v4.view.GravityCompat;
-        import android.support.v4.widget.DrawerLayout;
-        import android.support.v7.app.ActionBarDrawerToggle;
-        import android.support.v7.app.AppCompatActivity;
-        import android.support.v7.widget.Toolbar;
-        import android.view.Menu;
-        import android.view.MenuItem;
-        import android.view.inputmethod.InputMethodManager;
-        import android.widget.AdapterView;
-        import android.widget.ArrayAdapter;
-        import android.widget.AutoCompleteTextView;
-        import android.widget.Button;
-        import android.widget.CheckBox;
-        import android.widget.DatePicker;
-        import android.widget.EditText;
-        import android.widget.LinearLayout;
-        import android.widget.ListView;
-        import android.widget.RadioButton;
-        import android.widget.RadioGroup;
-        import android.widget.Spinner;
-        import android.widget.TabHost;
-        import android.widget.TableRow;
-        import android.widget.TextView;
-        import android.widget.TimePicker;
-        import android.widget.ViewSwitcher;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
+import android.view.SubMenu;
+import android.view.View;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
+import android.widget.TabHost;
+import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.ViewSwitcher;
 
-        import com.nonsense.planttracker.tracker.CollectPlantData;
-        import com.nonsense.planttracker.tracker.adapters.CustomEventTileArrayAdapter;
-        import com.nonsense.planttracker.tracker.adapters.GroupTileArrayAdapter;
-        import com.nonsense.planttracker.tracker.adapters.PlantStateTileArrayAdapter;
-        import com.nonsense.planttracker.tracker.impl.EventRecord;
-        import com.nonsense.planttracker.tracker.impl.GenericRecord;
-        import com.nonsense.planttracker.tracker.impl.Group;
-        import com.nonsense.planttracker.tracker.impl.ObservationRecord;
-        import com.nonsense.planttracker.tracker.adapters.PlantRecordableTileArrayAdapter;
-        import com.nonsense.planttracker.tracker.adapters.PlantTileArrayAdapter;
-        import com.nonsense.planttracker.tracker.impl.Plant;
-        import com.nonsense.planttracker.tracker.impl.PlantActions.PlantAction;
-        import com.nonsense.planttracker.tracker.impl.PlantTracker;
-        import com.nonsense.planttracker.tracker.impl.Recordable;
-        import com.nonsense.planttracker.tracker.interf.IDialogHandler;
-        import com.nonsense.planttracker.tracker.interf.IDoIt;
-        import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
+import com.nonsense.planttracker.tracker.CollectPlantData;
+import com.nonsense.planttracker.tracker.adapters.CustomEventTileArrayAdapter;
+import com.nonsense.planttracker.tracker.adapters.GroupTileArrayAdapter;
+import com.nonsense.planttracker.tracker.adapters.PlantStateTileArrayAdapter;
+import com.nonsense.planttracker.tracker.impl.EventRecord;
+import com.nonsense.planttracker.tracker.impl.GenericRecord;
+import com.nonsense.planttracker.tracker.impl.Group;
+import com.nonsense.planttracker.tracker.impl.ObservationRecord;
+import com.nonsense.planttracker.tracker.adapters.PlantRecordableTileArrayAdapter;
+import com.nonsense.planttracker.tracker.adapters.PlantTileArrayAdapter;
+import com.nonsense.planttracker.tracker.impl.Plant;
+import com.nonsense.planttracker.tracker.impl.PlantActions.PlantAction;
+import com.nonsense.planttracker.tracker.impl.PlantTracker;
+import com.nonsense.planttracker.tracker.impl.Recordable;
+import com.nonsense.planttracker.tracker.interf.IDialogHandler;
+import com.nonsense.planttracker.tracker.interf.IDoIt;
+import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 
-        import java.io.File;
-        import java.io.FilenameFilter;
-        import java.text.SimpleDateFormat;
-        import java.util.ArrayList;
-        import java.util.Calendar;
-        import java.util.Comparator;
-        import java.util.List;
-        import java.util.Map;
-        import java.util.Stack;
-        import java.util.TreeMap;
-
+import java.io.File;
+import java.io.FilenameFilter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+import java.util.TreeMap;
 
 public class PlantTrackerUi extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, IPlantTrackerListener {
 
     private static String PT_FILE_EXTENSION = ".json";
 
+    // Intent constants
+    private static final int TAKE_PICTURES = 0;
+    private static final int IMAGE_CHOOSER_INTENT = 1;
     private static final int GENERIC_RECORD_INTENT = 25;
 
     private ViewSwitcher switcher;
@@ -1343,61 +1345,6 @@ public class PlantTrackerUi extends AppCompatActivity
             }
         };
     }
-/*
-    private IDialogHandler getWaterDialogHandler()    {
-        return new IDialogHandler() {
-            @Override
-            public void bindDialog(final Dialog dialog) {
-                final CheckBox applyToGroupCheckBox = (CheckBox)dialog.findViewById(R.id.applyToGroupCheckbox);
-
-                Button okButton = (Button)dialog.findViewById(R.id.okButton);
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        EditText pHEditText = (EditText)dialog.findViewById(R.id.pHEditText);
-                        String phInput = pHEditText.getText().toString();
-
-                        double d = 0.0;
-                        try {
-                            d = Double.parseDouble(phInput);
-                        }
-                        catch (Exception e) {
-                            return;
-                        }
-
-                        final double pH = d;
-                        GenericRecord record = null;
-                        IPlantEventDoer doer = new PlantAction(record);
-                        if (applyToGroupCheckBox.isChecked() && currentlySelectedGroup > 0)   {
-                            tracker.performEventForPlantsInGroup(currentlySelectedGroup, doer);
-                        }
-                        else    {
-                            doer.doEventToPlant(currentPlant);
-                        }
-
-                        dialog.dismiss();
-
-                        fillIndividualPlantView();
-                    }
-                });
-
-                Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                    }
-                });
-
-                try {
-                    dialog.show();
-                }
-                catch(Exception e)  {
-                    e.printStackTrace();
-                }            }
-        };
-    }
-*/
 
     private IDialogHandler getObservationDialogHandler() {
         return new IDialogHandler() {
@@ -1975,9 +1922,7 @@ public class PlantTrackerUi extends AppCompatActivity
         }
     }
 
-    /* Camera and image selection work in progress */
-    private static final int TAKE_PICTURES = 0;
-    private static final int IMAGE_CHOOSER_INTENT = 1;
+
 
     private ListView attachedImagesListView;
 
@@ -1994,6 +1939,31 @@ public class PlantTrackerUi extends AppCompatActivity
         imageChooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 
         startActivityForResult(imageChooserIntent, IMAGE_CHOOSER_INTENT);
+    }
+
+    protected void updateAttachImagesView(ArrayList<Uri> selectedImages) {
+        ArrayList<String> fileNames = new ArrayList<>();
+        for (Uri uri : selectedImages) {
+            String fullPath = convertUriToFilePath(uri);
+            fileNames.add(fullPath.substring(fullPath.lastIndexOf('/') + 1));
+        }
+
+        ArrayAdapter<String> images = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, fileNames);
+        attachedImagesListView.setAdapter(images);
+    }
+
+    protected String convertUriToFilePath(Uri uri) {
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
+        // Move to first row
+        cursor.moveToFirst();
+
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String imagePath = cursor.getString(columnIndex);
+        cursor.close();
+
+        return imagePath;
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
@@ -2045,31 +2015,6 @@ public class PlantTrackerUi extends AppCompatActivity
                 break;
                 */
         }
-    }
-
-    protected void updateAttachImagesView(ArrayList<Uri> selectedImages) {
-        ArrayList<String> fileNames = new ArrayList<>();
-        for (Uri uri : selectedImages) {
-            String fullPath = convertUriToFilePath(uri);
-            fileNames.add(fullPath.substring(fullPath.lastIndexOf('/') + 1));
-        }
-
-        ArrayAdapter<String> images = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, fileNames);
-        attachedImagesListView.setAdapter(images);
-    }
-
-    protected String convertUriToFilePath(Uri uri) {
-        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
-        // Move to first row
-        cursor.moveToFirst();
-
-        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String imagePath = cursor.getString(columnIndex);
-        cursor.close();
-
-        return imagePath;
     }
 
     /* Import / export */
