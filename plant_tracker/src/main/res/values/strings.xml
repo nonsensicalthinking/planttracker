@@ -4,6 +4,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="action_settings">Settings</string>
     <string name="action_delete">Delete Plant</string>
     <string name="action_delete_really">Confirm Delete Plant</string>
     <string name="action_rename">Rename Plant</string>
