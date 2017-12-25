@@ -120,7 +120,6 @@ public class PlantTrackerUi extends AppCompatActivity
     private PlantTracker tracker;
     private Plant currentPlant;
     private long groupIdViewFilter;
-    private long currentlySelectedGroup;
 
     private enum PlantDisplay {
         All,
@@ -601,7 +600,7 @@ public class PlantTrackerUi extends AppCompatActivity
                 builder.setIcon(R.drawable.ic_growing_plant);
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        plantRecordableAdapter.remove(currentPlant.getAllGenericRecords().get(position));
+                        currentPlant.removeGenericRecord(position);
                         fillIndividualPlantView();
                         dialog.dismiss();
                     }
@@ -657,7 +656,6 @@ public class PlantTrackerUi extends AppCompatActivity
             }
         });
 
-        attachedImagesListView = (ListView) dialog.findViewById(R.id.attachedImagesListView);
     }
 
     private void setFloatingButtonTextAndAction(View.OnClickListener listener) {
@@ -1219,7 +1217,7 @@ public class PlantTrackerUi extends AppCompatActivity
         TextView eventTypeTextView;
         TextView dateTextView;
 
-        // FIXME fill display somehow with datapoints
+        //FIXME create event summary view dialog
     }
 
     private void presentRenameDialog() {
@@ -1339,8 +1337,6 @@ public class PlantTrackerUi extends AppCompatActivity
         }
     }
 
-    private ListView attachedImagesListView;
-
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
         switch (requestCode) {
@@ -1355,8 +1351,8 @@ public class PlantTrackerUi extends AppCompatActivity
                             0);
 
                     PlantAction action = new PlantAction(record);
-                    if (applyToGroup && currentlySelectedGroup > 0) {
-                        tracker.performEventForPlantsInGroup(currentlySelectedGroup, action);
+                    if (applyToGroup && selectedGroup > 0) {
+                        tracker.performEventForPlantsInGroup(selectedGroup, action);
                     } else {
                         action.runAction(currentPlant);
                     }

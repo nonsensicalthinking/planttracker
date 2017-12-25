@@ -189,6 +189,13 @@ public class Plant {
         return records;
     }
 
+    public void removeGenericRecord(int recordPosition)    {
+        plantData.genericRecords.remove(recordPosition);
+
+        updateSummaryInformation();
+        notifyUpdateListeners();
+    }
+
     private void updateSummaryInformation() {
         for(GenericRecord record : plantData.genericRecords)    {
             // set plant phase
