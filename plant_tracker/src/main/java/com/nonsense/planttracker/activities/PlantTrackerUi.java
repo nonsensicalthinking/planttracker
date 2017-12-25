@@ -13,11 +13,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
@@ -52,18 +50,14 @@ import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.tracker.adapters.CustomEventTileArrayAdapter;
 import com.nonsense.planttracker.tracker.adapters.GroupTileArrayAdapter;
 import com.nonsense.planttracker.tracker.adapters.PlantStateTileArrayAdapter;
-import com.nonsense.planttracker.tracker.impl.EventRecord;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Group;
-import com.nonsense.planttracker.tracker.impl.ObservationRecord;
 import com.nonsense.planttracker.tracker.adapters.PlantRecordableTileArrayAdapter;
 import com.nonsense.planttracker.tracker.adapters.PlantTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.Plant;
 import com.nonsense.planttracker.tracker.impl.PlantActions.PlantAction;
 import com.nonsense.planttracker.tracker.impl.PlantTracker;
-import com.nonsense.planttracker.tracker.impl.Recordable;
 import com.nonsense.planttracker.tracker.interf.IDialogHandler;
-import com.nonsense.planttracker.tracker.interf.IDoIt;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 
 import java.io.File;
@@ -109,8 +103,6 @@ public class PlantTrackerUi extends AppCompatActivity
     private Menu individualPlantMenu;
     private SubMenu addToGroup;
     private SubMenu removeFromGroup;
-
-    private PlantRecordableTileArrayAdapter plantRecordableAdapter;
 
     // Data
     private TreeMap<Integer, Long> menuItemToGroupIdMapping = new TreeMap<>();
@@ -562,7 +554,7 @@ public class PlantTrackerUi extends AppCompatActivity
             parentPlantTableRow.setVisibility(View.GONE);
         }
 
-        plantRecordableAdapter = new PlantRecordableTileArrayAdapter(
+        PlantRecordableTileArrayAdapter plantRecordableAdapter = new PlantRecordableTileArrayAdapter(
                 getBaseContext(), R.layout.plant_recordable_tile,
                 currentPlant.getAllGenericRecords(), currentPlant);
 
