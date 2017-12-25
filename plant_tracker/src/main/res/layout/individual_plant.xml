@@ -2,243 +2,233 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:weightSum="1">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_weight="0" />
+
+    <TextView
+        android:id="@+id/plantNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_green_dark"
+        android:text="White Dwarf (#3) G3"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_blue_bright"
+        android:textSize="30sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/lastCaptureImageView"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_alignBottom="@+id/tableLayout"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            app:srcCompat="@drawable/ic_growing_plant" />
+
+        <TableLayout
+            android:id="@+id/tableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/lastCaptureImageView">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="5dp">
+
+                <TextView
+                    android:id="@+id/textView34"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="5dp"
+                    android:text="Grow Week"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/weeksSinceGrowStartTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="6"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?android:attr/colorControlHighlight"
+                android:paddingLeft="5dp">
+
+                <TextView
+                    android:id="@+id/textView36"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Grow Day"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/daysSinceGrowStartTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="41"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="5dp">
+
+                <TextView
+                    android:id="@+id/textView38"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phase"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/stateNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Flowering"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?android:attr/colorControlHighlight"
+                android:paddingLeft="5dp">
+
+                <TextView
+                    android:id="@+id/textView40"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="24sp"
+                    android:paddingRight="10dp"
+                    android:text="Phase Wk."
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/weeksSinceStateStartTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textSize="18sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="5dp">
+
+                <TextView
+                    android:id="@+id/textView42"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phase Day"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/daysSinceStateStartTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="13"
+                    android:textSize="18sp" />
+            </TableRow>
+        </TableLayout>
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <Space
+        <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_weight="1" />
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/plantNameTextView"
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?android:attr/colorControlHighlight"
+                android:paddingLeft="5dp">
+
+                <TextView
+                    android:id="@+id/textView45"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="48dp"
+                    android:text="Plant Source"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/fromSeedTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clone"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/parentPlantTableRow"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="5dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/textView47"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Parent Plant"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/parentPlantIdTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="White Dwarf (#3) G2"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:textSize="18sp" />
+
+            </TableRow>
+
+        </TableLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Spinner
+            android:id="@+id/addEventSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/holo_green_dark"
-            android:text="White Dwarf (#3) G3"
-            android:textAlignment="center"
-            android:textColor="@android:color/holo_blue_bright"
-            android:textSize="30sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"></LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/lastCaptureImageView"
-                android:layout_width="150dp"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/tableLayout"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                app:srcCompat="@drawable/ic_growing_plant" />
-
-            <TableLayout
-                android:id="@+id/tableLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_toEndOf="@+id/lastCaptureImageView">
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="5dp">
-
-                    <TextView
-                        android:id="@+id/textView34"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingRight="5dp"
-                        android:text="Grow Week"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/weeksSinceGrowStartTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="6"
-                        android:textSize="18sp" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?android:attr/colorControlHighlight"
-                    android:paddingLeft="5dp">
-
-                    <TextView
-                        android:id="@+id/textView36"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Grow Day"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/daysSinceGrowStartTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="41"
-                        android:textSize="18sp" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="5dp">
-
-                    <TextView
-                        android:id="@+id/textView38"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Phase"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/stateNameTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Flowering"
-                        android:textColor="@android:color/holo_blue_light"
-                        android:textSize="18sp" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?android:attr/colorControlHighlight"
-                    android:paddingLeft="5dp">
-
-                    <TextView
-                        android:id="@+id/textView40"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:lineSpacingExtra="24sp"
-                        android:paddingRight="10dp"
-                        android:text="Phase Wk."
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/weeksSinceStateStartTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2"
-                        android:textSize="18sp" />
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="5dp">
-
-                    <TextView
-                        android:id="@+id/textView42"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Phase Day"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/daysSinceStateStartTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="13"
-                        android:textSize="18sp" />
-                </TableRow>
-            </TableLayout>
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?android:attr/colorControlHighlight"
-                    android:paddingLeft="5dp">
-
-                    <TextView
-                        android:id="@+id/textView45"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingRight="48dp"
-                        android:text="Plant Source"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/fromSeedTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Clone"
-                        android:textSize="18sp" />
-                </TableRow>
-
-                <TableRow
-                    android:id="@+id/parentPlantTableRow"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="5dp"
-                    android:visibility="visible">
-
-                    <TextView
-                        android:id="@+id/textView47"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Parent Plant"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/parentPlantIdTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="White Dwarf (#3) G2"
-                        android:textColor="@android:color/holo_blue_light"
-                        android:textSize="18sp" />
-
-                </TableRow>
-
-            </TableLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <Spinner
-                android:id="@+id/addEventSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:elevation="5dp"
-                android:fadeScrollbars="false" />
-
-        </LinearLayout>
-
-        <ListView
-            android:id="@+id/recordableEventListView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:stackFromBottom="true" />
+            android:layout_weight="1"
+            android:elevation="5dp"
+            android:fadeScrollbars="false" />
 
     </LinearLayout>
+
+    <ListView
+        android:id="@+id/recordableEventListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:stackFromBottom="true" />
+
 </LinearLayout>
