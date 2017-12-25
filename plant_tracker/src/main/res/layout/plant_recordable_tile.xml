@@ -1,25 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:theme="@style/Theme.Design">
-
-    <TextView
-        android:id="@+id/recordableSummaryTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/observEventTypeTextView"
-        android:paddingLeft="3dp"
-        android:text="Fs: 0.5 pH: 6.4 Notes: lorem ispum dollar solat ..."
-        android:textColor="@android:color/background_dark" />
+    android:theme="@style/Theme.Design"
+    android:orientation="vertical"
+    android:paddingTop="3dp"
+    android:paddingBottom="3dp">
 
     <TextView
         android:id="@+id/observEventTypeTextView"
-        android:layout_width="50dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -30,4 +21,17 @@
         android:textColor="@color/colorPrimary"
         android:textSize="14sp" />
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/recordableSummaryTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/observEventTypeTextView"
+        android:paddingLeft="16dp"
+        android:text="Fs: 0.5 pH: 6.4 Notes: lorem ispum dollar solat ..."
+        android:textColor="@android:color/background_dark" />
+
+
+</LinearLayout>

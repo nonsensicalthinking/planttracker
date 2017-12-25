@@ -431,13 +431,7 @@ public class PlantTrackerUi extends AppCompatActivity
         setFloatingButtonTextAndAction(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presentAddPlantPhaseDialog(new IDoIt() {
-                    @Override
-                    public void doIt() {
-                        fillViewWithPlantPhases();
-                    }
-                });
-
+                launchCollectPlantDataIntent(currentPlant.getPhaseChangeRecord(), true);
             }
         });
 
@@ -1345,44 +1339,6 @@ public class PlantTrackerUi extends AppCompatActivity
         }
     }
 
-    private void presentAddPlantPhaseDialog(final IDoIt successfulAction) {
-        final Dialog dialog = new Dialog(PlantTrackerUi.this);
-        dialog.setContentView(R.layout.dialog_add_phase);
-
-        final EditText phaseDisplayNameEditText = (EditText) dialog.findViewById(
-                R.id.phaseDisplayNameEditText);
-
-        Button okButton = (Button) dialog.findViewById(R.id.okButton);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!tracker.getPlantTrackerSettings().addStateAutoComplete(
-                        phaseDisplayNameEditText.getText().toString())) {
-                    //TODO display error
-                    return;
-                }
-
-                dialog.dismiss();
-
-                successfulAction.doIt();
-            }
-        });
-
-        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        try {
-            dialog.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private ListView attachedImagesListView;
 
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
@@ -1404,6 +1360,8 @@ public class PlantTrackerUi extends AppCompatActivity
                     } else {
                         action.runAction(currentPlant);
                     }
+
+                    fillIndividualPlantView();
                 }
                 break;
         }

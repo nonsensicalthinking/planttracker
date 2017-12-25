@@ -100,8 +100,9 @@ public class Plant {
     }
 
     public GenericRecord getPhaseChangeRecord() {
-        GenericRecord record = new GenericRecord("Change Phase");
-        record.setDataPoint("Name", new String());
+        GenericRecord record = new GenericRecord("Changing Phase");
+        record.setDataPoint("Phase Name", new String());
+        record.summaryTemplate = "Plant entered a new phase, {Phase Name}";
 
         return record;
     }
@@ -110,6 +111,7 @@ public class Plant {
         plantData.genericRecords.add(record);
 
         sortEvents();
+        updateSummaryInformation();
         notifyUpdateListeners();
     }
 
@@ -185,6 +187,19 @@ public class Plant {
         });
 
         return records;
+    }
+
+    private void updateSummaryInformation() {
+        for(GenericRecord record : plantData.genericRecords)    {
+            // set plant phase
+            if (record.dataPoints.containsKey("Phase Name")) {
+                plantData.currentStateName = (String)record.dataPoints.get("Phase Name");
+                plantData.currentStateStartDate = record.time;
+            }
+
+            // TODO update other plant summary fields
+
+        }
     }
 
     private void notifyUpdateListeners()    {
