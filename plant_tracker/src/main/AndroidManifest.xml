@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".PlantTrackerUi"
+            android:name=".activities.PlantTrackerUi"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -32,7 +32,7 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".tracker.CollectPlantData"></activity>
+        <activity android:name=".activities.CollectPlantData"></activity>
     </application>
 
 </manifest>

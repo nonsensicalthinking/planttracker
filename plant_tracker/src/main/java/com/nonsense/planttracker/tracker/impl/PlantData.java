@@ -1,6 +1,5 @@
 package com.nonsense.planttracker.tracker.impl;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -16,13 +15,10 @@ public class PlantData {
     public boolean isArchived;
     public Calendar currentStateStartDate;
     public String currentStateName;
-    public ArrayList<EventRecord> recordableEvents;
-    public ArrayList<ObservationRecord> observationRecords;
     public ArrayList<GenericRecord> genericRecords;
     public ArrayList<Long> groupIds;
 
     public PlantData()  {
-        recordableEvents = new ArrayList<>();
         genericRecords = new ArrayList<>();
         groupIds = new ArrayList<>();
     }

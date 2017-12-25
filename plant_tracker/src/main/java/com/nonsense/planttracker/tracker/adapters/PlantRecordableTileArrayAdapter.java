@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.nonsense.planttracker.R;
+import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Plant;
 import com.nonsense.planttracker.tracker.impl.Recordable;
 
@@ -21,7 +22,7 @@ import java.util.List;
  * Created by Derek Brooks on 7/1/2017.
  */
 
-public class PlantRecordableTileArrayAdapter extends ArrayAdapter<Recordable> {
+public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord> {
 
     private int viewResourceId;
     private Plant currentPlant;
@@ -32,7 +33,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<Recordable> {
         currentPlant = plant;
     }
 
-    public PlantRecordableTileArrayAdapter(Context context, int resource, List<Recordable> items,
+    public PlantRecordableTileArrayAdapter(Context context, int resource, List<GenericRecord> items,
                                            Plant plant) {
         super(context, resource, items);
         viewResourceId = resource;
@@ -53,8 +54,8 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<Recordable> {
         Calendar plantStartDate = currentPlant.getPlantStartDate();
         //Calendar flowerStartDate = currentPlant.getFlowerStartDate();
 
-        Recordable p = getItem(position);
-        long growWeekCount = p.weeksSinceDate(plantStartDate);
+        GenericRecord p = getItem(position);
+        long growWeekCount = 96969696;//FIXME
 
         String weekDisplay = "";
         weekDisplay = "(W" + growWeekCount + ") ";
@@ -62,13 +63,13 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<Recordable> {
         if (p != null) {
             TextView eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
             if (eventTypeTextView != null) {
-                eventTypeTextView.setText(p.getEventTypeString());
+                eventTypeTextView.setText(p.displayName);
             }
 
             TextView recordableSummaryTextView = (TextView)v.findViewById(
                     R.id.recordableSummaryTextView);
             if (recordableSummaryTextView != null) {
-                recordableSummaryTextView.setText(weekDisplay + p.Summary());
+                recordableSummaryTextView.setText(p.getSummary());
             }
         }
 

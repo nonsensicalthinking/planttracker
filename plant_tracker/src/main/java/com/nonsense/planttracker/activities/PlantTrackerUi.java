@@ -1,4 +1,4 @@
-package com.nonsense.planttracker;
+package com.nonsense.planttracker.activities;
 
 // Additional source attribution for icon:
 // Plant Icon website http://www.freepik.com/free-icon/plant-growing_743982.htm
@@ -34,9 +34,7 @@ import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -50,7 +48,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ViewSwitcher;
 
-import com.nonsense.planttracker.tracker.CollectPlantData;
+import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.tracker.adapters.CustomEventTileArrayAdapter;
 import com.nonsense.planttracker.tracker.adapters.GroupTileArrayAdapter;
 import com.nonsense.planttracker.tracker.adapters.PlantStateTileArrayAdapter;
@@ -66,7 +64,6 @@ import com.nonsense.planttracker.tracker.impl.PlantTracker;
 import com.nonsense.planttracker.tracker.impl.Recordable;
 import com.nonsense.planttracker.tracker.interf.IDialogHandler;
 import com.nonsense.planttracker.tracker.interf.IDoIt;
-import com.nonsense.planttracker.tracker.interf.IPlantEventDoer;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 
 import java.io.File;
@@ -574,7 +571,7 @@ public class PlantTrackerUi extends AppCompatActivity
 
         plantRecordableAdapter = new PlantRecordableTileArrayAdapter(
                 getBaseContext(), R.layout.plant_recordable_tile,
-                currentPlant.getAllRecordableEvents(), currentPlant);
+                currentPlant.getAllGenericRecords(), currentPlant);
 
         recordableEventListView.setAdapter(plantRecordableAdapter);
         recordableEventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -610,7 +607,7 @@ public class PlantTrackerUi extends AppCompatActivity
                 builder.setIcon(R.drawable.ic_growing_plant);
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        plantRecordableAdapter.remove(currentPlant.removeRecordableEvent(position));
+                        plantRecordableAdapter.remove(currentPlant.getAllGenericRecords().get(position));
                         fillIndividualPlantView();
                         dialog.dismiss();
                     }
@@ -654,7 +651,7 @@ public class PlantTrackerUi extends AppCompatActivity
         openCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presentCamera();
+                //FIXME open camera activity
             }
         });
 
@@ -662,7 +659,7 @@ public class PlantTrackerUi extends AppCompatActivity
         attachImagesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presentImageChooser();
+                //FIXME open picture browser for selecting existing images
             }
         });
 
@@ -1223,62 +1220,12 @@ public class PlantTrackerUi extends AppCompatActivity
     private void presentRecordableEventSummaryDialog(int eventIndex) {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
 
-        Recordable r = currentPlant.getAllRecordableEvents().get(eventIndex);
+        GenericRecord r = currentPlant.getAllGenericRecords().get(eventIndex);
 
         TextView eventTypeTextView;
         TextView dateTextView;
 
-        if (r instanceof EventRecord) {
-            EventRecord er = (EventRecord) r;
-            dialog.setContentView(R.layout.dialog_display_recordable_event);
-            eventTypeTextView = (TextView) dialog.findViewById(R.id.observEventTypeTextView);
-            dateTextView = (TextView) dialog.findViewById(R.id.dateTextView);
-
-            eventTypeTextView.setText(er.getEventString());
-            dateTextView.setText(r.getTimestamp().getTime().toString());
-            TextView phTextView = (TextView) dialog.findViewById(R.id.pHTextView);
-            TextView foodStrengthTextView = (TextView) dialog.findViewById(
-                    R.id.foodStrengthTextView);
-
-            LinearLayout foodLayout = (LinearLayout) dialog.findViewById(R.id.foodLayout);
-            LinearLayout waterLayout = (LinearLayout) dialog.findViewById(R.id.waterLayout);
-
-            if (er.getEventType() == EventRecord.PlantEvent.Food ||
-                    er.getEventType() == EventRecord.PlantEvent.Water) {
-                phTextView.setText("" + er.getpH());
-                foodStrengthTextView.setText("" + er.getFoodStrength());
-
-                if (er.getEventType() == EventRecord.PlantEvent.Food) {
-                    foodLayout.setVisibility(View.VISIBLE);
-                } else {
-                    foodLayout.setVisibility(View.GONE);
-                }
-            } else {
-                foodLayout.setVisibility(View.GONE);
-                waterLayout.setVisibility(View.GONE);
-            }
-
-        } else if (r instanceof ObservationRecord) {
-            ObservationRecord or = (ObservationRecord) r;
-            dialog.setContentView(R.layout.dialog_display_observation);
-            eventTypeTextView = (TextView) dialog.findViewById(R.id.observEventTypeTextView);
-            dateTextView = (TextView) dialog.findViewById(R.id.observDateTextView);
-            TextView tempTextView = (TextView) dialog.findViewById(R.id.tempTextView);
-            TextView rhTextView = (TextView) dialog.findViewById(R.id.rhTextView);
-            TextView notesTextView = (TextView) dialog.findViewById(R.id.notesTextView);
-
-            eventTypeTextView.setText("Observation");
-            dateTextView.setText(r.getTimestamp().getTime().toString());
-            tempTextView.setText(or.getTempLow() + "/" + or.getTempHigh());
-            rhTextView.setText(or.getRhLow() + "/" + or.getRhHigh());
-            notesTextView.setText(or.getNotes());
-        }
-
-        try {
-            dialog.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // FIXME fill display somehow with datapoints
     }
 
     private void presentRenameDialog() {
@@ -1438,46 +1385,6 @@ public class PlantTrackerUi extends AppCompatActivity
 
     private ListView attachedImagesListView;
 
-    private void presentCamera() {
-        Intent cameraIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
-        cameraIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-
-        startActivityForResult(cameraIntent, TAKE_PICTURES);
-    }
-
-    private void presentImageChooser() {
-        Intent imageChooserIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        imageChooserIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-
-        startActivityForResult(imageChooserIntent, IMAGE_CHOOSER_INTENT);
-    }
-
-    protected void updateAttachImagesView(ArrayList<Uri> selectedImages) {
-        ArrayList<String> fileNames = new ArrayList<>();
-        for (Uri uri : selectedImages) {
-            String fullPath = convertUriToFilePath(uri);
-            fileNames.add(fullPath.substring(fullPath.lastIndexOf('/') + 1));
-        }
-
-        ArrayAdapter<String> images = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, fileNames);
-        attachedImagesListView.setAdapter(images);
-    }
-
-    protected String convertUriToFilePath(Uri uri) {
-        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
-        // Move to first row
-        cursor.moveToFirst();
-
-        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String imagePath = cursor.getString(columnIndex);
-        cursor.close();
-
-        return imagePath;
-    }
-
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
         switch (requestCode) {
@@ -1499,33 +1406,6 @@ public class PlantTrackerUi extends AppCompatActivity
                     }
                 }
                 break;
-
-/*            case TAKE_PICTURES:
-                presentImageChooser();
-                break;
-
-            case IMAGE_CHOOSER_INTENT:
-                if(resultCode == RESULT_OK){
-                    if (returnedIntent.getClipData() != null) {
-                        ClipData clipData = returnedIntent.getClipData();
-                        ArrayList<Uri> selectionUris = new ArrayList<Uri>();
-                        for (int i = 0; i < clipData.getItemCount(); i++) {
-                            ClipData.Item item = clipData.getItemAt(i);
-                            Uri uri = item.getUri();
-                            selectionUris.add(uri);
-
-                            //TODO determine selected image source and set the variable to indicate
-                            // what we have. Eg, Gallery, Application Folder, etc...
-                        }
-
-                        ImageView imageView = (ImageView)findViewById(R.id.lastCaptureImageView);
-                        imageView.setImageURI(selectionUris.get(selectionUris.size()-1));
-
-                        updateAttachImagesView(selectionUris);
-                    }
-                }
-                break;
-                */
         }
     }
 

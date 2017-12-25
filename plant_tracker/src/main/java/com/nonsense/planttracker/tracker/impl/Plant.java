@@ -33,8 +33,6 @@ public class Plant {
         plantData.plantName = plantName;
         plantData.plantId = System.currentTimeMillis();
         plantData.startDate = growStartDate;
-        plantData.recordableEvents = new ArrayList<>();
-        plantData.observationRecords = new ArrayList<>();
         plantData.isFromSeed = isFromSeed;
         plantData.groupIds = new ArrayList<>();
     }
@@ -74,54 +72,20 @@ public class Plant {
         return plantData.isFromSeed;
     }
 
-    public int getRecordableEventCount()    {
-        return plantData.recordableEvents.size();
-    }
+    public ArrayList<GenericRecord> getAllGenericRecords()  {
+        ArrayList<GenericRecord> rec = new ArrayList<>();
 
-    // FixMe we need to handle this better. Dirty hack to get json objects working
-    // we don't need to sort like this, the problem could be resolved with a json exlcusion on the
-    // sorted list
-    public ArrayList<Recordable> getAllRecordableEvents()  {
-        ArrayList<Recordable> rec = new ArrayList<>();
-
-        for(EventRecord er : plantData.recordableEvents)    {
-            rec.add((Recordable)er);
-        }
-
-        for(ObservationRecord or : plantData.observationRecords) {
-            rec.add((Recordable)or);
+        for(GenericRecord er : plantData.genericRecords)    {
+            rec.add((GenericRecord)er);
         }
 
         return sortEvents(rec);
     }
 
-    public void startGrow(Calendar c) {
-        long currentDay = calcDaysFromTime(c);
-        long currentWeek = calcWeeksFromTime(c);
-
-        plantData.recordableEvents.add(new EventRecord(currentDay, currentWeek,
-                EventRecord.PlantEvent.GrowStart, c));
-
-        sortEvents();
-
-        notifyUpdateListeners();
-    }
-
-    public void feedPlant(double foodStrength, double pH, Calendar cal)  {
-        long currentDay = calcDaysFromTime(cal);
-        long currentWeek = calcWeeksFromTime(cal);
-
-        plantData.recordableEvents.add(new EventRecord(currentDay, currentWeek, EventRecord.PlantEvent.Food,
-                foodStrength, pH, cal));
-
-        sortEvents();
-
-        notifyUpdateListeners();
-    }
-
     public GenericRecord getWaterPlantRecord()   {
         GenericRecord record = new GenericRecord("Water");
         record.setDataPoint("pH", new Double(6.5));
+        record.summaryTemplate = "pH of water {pH}";
 
         return record;
     }
@@ -130,6 +94,7 @@ public class Plant {
         GenericRecord record = new GenericRecord("Feeding");
         record.setDataPoint("pH", new Double(6.5));
         record.setDataPoint("Food Strength", new Double(0.5));
+        record.summaryTemplate = "pH of food {pH} with strength of {Food Strength}";
 
         return record;
     }
@@ -145,19 +110,6 @@ public class Plant {
         plantData.genericRecords.add(record);
 
         sortEvents();
-        notifyUpdateListeners();
-    }
-
-    public void addObservation(int rhHigh, int rhLow, int tempHigh, int tempLow, String notes,
-                               Calendar cal)    {
-        long currentDay = calcDaysFromTime(cal);
-        long currentWeek = calcWeeksFromTime(cal);
-
-        plantData.observationRecords.add(new ObservationRecord(currentDay, currentWeek, rhHigh, rhLow,
-                tempHigh, tempLow, notes, cal));
-
-        sortEvents();
-
         notifyUpdateListeners();
     }
 
@@ -211,53 +163,28 @@ public class Plant {
         return -1;
     }
 
-    public void changePlantingDate(Calendar c)  {
-        plantData.startDate = c;
-
-        long currentDay = getDaysFromStart();
-        long currentWeek = getWeeksFromStart();
-        plantData.recordableEvents.add(new EventRecord(currentDay, currentWeek,
-                EventRecord.PlantEvent.ChangePlantingDate, c));
-
-        sortEvents();
-
-        notifyUpdateListeners();
-    }
-
-    public void addGeneralEvent(String generalEventName, String generalEventAbbrev,
-                                String eventNotes, Calendar cal)  {
-        long currentDay = calcDaysFromTime(cal);
-        long currentWeek = calcWeeksFromTime(cal);
-        plantData.recordableEvents.add(new EventRecord(currentDay, currentWeek, generalEventName,
-                generalEventAbbrev, eventNotes, cal));
-
-        sortEvents();
-
-        notifyUpdateListeners();
-    }
-
     public Calendar getPlantStartDate() {
         return plantData.startDate;
     }
 
     private void sortEvents()   {
-        plantData.recordableEvents.sort(new Comparator<Recordable>() {
+        plantData.genericRecords.sort(new Comparator<GenericRecord>() {
             @Override
-            public int compare(Recordable o1, Recordable o2) {
-                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            public int compare(GenericRecord o1, GenericRecord o2) {
+                return o1.time.compareTo(o2.time);
             }
         });
     }
-
-    private ArrayList<Recordable> sortEvents(ArrayList<Recordable> recordables) {
-        recordables.sort(new Comparator<Recordable>() {
+	
+    private ArrayList<GenericRecord> sortEvents(ArrayList<GenericRecord> records) {
+        records.sort(new Comparator<GenericRecord>() {
             @Override
-            public int compare(Recordable o1, Recordable o2) {
-                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            public int compare(GenericRecord o1, GenericRecord o2) {
+                return o1.time.compareTo(o2.time);
             }
         });
 
-        return recordables;
+        return records;
     }
 
     private void notifyUpdateListeners()    {
@@ -305,48 +232,8 @@ public class Plant {
         return plantData.groupIds;
     }
 
-    public Recordable removeRecordableEvent(int pos)  {
-        Recordable r = plantData.recordableEvents.remove(pos);
-        updatePlant();
-        return r;
-    }
-
-    public void changePlantState(Calendar cal, String stateName)  {
-        long currentDay = calcDaysFromTime(cal);
-        long currentWeek = calcWeeksFromTime(cal);
-
-        plantData.recordableEvents.add(new EventRecord(currentDay, currentWeek, stateName, cal));
-
-        updatePlant();
-    }
-
     public String getCurrentStateName() {
         return plantData.currentStateName;
-    }
-
-    private void updatePlant()  {
-        sortEvents();
-
-        boolean stateFound = false;
-        for(int x = plantData.recordableEvents.size()-1; x >= 0; x--) {
-            Recordable event = plantData.recordableEvents.get(x);
-            EventRecord rec = (EventRecord)event;
-
-            if (rec.getEventType() == EventRecord.PlantEvent.State) {
-                plantData.currentStateStartDate = rec.getTimestamp();
-                plantData.currentStateName = rec.getEventText();
-                stateFound = true;
-                break;
-            }
-
-            if (!stateFound) {
-                plantData.currentStateStartDate = null;
-                plantData.currentStateName = null;
-            }
-
-        }
-
-        notifyUpdateListeners();
     }
 
     public PlantData getPlantData() {
