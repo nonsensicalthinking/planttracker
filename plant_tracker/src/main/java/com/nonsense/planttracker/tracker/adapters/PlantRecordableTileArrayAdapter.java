@@ -15,6 +15,7 @@ import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Plant;
 import com.nonsense.planttracker.tracker.impl.Recordable;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -62,15 +63,15 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
 
         if (p != null) {
             TextView eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
-            if (eventTypeTextView != null) {
-                eventTypeTextView.setText(p.displayName);
-            }
+            eventTypeTextView.setText(p.displayName);
 
             TextView recordableSummaryTextView = (TextView)v.findViewById(
                     R.id.recordableSummaryTextView);
-            if (recordableSummaryTextView != null) {
-                recordableSummaryTextView.setText(p.getSummary());
-            }
+            recordableSummaryTextView.setText(p.getSummary());
+
+            TextView dateTextView = (TextView)v.findViewById(R.id.dateTextView);
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
+            dateTextView.setText(sdf.format(p.time.getTime()) + " [Wk.3/6]");
         }
 
         return v;

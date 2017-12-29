@@ -7,8 +7,6 @@ package com.nonsense.planttracker.tracker.interf;
 public interface IPlantTrackerListener {
 
     public void plantUpdated();
-    public void plantsUpdated();
-
     public void groupsUpdated();
 
 }

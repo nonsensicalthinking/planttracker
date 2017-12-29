@@ -200,6 +200,8 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         p.addUpdateListener(this);
         plants.add(p);
 
+        p.plantLoadFinished();
+
         if (p.isArchived()) {
             archivedPlants.add(p);
         }

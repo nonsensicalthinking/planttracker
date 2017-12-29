@@ -266,4 +266,8 @@ public class Plant {
         plantData = pd;
     }
 
+    public void plantLoadFinished() {
+        updateSummaryInformation();
+    }
+
 }

@@ -13,11 +13,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.view.SubMenu;
 import android.view.View;
@@ -60,13 +57,12 @@ import com.nonsense.planttracker.tracker.impl.PlantTracker;
 import com.nonsense.planttracker.tracker.interf.IDialogHandler;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
@@ -95,6 +91,8 @@ public class PlantTrackerUi extends AppCompatActivity
     private TextView plantNameTextView;
     private TextView daysSinceGrowStartTextView;
     private TextView weeksSinceGrowStartTextView;
+    private TextView weeksSinceStateStartTextView;
+    private TextView daysSinceStateStartTextView;
     private TextView stateNameTextView;
     private TextView fromSeedTextView;
     private ListView recordableEventListView;
@@ -188,6 +186,12 @@ public class PlantTrackerUi extends AppCompatActivity
                 launchCollectPlantDataIntent(currentPlant.getPhaseChangeRecord(), true);
             }
         });
+
+        weeksSinceStateStartTextView = (TextView)findViewById(
+                R.id.weeksSinceStateStartTextView);
+
+        daysSinceStateStartTextView = (TextView)findViewById(
+                R.id.daysSinceStateStartTextView);
     }
 
     private void showFloatingActionButton() {
@@ -499,18 +503,21 @@ public class PlantTrackerUi extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                String selectedItem = adapter.getItem(position).toString();
+                String selectedItem = adapter.getItem(position);
 
                 switch (selectedItem) {
                     case "Change State":
-                        launchCollectPlantDataIntent(currentPlant.getPhaseChangeRecord(), true);
+                        launchCollectPlantDataIntent(currentPlant.getPhaseChangeRecord(),
+                                true);
                         break;
                     case "Water":
-                        launchCollectPlantDataIntent(currentPlant.getWaterPlantRecord(), true);
+                        launchCollectPlantDataIntent(currentPlant.getWaterPlantRecord(),
+                                true);
                         break;
 
                     case "Feed":
-                        launchCollectPlantDataIntent(currentPlant.getFeedPlantRecord(), true);
+                        launchCollectPlantDataIntent(currentPlant.getFeedPlantRecord(),
+                                true);
                         break;
                 }
 
@@ -566,7 +573,6 @@ public class PlantTrackerUi extends AppCompatActivity
             }
         });
 
-        TextView daysSinceStateStartTextView = (TextView) findViewById(R.id.daysSinceStateStartTextView);
         long days = currentPlant.getDaysFromStateStart();
         if (days > 0) {
             daysSinceStateStartTextView.setText("" + days);
@@ -574,11 +580,11 @@ public class PlantTrackerUi extends AppCompatActivity
             daysSinceStateStartTextView.setText("--");
         }
 
-        TextView weeksSinceStateStartTextView = (TextView) findViewById(
-                R.id.weeksSinceStateStartTextView);
         long weeks = currentPlant.getWeeksFromStateStart();
         if (weeks > 0) {
             weeksSinceStateStartTextView.setText("" + currentPlant.getWeeksFromStateStart());
+        } else if(weeks == 0) {
+            weeksSinceStateStartTextView.setText("1");
         } else {
             weeksSinceStateStartTextView.setText("--");
         }
@@ -803,29 +809,6 @@ public class PlantTrackerUi extends AppCompatActivity
 
             case R.id.nav_about_plant_tracker:
                 presentAboutDialog();
-                break;
-
-            case R.id.nav_export:
-                if (switcher.getCurrentView() == individualPlantView) {
-                    ArrayList<String> files = new ArrayList<>();
-                    files.add(getFilesDir() + "/plants/" + currentPlant.getPlantId() +
-                            PT_FILE_EXTENSION);
-                    email(PlantTrackerUi.this, "", "", "Plant Tracker Export", "Plant Tracker Export",
-                            files);
-                } else {
-                    ArrayList<Plant> allPlants = tracker.getAllPlants();
-                    ArrayList<String> files = new ArrayList<>();
-                    String filesDir = getFilesDir().toString();
-                    for (Plant p : allPlants) {
-                        files.add(filesDir + "/plants/" + p.getPlantId() + PT_FILE_EXTENSION);
-                    }
-                    email(PlantTrackerUi.this, "", "", "Plant Tracker Export", "Plant Tracker Export",
-                            files);
-                }
-                break;
-
-            case R.id.nav_import:
-                presentImportDialog();
                 break;
 
             default:
@@ -1355,118 +1338,9 @@ public class PlantTrackerUi extends AppCompatActivity
         }
     }
 
-    /* Import / export */
-    private void presentImportDialog() {
-        File downloadDirectory = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS);
-
-        final ArrayList<String> fileNames = new ArrayList<>();
-
-        final File[] files = downloadDirectory.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                if (name.endsWith(PT_FILE_EXTENSION)) {
-                    // build list of file names while we're at it...
-                    fileNames.add(name);
-                    return true;
-                }
-
-                return false;
-            }
-        });
-
-        final Dialog dialog = new Dialog(PlantTrackerUi.this);
-        dialog.setContentView(R.layout.dialog_import_plants);
-
-        final ListView importPlantsListView = (ListView) dialog.findViewById(
-                R.id.importPlantsListView);
-
-        final ArrayList<String> selectedFiles = new ArrayList<>();
-
-        importPlantsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        importPlantsListView.setAdapter(new ArrayAdapter<String>(
-                getBaseContext(), android.R.layout.simple_list_item_1, fileNames) {
-
-            public void onItemClick(AdapterView<?> adapter, View arg1, int index, long arg3) {
-                if (selectedFiles.contains(fileNames.get(index))) {
-                    selectedFiles.remove(fileNames.get(index));
-                } else {
-                    selectedFiles.add(fileNames.get(index));
-                }
-            }
-        });
-
-        Button okButton = (Button) dialog.findViewById(R.id.okButton);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ArrayList<File> fileImportCollection = new ArrayList<File>();
-                for (String fileName : selectedFiles) {
-                    for (File f : files) {
-                        if (f.getName().equals(fileName)) {
-                            fileImportCollection.add(f);
-                        }
-                    }
-                }
-
-                tracker.importPlants(fileImportCollection);
-
-                dialog.dismiss();
-            }
-        });
-
-        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        try {
-            dialog.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // email files
-    public void email(Context context, String emailTo, String emailCC,
-                      String subject, String emailText, List<String> filePaths) {
-
-        //need to "send multiple" to get more than one attachment
-        final Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-
-        emailIntent.setType("text/plain");
-        emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{emailTo});
-        emailIntent.putExtra(android.content.Intent.EXTRA_CC, new String[]{emailCC});
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        emailIntent.putExtra(Intent.EXTRA_TEXT, emailText);
-
-        //has to be an ArrayList
-        ArrayList<Uri> uris = new ArrayList<Uri>();
-
-        //convert from paths to Android friendly Parcelable Uri's
-        for (String file : filePaths) {
-            File fileIn = new File(file);
-            Uri u = FileProvider.getUriForFile(context, "com.nonsense.planttracker.provider",
-                    fileIn);
-
-            uris.add(u);
-        }
-
-        emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-        context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-    }
-
     /* Begin IPlantTrackerListener */
     @Override
     public void plantUpdated() {
-        refreshListView();
-    }
-
-    @Override
-    public void plantsUpdated() {
         refreshListView();
     }
 
