@@ -188,6 +188,7 @@ public class CreateRecordType extends AppCompatActivity {
                         default:
                             summaryTemplateEditText.append("{" + name + "}");
                             insertDataPointSpinner.setSelection(0);
+                            record.summaryTemplate = summaryTemplateEditText.getText().toString();
                             break;
                     }
                 }
@@ -236,9 +237,8 @@ public class CreateRecordType extends AppCompatActivity {
                         break;
 
                     case "Double":
-                        defaultValueEditText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                        defaultValueEditText.setKeyListener(DigitsKeyListener.getInstance(
-                                false,true));
+                        defaultValueEditText.setInputType(
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                         break;
                 }
             }
