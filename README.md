@@ -21,5 +21,5 @@ __Future plans (in no particular order)__:
 * Desktop implementation for managing plants
 
 __IMPORTANT__:
-Android Oreo required.  Once I am closer to 1.0 I will work to lower the minimum API level.
-For a short period of time, installations of updates may clear current plant data or tracker settings.
+* Android Oreo required.  Once I am closer to 1.0 I will work to lower the minimum API level.
+* For a short period of time, installations of updates may clear current plant data or tracker settings. I am sorry! Fixing this is a priority!!
