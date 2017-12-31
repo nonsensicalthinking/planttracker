@@ -30,6 +30,7 @@ import java.util.Calendar;
 import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -476,16 +477,22 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         uiListener = listener;
     }
 
-    public void removeCustomEvent(String key) {
-        getPlantTrackerSettings().removeAutoCompleteKeyValuePair(key);
-
-        settingsChanged();
-    }
-
     public void removePlantState(String key)    {
         getPlantTrackerSettings().removeStateAutoComplete(key);
 
         settingsChanged();
+    }
+
+    public void addGenericRecordTemplate(GenericRecord record)  {
+        settings.addGenericRecordTemplate(record);
+    }
+
+    public Set<String> getGenericRecordTypes()   {
+        return settings.getGenericRecordNames();
+    }
+
+    public GenericRecord getGenericRecordTemplate(String name)  {
+        return settings.getGenericRecordTemplate(name);
     }
 }
 

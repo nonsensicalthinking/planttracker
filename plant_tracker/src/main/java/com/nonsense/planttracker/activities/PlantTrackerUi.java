@@ -44,7 +44,6 @@ import android.widget.TimePicker;
 import android.widget.ViewSwitcher;
 
 import com.nonsense.planttracker.R;
-import com.nonsense.planttracker.tracker.adapters.CustomEventTileArrayAdapter;
 import com.nonsense.planttracker.tracker.adapters.GroupTileArrayAdapter;
 import com.nonsense.planttracker.tracker.adapters.PlantStateTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
@@ -56,8 +55,6 @@ import com.nonsense.planttracker.tracker.impl.PlantActions.PlantAction;
 import com.nonsense.planttracker.tracker.impl.PlantTracker;
 import com.nonsense.planttracker.tracker.interf.IDialogHandler;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
-
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -76,6 +73,9 @@ public class PlantTrackerUi extends AppCompatActivity
     private static final int TAKE_PICTURES = 0;
     private static final int IMAGE_CHOOSER_INTENT = 1;
     private static final int GENERIC_RECORD_INTENT = 25;
+    private static final int CREATE_GENERIC_RECORD_TEMPLATE_INTENT = 26;
+
+    private static final String CREATE_NEW_GENERIC_RECORD_OPTION = "Create new record type...";
 
     private ViewSwitcher switcher;
     private LinearLayout allPlantsView;
@@ -349,73 +349,6 @@ public class PlantTrackerUi extends AppCompatActivity
         });
     }
 
-    private void fillViewWithCustomEvents() {
-        toolbar.setSubtitle("Custom Event Management");
-
-        showFloatingActionButton();
-
-        currentListView = ListDisplay.CustomEvents;
-
-        setFloatingButtonTextAndAction(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO create new recordable activity
-            }
-        });
-
-        ArrayList<Map.Entry<String, String>> events = new ArrayList<>();
-        events.addAll(tracker.getPlantTrackerSettings().getAutoCompleteCustomEventEntrySet());
-
-        final ArrayList<Map.Entry<String, String>> fEvents = events;
-
-        CustomEventTileArrayAdapter adapter = new CustomEventTileArrayAdapter(getBaseContext(),
-                R.layout.custom_event_list_tile, events);
-
-        setEmptyViewCaption("No Custom Events Found");
-
-        plantListView.setAdapter(adapter);
-
-        plantListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
-                builder.setTitle(R.string.app_name);
-                builder.setMessage("Are you sure you want to delete this custom event?");
-                builder.setIcon(R.drawable.ic_growing_plant);
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        tracker.getPlantTrackerSettings().removeAutoCompleteKeyValuePair(
-                                fEvents.get(position).getKey());
-
-                        tracker.removeCustomEvent(fEvents.get(position).getKey());
-
-                        fillViewWithCustomEvents();
-                        dialog.dismiss();
-                    }
-                });
-
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-
-                AlertDialog alert = builder.create();
-                alert.show();
-
-                return true;
-            }
-        });
-
-        plantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // TODO display custom event information view and
-                // TODO a way to add more
-            }
-        });
-    }
-
     private void fillViewWithPlantPhases() {
         toolbar.setSubtitle("Plant Phase Management");
 
@@ -488,10 +421,9 @@ public class PlantTrackerUi extends AppCompatActivity
         fromSeedTextView.setText((currentPlant.isFromSeed() ? R.string.seed : R.string.clone));
 
         ArrayList<String> eventOptions = new ArrayList<>();
-        eventOptions.add("Add Event");
-        eventOptions.add("Change State");
-        eventOptions.add("Water");
-        eventOptions.add("Feed");
+        eventOptions.add("Select new record type...");
+        eventOptions.add(CREATE_NEW_GENERIC_RECORD_OPTION);
+        eventOptions.addAll(tracker.getGenericRecordTypes());
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, eventOptions);
@@ -506,17 +438,19 @@ public class PlantTrackerUi extends AppCompatActivity
                 String selectedItem = adapter.getItem(position);
 
                 switch (selectedItem) {
-                    case "Change State":
-                        launchCollectPlantDataIntent(currentPlant.getPhaseChangeRecord(),
-                                true);
-                        break;
-                    case "Water":
-                        launchCollectPlantDataIntent(currentPlant.getWaterPlantRecord(),
-                                true);
+                    case "Select new record type...":
                         break;
 
-                    case "Feed":
-                        launchCollectPlantDataIntent(currentPlant.getFeedPlantRecord(),
+                    case CREATE_NEW_GENERIC_RECORD_OPTION:
+                        Intent intent = new Intent(PlantTrackerUi.this,
+                                CreateRecordType.class);
+                        intent.putExtra("genericRecord", new GenericRecord(""));
+
+                        startActivityForResult(intent, CREATE_GENERIC_RECORD_TEMPLATE_INTENT);
+                        break;
+
+                    default:
+                        launchCollectPlantDataIntent(tracker.getGenericRecordTemplate(selectedItem),
                                 true);
                         break;
                 }
@@ -561,18 +495,6 @@ public class PlantTrackerUi extends AppCompatActivity
             parentPlantTableRow.setVisibility(View.GONE);
         }
 
-        PlantRecordableTileArrayAdapter plantRecordableAdapter = new PlantRecordableTileArrayAdapter(
-                getBaseContext(), R.layout.plant_recordable_tile,
-                currentPlant.getAllGenericRecords(), currentPlant);
-
-        recordableEventListView.setAdapter(plantRecordableAdapter);
-        recordableEventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                presentRecordableEventSummaryDialog(i);
-            }
-        });
-
         long days = currentPlant.getDaysFromStateStart();
         if (days > 0) {
             daysSinceStateStartTextView.setText("" + days);
@@ -588,6 +510,18 @@ public class PlantTrackerUi extends AppCompatActivity
         } else {
             weeksSinceStateStartTextView.setText("--");
         }
+
+        PlantRecordableTileArrayAdapter plantRecordableAdapter = new PlantRecordableTileArrayAdapter(
+                getBaseContext(), R.layout.plant_recordable_tile,
+                currentPlant.getAllGenericRecords(), currentPlant);
+
+        recordableEventListView.setAdapter(plantRecordableAdapter);
+        recordableEventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                presentRecordableEventSummaryDialog(i);
+            }
+        });
 
         recordableEventListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -782,12 +716,13 @@ public class PlantTrackerUi extends AppCompatActivity
                 break;
 
             case R.id.nav_manage_events:
-                if (switcher.getCurrentView() != allPlantsView) {
+/*                if (switcher.getCurrentView() != allPlantsView) {
                     switcherToPrevious();
                     fillViewWithCustomEvents();
                 } else {
                     fillViewWithCustomEvents();
                 }
+  */
                 break;
 
             case R.id.nav_manage_states:
@@ -1074,12 +1009,15 @@ public class PlantTrackerUi extends AppCompatActivity
                 case Plants:
                     fillViewWithPlants();
                     break;
+
                 case Groups:
                     fillViewWithGroups();
                     break;
+
                 case CustomEvents: // custom events
-                    fillViewWithCustomEvents();
+                    //fillViewWithCustomEvents();
                     break;
+
                 case Phases: // plant phase
                     fillViewWithPlantPhases();
                     break;
@@ -1331,6 +1269,17 @@ public class PlantTrackerUi extends AppCompatActivity
                     } else {
                         action.runAction(currentPlant);
                     }
+
+                    fillIndividualPlantView();
+                }
+                break;
+
+            case CREATE_GENERIC_RECORD_TEMPLATE_INTENT:
+                if (resultCode == Activity.RESULT_OK)   {
+                    GenericRecord record = (GenericRecord)returnedIntent.getSerializableExtra(
+                            "genericRecord");
+
+                    tracker.addGenericRecordTemplate(record);
 
                     fillIndividualPlantView();
                 }

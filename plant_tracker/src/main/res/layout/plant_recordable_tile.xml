@@ -33,7 +33,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="Fri, Mar 03, 2024"
             android:textColor="@color/colorPrimary" />
 
     </LinearLayout>

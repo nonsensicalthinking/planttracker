@@ -32,7 +32,8 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".activities.CollectPlantData"></activity>
+        <activity android:name=".activities.CollectPlantData" />
+        <activity android:name=".activities.CreateRecordType"></activity>
     </application>
 
 </manifest>

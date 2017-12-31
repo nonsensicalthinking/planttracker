@@ -19,72 +19,17 @@ public class PlantTrackerSettings implements Serializable {
     private static final long serialVersionUID = 6952312342L;
 
     private transient ISettingsChangedListener listener;
-    private ArrayList<String> keys;
-    private TreeMap<String, String> genericEventKeyValuePairs;
+    private TreeMap<String, GenericRecord> genericRecordTemplates;
     private ArrayList<Group> groups;
     private ArrayList<String> stateAutoComplete;
 
-
-    public PlantTrackerSettings()   {
-        keys = new ArrayList<String>();
-        genericEventKeyValuePairs = new TreeMap<String,String>();
+    PlantTrackerSettings()   {
+        genericRecordTemplates = new TreeMap<>();
         groups = new ArrayList<Group>();
         stateAutoComplete = new ArrayList<String>();
     }
 
-    public ArrayList<String> getAutoCompleteKeys()  {
-        return keys;
-    }
-
-    public ArrayList<String> getAutoCompleteValues() {
-        ArrayList<String> list = new ArrayList<>();
-        list.addAll(genericEventKeyValuePairs.values());
-
-        return list;
-    }
-
-    public Set<Map.Entry<String, String>> getAutoCompleteCustomEventEntrySet() {
-        return genericEventKeyValuePairs.entrySet();
-    }
-
-    public boolean addAutoCompleteKeyValuePair(String key, String value)   {
-        if (genericEventKeyValuePairs.containsKey(key) ||
-                genericEventKeyValuePairs.containsValue(value)) {
-            return false;
-        }
-
-        keys.add(key);
-        genericEventKeyValuePairs.put(key, value);
-        settingsChanged();
-
-        return true;
-    }
-
-    public boolean removeAutoCompleteKeyValuePair(String key)   {
-        if (genericEventKeyValuePairs.containsKey(key)) {
-            genericEventKeyValuePairs.remove(key);
-            return true;
-        }
-
-        return false;
-    }
-
-    public String getAutoCompleteValueForKey(String key)  {
-        return genericEventKeyValuePairs.get(key);
-    }
-
-    public String getAutoCompleteKeyForValue(String value)  {
-        for(Map.Entry<String, String> entry : genericEventKeyValuePairs.entrySet()) {
-            if (entry.getValue().equals(value)) {
-                return entry.getKey();
-            }
-        }
-
-        return null;
-    }
-
-
-    public void setListener(ISettingsChangedListener l) {
+    void setListener(ISettingsChangedListener l) {
         listener = l;
     }
 
@@ -92,7 +37,7 @@ public class PlantTrackerSettings implements Serializable {
         listener.settingsChanged();
     }
 
-    public void addGroup(Group g)  {
+    void addGroup(Group g)  {
         if (!groups.contains(g))    {
             groups.add(g);
         }
@@ -100,17 +45,17 @@ public class PlantTrackerSettings implements Serializable {
         settingsChanged();
     }
 
-    public void removeGroup(long groupId)   {
+    void removeGroup(long groupId)   {
         Group g = new Group(groupId, "");
         removeGroup(g);
     }
 
-    public void removeGroup(Group g)   {
+    private void removeGroup(Group g)   {
         groups.remove(g);
         settingsChanged();
     }
 
-    public Group getGroup(long groupId) throws GroupNotFoundException {
+    Group getGroup(long groupId) throws GroupNotFoundException {
         Group g = new Group(groupId, null);
         if (groups.contains(g)) {
             return groups.get(groups.indexOf(g));
@@ -119,7 +64,7 @@ public class PlantTrackerSettings implements Serializable {
         throw new GroupNotFoundException("Unable to locate group with id: " + groupId);
     }
 
-    public final ArrayList<Group> getGroups() {
+    final ArrayList<Group> getGroups() {
         return groups;
     }
 
@@ -141,8 +86,46 @@ public class PlantTrackerSettings implements Serializable {
         return stateAutoComplete;
     }
 
-    public void removeStateAutoComplete(String key) {
+    void removeStateAutoComplete(String key) {
         stateAutoComplete.remove(key);
     }
-}
 
+    public void addGenericRecordTemplate(GenericRecord record)  {
+        if (genericRecordTemplates.containsKey(record.displayName)) {
+            genericRecordTemplates.remove(record.displayName);
+        }
+
+        genericRecordTemplates.put(record.displayName, record);
+
+        settingsChanged();
+    }
+
+    public void removeGenericRecordTemplate(GenericRecord record) {
+        if (genericRecordTemplates.containsKey(record.displayName)) {
+            genericRecordTemplates.remove(record.displayName);
+        }
+
+        settingsChanged();
+    }
+
+    Set<String> getGenericRecordNames() {
+        if (genericRecordTemplates == null) {
+            genericRecordTemplates = new TreeMap<>();
+        }
+
+        return genericRecordTemplates.keySet();
+    }
+
+    GenericRecord getGenericRecordTemplate(String name)  {
+        try {
+            GenericRecord record = genericRecordTemplates.get(name);
+
+            return (GenericRecord)record.clone();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+}

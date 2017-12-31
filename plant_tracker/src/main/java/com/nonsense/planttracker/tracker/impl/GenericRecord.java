@@ -11,13 +11,14 @@ import java.util.regex.Pattern;
  * Created by Derek Brooks on 12/23/2017.
  */
 
-public class GenericRecord implements Serializable {
+public class GenericRecord implements Serializable, Cloneable {
 
     public String displayName;
     public Calendar time;
     public String notes;
     public TreeMap<String, Object> dataPoints;
     public String summaryTemplate;
+    public boolean showNotes;
 
     public GenericRecord(String displayName)  {
         this.displayName = displayName;
@@ -68,10 +69,34 @@ public class GenericRecord implements Serializable {
             }
         }
 
-        if (notes != null)  {
+        if (showNotes && notes != null)  {
             summary += ", Notes: " + notes;
         }
 
         return summary;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        GenericRecord record = (GenericRecord)super.clone();
+
+        record.dataPoints = new TreeMap<>();
+        for(String key : dataPoints.keySet())   {
+            Object value = dataPoints.get(key);
+
+            if (value != null)  {
+                if( value instanceof String )   {
+                    record.setDataPoint(key, new String((String)record.dataPoints.get(key)));
+                }
+                else if( value instanceof Integer ) {
+                    record.setDataPoint(key, Integer.valueOf((Integer)record.dataPoints.get(key)));
+                }
+                else if( value instanceof Double )    {
+                    record.setDataPoint(key, Double.valueOf((Double)record.dataPoints.get(key)));
+                }
+            }
+        }
+
+        return super.clone();
     }
 }

@@ -156,6 +156,7 @@ public class CollectPlantData extends AppCompatActivity {
         TextView headingTextView = new TextView(this);
         headingTextView.setTextSize(34);
         headingTextView.setTypeface(Typeface.DEFAULT_BOLD);
+
         headingTextView.setText(record.displayName);
         heading.addView(headingTextView);
         tab1.addView(heading);
