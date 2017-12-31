@@ -148,6 +148,15 @@ public class CreateRecordType extends AppCompatActivity {
     private void bindSummaryTemplateInputs()    {
         final EditText summaryTemplateEditText = (EditText)findViewById(
                 R.id.summaryTemplateEditText);
+
+        summaryTemplateEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                record.summaryTemplate = summaryTemplateEditText.getText().toString();
+                return false;
+            }
+        });
+
         final Spinner insertDataPointSpinner = (Spinner)findViewById(R.id.insertDataPointSpinner);
 
         final ArrayList<String> dataPoints = new ArrayList<String>();

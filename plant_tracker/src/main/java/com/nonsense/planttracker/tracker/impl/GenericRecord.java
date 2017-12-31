@@ -80,23 +80,6 @@ public class GenericRecord implements Serializable, Cloneable {
     public Object clone() throws CloneNotSupportedException {
         GenericRecord record = (GenericRecord)super.clone();
 
-        record.dataPoints = new TreeMap<>();
-        for(String key : dataPoints.keySet())   {
-            Object value = dataPoints.get(key);
-
-            if (value != null)  {
-                if( value instanceof String )   {
-                    record.setDataPoint(key, new String((String)record.dataPoints.get(key)));
-                }
-                else if( value instanceof Integer ) {
-                    record.setDataPoint(key, Integer.valueOf((Integer)record.dataPoints.get(key)));
-                }
-                else if( value instanceof Double )    {
-                    record.setDataPoint(key, Double.valueOf((Double)record.dataPoints.get(key)));
-                }
-            }
-        }
-
-        return super.clone();
+        return record;
     }
 }
