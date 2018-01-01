@@ -1,5 +1,6 @@
 package com.nonsense.planttracker.tracker.impl;
 
+import com.google.gson.annotations.Expose;
 import com.nonsense.planttracker.tracker.exceptions.GroupNotFoundException;
 import com.nonsense.planttracker.tracker.interf.ISettingsChangedListener;
 
@@ -18,7 +19,9 @@ import java.util.TreeMap;
 public class PlantTrackerSettings implements Serializable {
     private static final long serialVersionUID = 6952312342L;
 
+    @Expose(serialize = false, deserialize = false)
     private transient ISettingsChangedListener listener;
+
     private TreeMap<String, GenericRecord> genericRecordTemplates;
     private ArrayList<Group> groups;
     private ArrayList<String> stateAutoComplete;

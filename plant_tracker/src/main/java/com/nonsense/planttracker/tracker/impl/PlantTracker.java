@@ -47,7 +47,7 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
 
     private static final String FILE_EXTENSION = ".json";
     private static final String SETTINGS_FOLDER = "/settings/";
-    private static final String SETTINGS_FILE = "tracker_settings.ser";
+    private static final String SETTINGS_FILE = "tracker_settings.json";
     private static final String PLANTS_FOLDER = "/plants/";
 
 
@@ -297,12 +297,15 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
 
         try
         {
-            FileOutputStream fos = new FileOutputStream(plantFolderPath +
-                    SETTINGS_FOLDER + SETTINGS_FILE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(settings);
-            oos.close();
-            fos.close();
+            String filePath = plantFolderPath + SETTINGS_FOLDER + SETTINGS_FILE;
+            BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
+            Gson g = new Gson();
+            String json = g.toJson(settings);
+
+            System.out.println("settings json: " + json);
+
+            bw.write(json);
+            bw.close();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -310,22 +313,27 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     }
 
     private void loadPlantTrackerSettings() {
-        // search plants folder for plant files
+        String filePath = plantFolderPath + SETTINGS_FOLDER + SETTINGS_FILE;
+
         try
         {
-            FileInputStream fis = new FileInputStream(plantFolderPath + SETTINGS_FOLDER +
-                    SETTINGS_FILE);
-            ObjectInputStream ois = new ObjectInputStream(fis);
+            Plant p = new Plant();
+            BufferedReader br = new BufferedReader(new FileReader(filePath));
+            Gson g = new Gson();
 
-            PlantTrackerSettings p = (PlantTrackerSettings)ois.readObject();
-            p.setListener(this);
-            settings = p;
+            Type settingsType = new TypeToken<PlantTrackerSettings>(){}.getType();
+
+            StringBuilder sb = new StringBuilder();
+            while(br.ready())   {
+                sb.append(br.readLine());
+            }
+
+            settings = g.fromJson(sb.toString(), settingsType);
         }
         catch (Exception e) {
             e.printStackTrace();
-            File f = new File(plantFolderPath + SETTINGS_FOLDER + SETTINGS_FILE);
-            f.delete();
-            System.out.println("Deleted invalid settings data: " + f.getName());
+            File f = new File(filePath);
+            // f.delete();
         }
     }
 
