@@ -1,10 +1,7 @@
 package com.nonsense.planttracker.tracker.adapters;
 
 import android.content.Context;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -13,14 +10,9 @@ import android.widget.TextView;
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Plant;
-import com.nonsense.planttracker.tracker.impl.Recordable;
-import com.nonsense.planttracker.tracker.impl.Utility;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Derek Brooks on 7/1/2017.
