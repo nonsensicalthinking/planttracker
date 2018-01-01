@@ -19,6 +19,9 @@ public class GenericRecord implements Serializable, Cloneable {
     public TreeMap<String, Object> dataPoints;
     public String summaryTemplate;
     public boolean showNotes;
+    public int weeksSincePhase;
+    public int weeksSinceStart;
+    public int phaseCount;
 
     public GenericRecord(String displayName)  {
         this.displayName = displayName;

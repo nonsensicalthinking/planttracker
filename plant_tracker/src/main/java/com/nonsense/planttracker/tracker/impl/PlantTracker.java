@@ -58,20 +58,58 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     public PlantTracker(String plantFolderPath)   {
         this.plantFolderPath = plantFolderPath;
 
+        plants = new ArrayList<>();
+        archivedPlants = new ArrayList<>();
+        activePlants = new ArrayList<>();
+
+        if (!loadSettings())    {
+            System.err.println("Unable to load tracker settings, created new settings file.");
+        }
+
+        loadPlants();
+
+        initGenericRecords();
+    }
+
+    private boolean loadSettings() {
         File settingsFile = new File(plantFolderPath + SETTINGS_FOLDER + SETTINGS_FILE);
         if (!settingsFile.exists())  {
             settings = new PlantTrackerSettings();
             settings.setListener(this);
             savePlantTrackerSettings();
-       }
+            return false;
+        }
         else    {
             loadPlantTrackerSettings();
         }
 
-        plants = new ArrayList<>();
-        archivedPlants = new ArrayList<>();
-        activePlants = new ArrayList<>();
-        loadPlants();
+        return true;
+    }
+
+    private void initGenericRecords()   {
+        GenericRecord record = null;
+
+        if (settings.getGenericRecordTemplate("Changing Phase") == null)    {
+            record = new GenericRecord("Changing Phase");
+            record.setDataPoint("Phase Name", new String());
+            record.summaryTemplate = "Plant entered a new phase, {Phase Name}";
+            settings.addGenericRecordTemplate(record);
+        }
+
+        if (settings.getGenericRecordTemplate("Feeding") == null)   {
+            record = new GenericRecord("Feeding");
+            record.setDataPoint("pH", new Double(6.5));
+            record.setDataPoint("Food Strength", new Double(0.5));
+            record.summaryTemplate = "pH of food {pH} with strength of {Food Strength}";
+            settings.addGenericRecordTemplate(record);
+        }
+
+        if (settings.getGenericRecordTemplate("Water") == null) {
+            record = new GenericRecord("Water");
+            record.setDataPoint("pH", new Double(6.5));
+            record.summaryTemplate = "pH of water {pH}";
+            settings.addGenericRecordTemplate(record);
+        }
     }
 
     public Iterator<Plant> getIteratorForAllPlants()    {
@@ -132,7 +170,6 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         deletePlantFileData(p);
         plants.remove(p);
     }
-
 
     public void saveAllPlants()    {
         File folder = new File(plantFolderPath);

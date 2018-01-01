@@ -53,6 +53,7 @@ import com.nonsense.planttracker.tracker.adapters.PlantTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.Plant;
 import com.nonsense.planttracker.tracker.impl.PlantActions.PlantAction;
 import com.nonsense.planttracker.tracker.impl.PlantTracker;
+import com.nonsense.planttracker.tracker.impl.Utility;
 import com.nonsense.planttracker.tracker.interf.IDialogHandler;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 
@@ -171,13 +172,13 @@ public class PlantTrackerUi extends AppCompatActivity
     }
 
     private void bindIndividualPlantView() {
-        plantNameTextView = (TextView) findViewById(R.id.plantNameTextView);
-        daysSinceGrowStartTextView = (TextView) findViewById(R.id.daysSinceGrowStartTextView);
-        weeksSinceGrowStartTextView = (TextView) findViewById(R.id.weeksSinceGrowStartTextView);
+        plantNameTextView = (TextView)findViewById(R.id.plantNameTextView);
+        daysSinceGrowStartTextView = (TextView)findViewById(R.id.daysSinceGrowStartTextView);
+        weeksSinceGrowStartTextView = (TextView)findViewById(R.id.weeksSinceGrowStartTextView);
         fromSeedTextView = (TextView) findViewById(R.id.fromSeedTextView);
-        recordableEventListView = (ListView) findViewById(R.id.recordableEventListView);
-        parentPlantTableRow = (TableRow) findViewById(R.id.parentPlantTableRow);
-        addEventSpinner = (Spinner) findViewById(R.id.addEventSpinner);
+        recordableEventListView = (ListView)findViewById(R.id.recordableEventListView);
+        parentPlantTableRow = (TableRow)findViewById(R.id.parentPlantTableRow);
+        addEventSpinner = (Spinner)findViewById(R.id.addEventSpinner);
 
         stateNameTextView = (TextView) findViewById(R.id.stateNameTextView);
         stateNameTextView.setOnClickListener(new View.OnClickListener() {
@@ -416,14 +417,31 @@ public class PlantTrackerUi extends AppCompatActivity
         hideFloatingActionButton();
 
         plantNameTextView.setText(currentPlant.getPlantName());
-        daysSinceGrowStartTextView.setText("" + currentPlant.getDaysFromStart());
-        weeksSinceGrowStartTextView.setText("" + currentPlant.getWeeksFromStart());
+
+        daysSinceGrowStartTextView.setText(""+Utility.calcDaysFromTime(
+                currentPlant.getPlantStartDate(), Calendar.getInstance()));
+        weeksSinceGrowStartTextView.setText(""+Utility.calcWeeksFromTime(
+                currentPlant.getPlantStartDate(), Calendar.getInstance()));
+
+
+        if (currentPlant.getPlantData().currentStateStartDate == null)  {
+            daysSinceStateStartTextView.setText("--");
+            weeksSinceStateStartTextView.setText("--");
+        }
+        else {
+            daysSinceStateStartTextView.setText("" + Utility.calcDaysFromTime(
+                    currentPlant.getPlantData().currentStateStartDate, Calendar.getInstance()));
+
+            weeksSinceStateStartTextView.setText("" + Utility.calcWeeksFromTime(
+                    currentPlant.getPlantData().currentStateStartDate, Calendar.getInstance()));
+        }
+
         fromSeedTextView.setText((currentPlant.isFromSeed() ? R.string.seed : R.string.clone));
 
         ArrayList<String> eventOptions = new ArrayList<>();
         eventOptions.add("Select new record type...");
-        eventOptions.add(CREATE_NEW_GENERIC_RECORD_OPTION);
         eventOptions.addAll(tracker.getGenericRecordTypes());
+        eventOptions.add(CREATE_NEW_GENERIC_RECORD_OPTION);
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, eventOptions);
@@ -493,22 +511,6 @@ public class PlantTrackerUi extends AppCompatActivity
             parentPlantTableRow.setVisibility(View.VISIBLE);
         } else {
             parentPlantTableRow.setVisibility(View.GONE);
-        }
-
-        long days = currentPlant.getDaysFromStateStart();
-        if (days > 0) {
-            daysSinceStateStartTextView.setText("" + days);
-        } else {
-            daysSinceStateStartTextView.setText("--");
-        }
-
-        long weeks = currentPlant.getWeeksFromStateStart();
-        if (weeks > 0) {
-            weeksSinceStateStartTextView.setText("" + currentPlant.getWeeksFromStateStart());
-        } else if(weeks == 0) {
-            weeksSinceStateStartTextView.setText("1");
-        } else {
-            weeksSinceStateStartTextView.setText("--");
         }
 
         PlantRecordableTileArrayAdapter plantRecordableAdapter = new PlantRecordableTileArrayAdapter(

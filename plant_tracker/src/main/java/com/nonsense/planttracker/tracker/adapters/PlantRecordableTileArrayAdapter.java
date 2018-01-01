@@ -14,10 +14,13 @@ import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Plant;
 import com.nonsense.planttracker.tracker.impl.Recordable;
+import com.nonsense.planttracker.tracker.impl.Utility;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Derek Brooks on 7/1/2017.
@@ -43,7 +46,6 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         View v = convertView;
 
         if (v == null) {
@@ -52,26 +54,31 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             v = vi.inflate(viewResourceId, null);
         }
 
-        Calendar plantStartDate = currentPlant.getPlantStartDate();
-        //Calendar flowerStartDate = currentPlant.getFlowerStartDate();
-
         GenericRecord p = getItem(position);
-        long growWeekCount = 96969696;//FIXME
-
-        String weekDisplay = "";
-        weekDisplay = "(W" + growWeekCount + ") ";
-
         if (p != null) {
+            // Build phase string
+            int phaseCount = p.phaseCount;
+            int stateWeekCount = p.weeksSincePhase;
+            int growWeekCount = p.weeksSinceStart;
+
+            String phaseDisplay = "[P" + phaseCount + "Wk." + stateWeekCount + "/" +
+                    growWeekCount + "]";
+
+            // date/relative weeks
+            TextView dateTextView = (TextView)v.findViewById(R.id.dateTextView);
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
+            dateTextView.setText(sdf.format(p.time.getTime()) + " " +
+                    ((phaseDisplay == null) ? "" : phaseDisplay));
+
+            // display name
             TextView eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
             eventTypeTextView.setText(p.displayName);
 
+            // summary text
             TextView recordableSummaryTextView = (TextView)v.findViewById(
                     R.id.recordableSummaryTextView);
             recordableSummaryTextView.setText(p.getSummary());
 
-            TextView dateTextView = (TextView)v.findViewById(R.id.dateTextView);
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
-            dateTextView.setText(sdf.format(p.time.getTime()) + " [Wk.3/6]");
         }
 
         return v;

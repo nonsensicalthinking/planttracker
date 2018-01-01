@@ -115,51 +115,43 @@ public class Plant {
         notifyUpdateListeners();
     }
 
+    // Days//Weeks//Counts
+
     public long getDaysFromStart()   {
-        return calcDaysFromTime(plantData.startDate);
+        return getDaysFromStart(Calendar.getInstance());
+    }
+
+    public long getDaysFromStart(Calendar c)    {
+        return Utility.calcDaysFromTime(plantData.startDate, c);
     }
 
     public long getWeeksFromStart()   {
-        return calcWeeksFromTime(plantData.startDate);
+        return getWeeksFromStart(plantData.startDate);
     }
 
-    public long calcDaysFromTime(Calendar start)    {
-        Calendar end = Calendar.getInstance();
-
-        Date startDate = start.getTime();
-        Date endDate = end.getTime();
-        long startTime = startDate.getTime();
-        long endTime = endDate.getTime();
-        long diffTime = endTime - startTime;
-        long diffDays = diffTime / (1000 * 60 * 60 * 24);
-
-        return diffDays + 1;    // shift to 1 based
-    }
-
-    public long calcWeeksFromTime(Calendar start)   {
-        Calendar end = Calendar.getInstance();
-
-        Date startDate = start.getTime();
-        Date endDate = end.getTime();
-        long startTime = startDate.getTime();
-        long endTime = endDate.getTime();
-        long diffTime = endTime - startTime;
-        long diffDays = diffTime / (1000 * 60 * 60 * 24 * 7);
-
-        return diffDays + 1;    // shift to 1 based
+    public long getWeeksFromStart(Calendar c)   {
+        return Utility.calcWeeksFromTime(plantData.startDate, c);
     }
 
     public long getDaysFromStateStart() {
-        if (plantData.currentStateStartDate != null)  {
-            return calcDaysFromTime(plantData.currentStateStartDate);
+        return getDaysFromStateStart(plantData.currentStateStartDate);
+    }
+
+    public long getDaysFromStateStart(Calendar c)   {
+        if (c != null)  {
+            return Utility.calcDaysFromTime(plantData.currentStateStartDate, c);
         }
 
         return -1;
     }
 
     public long getWeeksFromStateStart()    {
-        if (plantData.currentStateStartDate != null)  {
-            return calcWeeksFromTime(plantData.currentStateStartDate);
+        return getWeeksFromStateStart(plantData.currentStateStartDate);
+    }
+
+    public long getWeeksFromStateStart(Calendar c)    {
+        if (c != null)  {
+            return Utility.calcWeeksFromTime(plantData.currentStateStartDate, c);
         }
 
         return -1;
@@ -169,6 +161,7 @@ public class Plant {
         return plantData.startDate;
     }
 
+    // plant object maintenance
     private void sortEvents()   {
         plantData.genericRecords.sort(new Comparator<GenericRecord>() {
             @Override
@@ -197,12 +190,27 @@ public class Plant {
     }
 
     private void updateSummaryInformation() {
+        Calendar nearestPhaseDate = null;
+        int phaseCount = 0;
+
+        sortEvents();
+
         for(GenericRecord record : plantData.genericRecords)    {
             // set plant phase
             if (record.dataPoints.containsKey("Phase Name")) {
                 plantData.currentStateName = (String)record.dataPoints.get("Phase Name");
                 plantData.currentStateStartDate = record.time;
+                nearestPhaseDate = record.time;
+                phaseCount++;
             }
+
+            if (nearestPhaseDate != null)   {
+                record.phaseCount = phaseCount;
+                record.weeksSincePhase = Utility.calcWeeksFromTime(nearestPhaseDate, record.time);
+                record.weeksSinceStart = Utility.calcWeeksFromTime(getPlantStartDate(),
+                        record.time);
+            }
+
 
             // TODO update other plant summary fields
 
