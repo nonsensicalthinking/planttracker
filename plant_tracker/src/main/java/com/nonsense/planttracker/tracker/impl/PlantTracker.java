@@ -75,13 +75,14 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         File settingsFile = new File(plantFolderPath + SETTINGS_FOLDER + SETTINGS_FILE);
         if (!settingsFile.exists())  {
             settings = new PlantTrackerSettings();
-            settings.setListener(this);
             savePlantTrackerSettings();
             return false;
         }
         else    {
             loadPlantTrackerSettings();
         }
+
+        settings.setListener(this);
 
         return true;
     }
