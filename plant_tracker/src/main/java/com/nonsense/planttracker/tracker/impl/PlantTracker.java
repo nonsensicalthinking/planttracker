@@ -540,6 +540,10 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     public GenericRecord getGenericRecordTemplate(String name)  {
         return settings.getGenericRecordTemplate(name);
     }
+
+    public void removeGenericRecordTemplate(String name)    {
+        settings.removeGenericRecordTemplate(name);
+    }
 }
 
 

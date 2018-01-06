@@ -131,4 +131,9 @@ public class PlantTrackerSettings implements Serializable {
 
         return null;
     }
+
+    void removeGenericRecordTemplate(String name)    {
+        genericRecordTemplates.remove(name);
+        settingsChanged();
+    }
 }
