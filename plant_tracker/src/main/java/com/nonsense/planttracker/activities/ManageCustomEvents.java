@@ -26,11 +26,14 @@ import java.util.ArrayList;
 public class ManageCustomEvents extends AppCompatActivity {
 
     private static final int CREATE_GENERIC_RECORD_TEMPLATE_INTENT = 26;
+    private static final int EDIT_GENERIC_RECORD_TEMPLATE_INTENT = 27;
 
     private PlantTracker tracker;
     private Toolbar toolbar;
     private FloatingActionButton floatingActionButton;
     private ListView customRecordTemplateListView;
+
+    private GenericRecord selectedRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +71,7 @@ public class ManageCustomEvents extends AppCompatActivity {
             }
         });
 
-        ArrayList<String> events = new ArrayList<>();
+        final ArrayList<String> events = new ArrayList<>();
         events.addAll(tracker.getGenericRecordTypes());
 
         final ArrayList<String> fEvents = events;
@@ -113,8 +116,14 @@ public class ManageCustomEvents extends AppCompatActivity {
         customRecordTemplateListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // TODO display custom event information view and
-                // TODO a way to add more
+                Intent intent = new Intent(ManageCustomEvents.this,
+                        CreateRecordType.class);
+                intent.putExtra("genericRecord", tracker.getGenericRecordTemplate(events.get(
+                        position)));
+
+                selectedRecord = tracker.getGenericRecordTemplate(events.get(position));
+
+                startActivityForResult(intent, EDIT_GENERIC_RECORD_TEMPLATE_INTENT);
             }
         });
 
@@ -140,6 +149,24 @@ public class ManageCustomEvents extends AppCompatActivity {
                             "genericRecord");
 
                     tracker.addGenericRecordTemplate(record);
+
+                    fillUi();
+                }
+                break;
+
+            case EDIT_GENERIC_RECORD_TEMPLATE_INTENT:
+                if (resultCode == Activity.RESULT_OK)   {
+                    //TODO save from here, don't wait until we exit the management activity
+                    GenericRecord retRec = (GenericRecord) returnedIntent.getSerializableExtra(
+                            "genericRecord");
+
+                    if (selectedRecord.displayName.equals(retRec.displayName))   {
+                        tracker.addGenericRecordTemplate(retRec);
+                    }
+                    else    {
+                        tracker.removeGenericRecordTemplate(selectedRecord.displayName);
+                        tracker.addGenericRecordTemplate(retRec);
+                    }
 
                     fillUi();
                 }

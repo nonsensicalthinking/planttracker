@@ -35,6 +35,8 @@ public class CreateRecordType extends AppCompatActivity {
     private String selectedDataPointName;
     private DataPointTileArrayAdapter dpta;
 
+    private EditText recordNameEditText;
+    private CheckBox showNotesFieldCheckBox;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +50,8 @@ public class CreateRecordType extends AppCompatActivity {
     }
 
     private void bindUi()   {
-        final EditText recordNameEditText = (EditText)findViewById(R.id.recordNameEditText);
+        recordNameEditText = (EditText)findViewById(R.id.recordNameEditText);
+        recordNameEditText.setText(record.displayName);
         recordNameEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -66,13 +69,15 @@ public class CreateRecordType extends AppCompatActivity {
             }
         });
 
-        final CheckBox showNotesFieldCheckBox = (CheckBox)findViewById(R.id.showNotesFieldCheckBox);
+        showNotesFieldCheckBox = (CheckBox)findViewById(R.id.showNotesFieldCheckBox);
+        showNotesFieldCheckBox.setChecked(record.showNotes);
         showNotesFieldCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 record.showNotes = b;
             }
         });
+
 
         bindDataPointList();
 
@@ -156,6 +161,8 @@ public class CreateRecordType extends AppCompatActivity {
     private void bindSummaryTemplateInputs()    {
         final EditText summaryTemplateEditText = (EditText)findViewById(
                 R.id.summaryTemplateEditText);
+
+        summaryTemplateEditText.setText(record.summaryTemplate);
 
         summaryTemplateEditText.addTextChangedListener(new TextWatcher() {
             @Override
