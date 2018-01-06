@@ -39,18 +39,18 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     private static final String PLANTS_FOLDER = "/plants/";
 
 
-    public PlantTracker()   {
+    public PlantTracker() {
         this("plants/");
     }
 
-    public PlantTracker(String plantFolderPath)   {
+    public PlantTracker(String plantFolderPath) {
         this.plantFolderPath = plantFolderPath;
 
         plants = new ArrayList<>();
         archivedPlants = new ArrayList<>();
         activePlants = new ArrayList<>();
 
-        if (!loadSettings())    {
+        if (!loadSettings()) {
             System.err.println("Unable to load tracker settings, created new settings file.");
         }
 
@@ -61,12 +61,11 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
 
     private boolean loadSettings() {
         File settingsFile = new File(plantFolderPath + SETTINGS_FOLDER + SETTINGS_FILE);
-        if (!settingsFile.exists())  {
+        if (!settingsFile.exists()) {
             settings = new PlantTrackerSettings();
             savePlantTrackerSettings();
             return false;
-        }
-        else    {
+        } else {
             loadPlantTrackerSettings();
         }
 
@@ -75,17 +74,17 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         return true;
     }
 
-    private void initGenericRecords()   {
+    private void initGenericRecords() {
         GenericRecord record = null;
 
-        if (settings.getGenericRecordTemplate("Changing Phase") == null)    {
+        if (settings.getGenericRecordTemplate("Changing Phase") == null) {
             record = new GenericRecord("Changing Phase");
             record.setDataPoint("Phase Name", new String());
             record.summaryTemplate = "Plant entered a new phase, {Phase Name}";
             settings.addGenericRecordTemplate(record);
         }
 
-        if (settings.getGenericRecordTemplate("Feeding") == null)   {
+        if (settings.getGenericRecordTemplate("Feeding") == null) {
             record = new GenericRecord("Feeding");
             record.setDataPoint("pH", new Double(6.5));
             record.setDataPoint("Food Strength", new Double(0.5));
@@ -101,18 +100,18 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         }
     }
 
-    public Iterator<Plant> getIteratorForAllPlants()    {
+    public Iterator<Plant> getIteratorForAllPlants() {
         return plants.iterator();
     }
 
-    public ArrayList<Plant> getAllPlants()  {
+    public ArrayList<Plant> getAllPlants() {
         return plants;
     }
 
-    public ArrayList<Plant> getActivePlants()   {
+    public ArrayList<Plant> getActivePlants() {
         activePlants.clear();
-        for(Plant p : plants)   {
-            if (!p.isArchived())    {
+        for (Plant p : plants) {
+            if (!p.isArchived()) {
                 activePlants.add(p);
             }
         }
@@ -122,7 +121,7 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
 
     public ArrayList<Plant> getArchivedPlants() {
         archivedPlants.clear();
-        for(Plant p : plants)   {
+        for (Plant p : plants) {
             if (p.isArchived()) {
                 archivedPlants.add(p);
             }
@@ -131,18 +130,18 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         return archivedPlants;
     }
 
-    public void addPlant(String plantName, boolean isFromSeed)  {
+    public void addPlant(String plantName, boolean isFromSeed) {
         addPlant(Calendar.getInstance(), plantName, isFromSeed);
     }
 
-    public void addPlant(Calendar c, String plantName, boolean isFromSeed)    {
+    public void addPlant(Calendar c, String plantName, boolean isFromSeed) {
         Plant p = new Plant(c, plantName, isFromSeed);
         p.addUpdateListener(this);
         plants.add(p);
         plantUpdate(p);
     }
 
-    public void addPlant(Calendar c, String plantName, long parentPlantId)  {
+    public void addPlant(Calendar c, String plantName, long parentPlantId) {
         Plant p = new Plant(c, plantName, false);
         p.addUpdateListener(this);
         p.setParentPlantId(parentPlantId);
@@ -155,31 +154,30 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         plants.remove(plantIndex);
     }
 
-    public void removePlant(Plant p)    {
+    public void removePlant(Plant p) {
         deletePlantFileData(p);
         plants.remove(p);
     }
 
-    public void saveAllPlants()    {
+    public void saveAllPlants() {
         File folder = new File(plantFolderPath);
-        if (!folder.exists())   {
+        if (!folder.exists()) {
             folder.mkdir();
         }
 
         // save each plant to a file individually into the plants folder
-        for(Plant p : plants)   {
+        for (Plant p : plants) {
             savePlant(p);
         }
     }
 
-    public void savePlant(Plant p)  {
+    public void savePlant(Plant p) {
         File folder = new File(plantFolderPath + PLANTS_FOLDER);
-        if (!folder.exists())   {
+        if (!folder.exists()) {
             folder.mkdir();
         }
 
-        try
-        {
+        try {
             String filePath = plantFolderPath + PLANTS_FOLDER + p.getPlantId() + FILE_EXTENSION;
             BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
             Gson g = new Gson();
@@ -189,33 +187,31 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
 
             bw.write(json);
             bw.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void loadPlants()    {
+    private void loadPlants() {
         // search plants folder for plant files
         List<String> results = new ArrayList<String>();
         File[] files = new File(plantFolderPath + PLANTS_FOLDER).listFiles();
-        if (files != null)  {
+        if (files != null) {
             for (File file : files) {
                 try {
                     if (file.getName().endsWith(FILE_EXTENSION)) {
                         Plant p = loadPlant(file);
                         attachPlant(p);
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
     }
 
-    private void attachPlant(Plant p)   {
-        if (p == null)  {
+    private void attachPlant(Plant p) {
+        if (p == null) {
             return;
         }
 
@@ -231,16 +227,15 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
 
         if (p.isArchived()) {
             archivedPlants.add(p);
-        }
-        else    {
+        } else {
             activePlants.add(p);
         }
     }
 
-    public boolean importPlants(ArrayList<File> files)   {
-        for(File f : files) {
+    public boolean importPlants(ArrayList<File> files) {
+        for (File f : files) {
             Plant p = loadPlant(f);
-            if (p != null)  {
+            if (p != null) {
                 attachPlant(p);
                 savePlant(p);
             }
@@ -249,19 +244,19 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         return true;
     }
 
-    private Plant loadPlant(File file)    {
+    private Plant loadPlant(File file) {
         String filePath = plantFolderPath + PLANTS_FOLDER + file.getName();
 
-        try
-        {
+        try {
             Plant p = new Plant();
             BufferedReader br = new BufferedReader(new FileReader(filePath));
             Gson g = new Gson();
 
-            Type plantType = new TypeToken<PlantData>(){}.getType();
+            Type plantType = new TypeToken<PlantData>() {
+            }.getType();
 
             StringBuilder sb = new StringBuilder();
-            while(br.ready())   {
+            while (br.ready()) {
                 sb.append(br.readLine());
             }
 
@@ -269,23 +264,21 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
             p.setPlantData(plantData);
 
             return p;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             File f = new File(filePath);
-           // f.delete();
+            // f.delete();
             return null;
         }
     }
 
-    private void savePlantTrackerSettings() {
+    public void savePlantTrackerSettings() {
         File folder = new File(plantFolderPath + SETTINGS_FOLDER);
-        if (!folder.exists())   {
+        if (!folder.exists()) {
             folder.mkdir();
         }
 
-        try
-        {
+        try {
             String filePath = plantFolderPath + SETTINGS_FOLDER + SETTINGS_FILE;
             BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
             Gson g = new Gson();
@@ -295,8 +288,7 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
 
             bw.write(json);
             bw.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -304,35 +296,34 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     private void loadPlantTrackerSettings() {
         String filePath = plantFolderPath + SETTINGS_FOLDER + SETTINGS_FILE;
 
-        try
-        {
+        try {
             Plant p = new Plant();
             BufferedReader br = new BufferedReader(new FileReader(filePath));
             Gson g = new Gson();
 
-            Type settingsType = new TypeToken<PlantTrackerSettings>(){}.getType();
+            Type settingsType = new TypeToken<PlantTrackerSettings>() {
+            }.getType();
 
             StringBuilder sb = new StringBuilder();
-            while(br.ready())   {
+            while (br.ready()) {
                 sb.append(br.readLine());
             }
 
             settings = g.fromJson(sb.toString(), settingsType);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             File f = new File(filePath);
             // f.delete();
         }
     }
 
-    public void deletePlant(Plant p)    {
+    public void deletePlant(Plant p) {
         deletePlantFileData(p);
         plants.remove(p);
     }
 
-    public void deleteAllPlants()    {
-        for(Plant p : plants)   {
+    public void deleteAllPlants() {
+        for (Plant p : plants) {
             deletePlantFileData(p);
         }
 
@@ -341,16 +332,16 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         settingsChanged();
     }
 
-    private void deletePlantFileData(Plant p)   {
+    private void deletePlantFileData(Plant p) {
         File plantFile = new File(plantFolderPath + PLANTS_FOLDER + p.getPlantId() +
                 FILE_EXTENSION);
 
-        if (plantFile.exists() && plantFile.isFile())   {
+        if (plantFile.exists() && plantFile.isFile()) {
             plantFile.delete();
         }
     }
 
-    public PlantTrackerSettings getPlantTrackerSettings()   {
+    public PlantTrackerSettings getPlantTrackerSettings() {
         return settings;
     }
 
@@ -365,8 +356,8 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     }
 
     public Plant getPlantById(long plantId) throws PlantNotFoundException {
-        for(Plant p : plants)   {
-            if (p.getPlantId() == plantId)  {
+        for (Plant p : plants) {
+            if (p.getPlantId() == plantId) {
                 return p;
             }
         }
@@ -374,11 +365,11 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         return null;
     }
 
-    public long addGroup(String groupName)  {
+    public long addGroup(String groupName) {
         return addGroup(System.currentTimeMillis(), groupName);
     }
 
-    private long addGroup(long groupId, String groupName)    {
+    private long addGroup(long groupId, String groupName) {
         Group g = new Group(groupId, groupName);
         settings.addGroup(g);
 
@@ -387,10 +378,10 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         return g.getGroupId();
     }
 
-    public void removeGroup(long groupId)   {
+    public void removeGroup(long groupId) {
         settings.removeGroup(groupId);
-        for (Plant p : getAllPlants())  {
-            if (p.getGroups().remove(groupId))  {
+        for (Plant p : getAllPlants()) {
+            if (p.getGroups().remove(groupId)) {
                 savePlant(p);
             }
         }
@@ -406,7 +397,7 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         uiListener.groupsUpdated();
     }
 
-    public void removeMemberFromGroup(long plantId, long groupId)   {
+    public void removeMemberFromGroup(long plantId, long groupId) {
         Group g = settings.getGroup(groupId);
         Plant p = getPlantById(plantId);
         p.removeGroup(g.getGroupId());
@@ -414,12 +405,12 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         uiListener.groupsUpdated();
     }
 
-    public ArrayList<Group> getGroupsPlantIsNotMemberOf(long plantId)   {
+    public ArrayList<Group> getGroupsPlantIsNotMemberOf(long plantId) {
         Plant p = getPlantById(plantId);
         ArrayList<Group> groups = settings.getGroups();
         ArrayList<Group> nonMemberGroups = new ArrayList<>();
 
-        for (Group g : groups)  {
+        for (Group g : groups) {
             if (!p.getGroups().contains(g.getGroupId())) {
                 nonMemberGroups.add(g);
             }
@@ -428,11 +419,11 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         return nonMemberGroups;
     }
 
-    public ArrayList<Group> getGroupsPlantIsMemberOf(long plantId)  {
+    public ArrayList<Group> getGroupsPlantIsMemberOf(long plantId) {
         Plant p = getPlantById(plantId);
         ArrayList<Group> groups = new ArrayList<>();
 
-        for(long groupId : p.getGroups())   {
+        for (long groupId : p.getGroups()) {
             groups.add(settings.getGroup(groupId));
         }
 
@@ -447,11 +438,11 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         return settings.getGroups();
     }
 
-    public final ArrayList<Group> getEmptyGroups()    {
+    public final ArrayList<Group> getEmptyGroups() {
         ArrayList<Group> groups = settings.getGroups();
         ArrayList<Group> emptyGroups = new ArrayList<>();
 
-        for(Group g : groups)   {
+        for (Group g : groups) {
             if (getMemberCountOfGroup(g.getGroupId()) == 0) {
                 emptyGroups.add(g);
             }
@@ -460,7 +451,7 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         return emptyGroups;
     }
 
-    public final ArrayList<Group> getNonEmptyGroups()   {
+    public final ArrayList<Group> getNonEmptyGroups() {
         ArrayList<Group> groups = new ArrayList<>();
         ArrayList<Group> emptyGroups = getEmptyGroups();
 
@@ -474,8 +465,8 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     private int getMemberCountOfGroup(long groupId) {
         int total = 0;
         ArrayList<Plant> activeGroupMembers = new ArrayList<>();
-        for(Plant p : getActivePlants())    {
-            if (p.getGroups().contains(groupId))    {
+        for (Plant p : getActivePlants()) {
+            if (p.getGroups().contains(groupId)) {
                 total++;
             }
         }
@@ -485,8 +476,8 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
 
     public ArrayList<Plant> getMembersOfGroup(long groupId) {
         ArrayList<Plant> activeGroupMembers = new ArrayList<>();
-        for(Plant p : getActivePlants())    {
-            if (p.getGroups().contains(groupId))    {
+        for (Plant p : getActivePlants()) {
+            if (p.getGroups().contains(groupId)) {
                 activeGroupMembers.add(p);
             }
         }
@@ -494,15 +485,15 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         return activeGroupMembers;
     }
 
-    public void renameGroup(long groupId, String name)  {
+    public void renameGroup(long groupId, String name) {
         Group g = getGroup(groupId);
         g.setGroupName(name);
         settingsChanged();
     }
 
-    public void performEventForPlantsInGroup(long groupId, PlantAction action)  {
+    public void performEventForPlantsInGroup(long groupId, PlantAction action) {
         ArrayList<Plant> plants = getMembersOfGroup(groupId);
-        for(Plant p : plants)   {
+        for (Plant p : plants) {
             action.runAction(p);
         }
     }
@@ -511,31 +502,32 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         uiListener = listener;
     }
 
-    public void removePlantState(String key)    {
+    public void removePlantState(String key) {
         getPlantTrackerSettings().removeStateAutoComplete(key);
 
         settingsChanged();
     }
 
-    public void addGenericRecordTemplate(GenericRecord record)  {
+    public void addGenericRecordTemplate(GenericRecord record) {
         settings.addGenericRecordTemplate(record);
     }
 
-    public Set<String> getGenericRecordTypes()   {
+    public Set<String> getGenericRecordTypes() {
         return settings.getGenericRecordNames();
     }
 
-    public GenericRecord getGenericRecordTemplate(String name)  {
+    public GenericRecord getGenericRecordTemplate(String name) {
         return settings.getGenericRecordTemplate(name);
     }
 
-    public void removeGenericRecordTemplate(String name)    {
+    public void removeGenericRecordTemplate(String name) {
         settings.removeGenericRecordTemplate(name);
     }
 
     public void setPlantTrackerSettings(PlantTrackerSettings plantTrackerSettings) {
         settings = plantTrackerSettings;
     }
+
 }
 
 

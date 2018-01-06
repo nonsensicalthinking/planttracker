@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_light"
-    tools:context="com.nonsense.planttracker.activities.ManageCustomEvents">
+    tools:context="com.nonsense.planttracker.activities.ManageRecordTemplates">
 
     <include
         layout="@layout/app_bar_plant_tracker_ui"

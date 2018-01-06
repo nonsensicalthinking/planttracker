@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * Created by Derek Brooks on 12/31/2017.
  */
 
-public class ManageCustomEvents extends AppCompatActivity {
+public class ManageRecordTemplates extends AppCompatActivity {
 
     private static final int CREATE_GENERIC_RECORD_TEMPLATE_INTENT = 26;
     private static final int EDIT_GENERIC_RECORD_TEMPLATE_INTENT = 27;
@@ -63,7 +63,7 @@ public class ManageCustomEvents extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ManageCustomEvents.this,
+                Intent intent = new Intent(ManageRecordTemplates.this,
                         CreateRecordType.class);
                 intent.putExtra("genericRecord", new GenericRecord(""));
 
@@ -87,7 +87,7 @@ public class ManageCustomEvents extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position,
                                            long id) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(
-                        ManageCustomEvents.this);
+                        ManageRecordTemplates.this);
                 builder.setTitle(R.string.app_name);
                 builder.setMessage("Are you sure you want to delete this custom record template?");
                 builder.setIcon(R.drawable.ic_growing_plant);
@@ -95,6 +95,7 @@ public class ManageCustomEvents extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         tracker.removeGenericRecordTemplate(fEvents.get(position));
 
+                        saveSettings();
                         fillUi();
                         dialog.dismiss();
                     }
@@ -116,7 +117,7 @@ public class ManageCustomEvents extends AppCompatActivity {
         customRecordTemplateListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Intent intent = new Intent(ManageCustomEvents.this,
+                Intent intent = new Intent(ManageRecordTemplates.this,
                         CreateRecordType.class);
                 intent.putExtra("genericRecord", tracker.getGenericRecordTemplate(events.get(
                         position)));
@@ -150,13 +151,13 @@ public class ManageCustomEvents extends AppCompatActivity {
 
                     tracker.addGenericRecordTemplate(record);
 
+                    saveSettings();
                     fillUi();
                 }
                 break;
 
             case EDIT_GENERIC_RECORD_TEMPLATE_INTENT:
                 if (resultCode == Activity.RESULT_OK)   {
-                    //TODO save from here, don't wait until we exit the management activity
                     GenericRecord retRec = (GenericRecord) returnedIntent.getSerializableExtra(
                             "genericRecord");
 
@@ -168,10 +169,16 @@ public class ManageCustomEvents extends AppCompatActivity {
                         tracker.addGenericRecordTemplate(retRec);
                     }
 
+                    saveSettings();
                     fillUi();
                 }
                 break;
         }
+    }
+
+    private void saveSettings() {
+        tracker.setPlantTrackerSettings(tracker.getPlantTrackerSettings());
+        tracker.savePlantTrackerSettings();
     }
 
 }

@@ -49,6 +49,12 @@ public class CreateRecordType extends AppCompatActivity {
         bindUi();
     }
 
+    @Override
+    public void onBackPressed() {
+        setResult(Activity.RESULT_CANCELED);
+        finish();
+    }
+
     private void bindUi()   {
         recordNameEditText = (EditText)findViewById(R.id.recordNameEditText);
         recordNameEditText.setText(record.displayName);

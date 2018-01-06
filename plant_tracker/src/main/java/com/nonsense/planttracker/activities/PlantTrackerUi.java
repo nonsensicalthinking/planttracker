@@ -718,7 +718,7 @@ public class PlantTrackerUi extends AppCompatActivity
 
             case R.id.nav_manage_events:
                 Intent manageRecordTemplates = new Intent(PlantTrackerUi.this,
-                        ManageCustomEvents.class);
+                        ManageRecordTemplates.class);
 
                 //TODO pass data
                 manageRecordTemplates.putExtra("tracker", tracker);
@@ -1291,7 +1291,6 @@ public class PlantTrackerUi extends AppCompatActivity
                     PlantTracker passedTracker = (PlantTracker) returnedIntent.getSerializableExtra(
                             "tracker");
                     tracker.setPlantTrackerSettings(passedTracker.getPlantTrackerSettings());
-                    tracker.settingsChanged();
 
                     refreshListView();
                 }
