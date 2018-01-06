@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.view.KeyEvent;
 import android.view.View;
@@ -19,6 +21,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.tracker.adapters.DataPointTileArrayAdapter;
@@ -50,11 +53,20 @@ public class CreateRecordType extends AppCompatActivity {
 
     private void bindUi()   {
         final EditText recordNameEditText = (EditText)findViewById(R.id.recordNameEditText);
-        recordNameEditText.setOnKeyListener(new View.OnKeyListener() {
+        recordNameEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
                 record.displayName = recordNameEditText.getText().toString();
-                return false;
             }
         });
 
@@ -149,11 +161,20 @@ public class CreateRecordType extends AppCompatActivity {
         final EditText summaryTemplateEditText = (EditText)findViewById(
                 R.id.summaryTemplateEditText);
 
-        summaryTemplateEditText.setOnKeyListener(new View.OnKeyListener() {
+        summaryTemplateEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
                 record.summaryTemplate = summaryTemplateEditText.getText().toString();
-                return false;
             }
         });
 

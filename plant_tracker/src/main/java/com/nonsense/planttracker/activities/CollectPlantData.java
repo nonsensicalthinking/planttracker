@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -24,6 +26,7 @@ import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
@@ -190,12 +193,20 @@ public class CollectPlantData extends AppCompatActivity {
         editText.setLayoutParams(new LinearLayout.LayoutParams(
                       ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         editText.setSingleLine(false);
-        editText.setOnKeyListener(new View.OnKeyListener() {
+        editText.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                record.notes = editText.getText().toString();
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                return false;
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                record.notes = editText.getText().toString();
             }
         });
 
@@ -248,12 +259,20 @@ public class CollectPlantData extends AppCompatActivity {
         final EditText editText = createNewInput();
         layout.addView(editText);
         editText.setText(value);
-        editText.setOnKeyListener(new View.OnKeyListener() {
+        editText.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                record.setDataPoint(key, editText.getText().toString());
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                return false;
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                record.setDataPoint(key, editText.getText().toString());
             }
         });
 
@@ -272,13 +291,21 @@ public class CollectPlantData extends AppCompatActivity {
         layout.addView(editText);
         editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
         editText.setText(value);
-        editText.setOnKeyListener(new View.OnKeyListener() {
+        editText.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
                 Integer val = Integer.parseInt(editText.getText().toString());
                 record.setDataPoint(key, val);
-
-                return false;
             }
         });
 
@@ -298,13 +325,21 @@ public class CollectPlantData extends AppCompatActivity {
         final EditText editText = createNewInput();
         editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         editText.setText(value.toString());
-        editText.setOnKeyListener(new View.OnKeyListener() {
+        editText.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
                 Double val = Double.parseDouble(editText.getText().toString());
                 record.setDataPoint(key, val);
-
-                return false;
             }
         });
 
