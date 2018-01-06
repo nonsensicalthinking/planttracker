@@ -2,17 +2,17 @@ package com.nonsense.planttracker.tracker.impl;
 
 import com.nonsense.planttracker.tracker.interf.IPlantUpdateListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 
 /**
  * Created by Derek Brooks on 6/30/2017.
  */
 
 @SuppressWarnings("Since15")
-public class Plant {
+public class Plant implements Serializable  {
 
     private static final long serialVersionUID = 2153335460648792L;
 

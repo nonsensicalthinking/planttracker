@@ -41,7 +41,6 @@ import android.widget.TabHost;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.nonsense.planttracker.R;
@@ -62,7 +61,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
 
@@ -76,6 +74,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private static final int IMAGE_CHOOSER_INTENT = 1;
     private static final int GENERIC_RECORD_INTENT = 25;
     private static final int CREATE_GENERIC_RECORD_TEMPLATE_INTENT = 26;
+    private static final int MANAGE_RECORD_TEMPLATES_INTENT = 27;
 
     private static final String CREATE_NEW_GENERIC_RECORD_OPTION = "Create new record type...";
 
@@ -90,7 +89,6 @@ public class PlantTrackerUi extends AppCompatActivity
     private ListView plantListView;
 
     // Individual plant view
-    private TextView plantNameTextView;
     private TextView daysSinceGrowStartTextView;
     private TextView weeksSinceGrowStartTextView;
     private TextView weeksSinceStateStartTextView;
@@ -173,7 +171,6 @@ public class PlantTrackerUi extends AppCompatActivity
     }
 
     private void bindIndividualPlantView() {
-        plantNameTextView = (TextView)findViewById(R.id.plantNameTextView);
         daysSinceGrowStartTextView = (TextView)findViewById(R.id.daysSinceGrowStartTextView);
         weeksSinceGrowStartTextView = (TextView)findViewById(R.id.weeksSinceGrowStartTextView);
         fromSeedTextView = (TextView) findViewById(R.id.fromSeedTextView);
@@ -417,7 +414,8 @@ public class PlantTrackerUi extends AppCompatActivity
 
         hideFloatingActionButton();
 
-        plantNameTextView.setText(currentPlant.getPlantName());
+        toolbar.setTitle(currentPlant.getPlantName());
+
 
         daysSinceGrowStartTextView.setText(""+Utility.calcDaysFromTime(
                 currentPlant.getPlantStartDate(), Calendar.getInstance()));
@@ -719,13 +717,13 @@ public class PlantTrackerUi extends AppCompatActivity
                 break;
 
             case R.id.nav_manage_events:
-/*                if (switcher.getCurrentView() != allPlantsView) {
-                    switcherToPrevious();
-                    fillViewWithCustomEvents();
-                } else {
-                    fillViewWithCustomEvents();
-                }
-  */
+                Intent manageRecordTemplates = new Intent(PlantTrackerUi.this,
+                        ManageCustomEvents.class);
+
+                //TODO pass data
+                manageRecordTemplates.putExtra("tracker", tracker);
+
+                startActivityForResult(manageRecordTemplates, MANAGE_RECORD_TEMPLATES_INTENT);
                 break;
 
             case R.id.nav_manage_states:
@@ -1285,6 +1283,17 @@ public class PlantTrackerUi extends AppCompatActivity
                     tracker.addGenericRecordTemplate(record);
 
                     fillIndividualPlantView();
+                }
+                break;
+
+            case MANAGE_RECORD_TEMPLATES_INTENT:
+                if (resultCode == Activity.RESULT_OK)   {
+                    PlantTracker passedTracker = (PlantTracker) returnedIntent.getSerializableExtra(
+                            "tracker");
+                    tracker.setPlantTrackerSettings(passedTracker.getPlantTrackerSettings());
+                    tracker.settingsChanged();
+
+                    refreshListView();
                 }
                 break;
         }

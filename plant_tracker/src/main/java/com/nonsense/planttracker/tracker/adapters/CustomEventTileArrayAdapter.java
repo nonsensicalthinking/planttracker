@@ -8,7 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.nonsense.planttracker.R;
-import com.nonsense.planttracker.tracker.impl.Group;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,7 @@ import java.util.Map;
  * Created by Derek Brooks on 7/1/2017.
  */
 
-public class CustomEventTileArrayAdapter extends ArrayAdapter<Map.Entry<String, String>> {
+public class CustomEventTileArrayAdapter extends ArrayAdapter<String> {
 
     private int viewResourceId;
 
@@ -27,7 +26,7 @@ public class CustomEventTileArrayAdapter extends ArrayAdapter<Map.Entry<String, 
     }
 
     public CustomEventTileArrayAdapter(Context context, int resource,
-                                       List<Map.Entry<String, String>> items) {
+                                       List<String> items) {
         super(context, resource, items);
         viewResourceId = resource;
     }
@@ -43,20 +42,15 @@ public class CustomEventTileArrayAdapter extends ArrayAdapter<Map.Entry<String, 
             v = vi.inflate(viewResourceId, null);
         }
 
-        Map.Entry<String, String> entry = getItem(position);
+        String entry = getItem(position);
 
         if (entry != null) {
-            TextView customEventTextView = (TextView)v.findViewById(R.id.firstLine);
-            //TextView groupSummaryTextView = (TextView)v.findViewById(R.id.secondLine);
-            //TextView archivedTextView = (TextView)v.findViewById(R.id.archivedTextView);
+            TextView firstLine = (TextView)v.findViewById(R.id.firstLine);
+            TextView secondLine = (TextView)v.findViewById(R.id.secondLine);
+            TextView archivedTextView = (TextView)v.findViewById(R.id.archivedTextView);
 
-            if (customEventTextView != null) {
-                customEventTextView.setText( "(" + entry.getKey() + ") " + entry.getValue() );
-            }
 
-            /*if (groupSummaryTextView != null) {
-                groupSummaryTextView.setText("");
-            }*/
+            firstLine.setText( entry );
         }
 
         return v;

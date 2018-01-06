@@ -12,17 +12,6 @@
         android:layout_height="56dp"
         android:layout_weight="0" />
 
-    <TextView
-        android:id="@+id/plantNameTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/holo_green_dark"
-        android:text="White Dwarf (#3) G3"
-        android:textAlignment="center"
-        android:textColor="@android:color/background_light"
-        android:textSize="30sp"
-        android:typeface="normal" />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

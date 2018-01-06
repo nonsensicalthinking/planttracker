@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.DigitsKeyListener;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,11 +19,9 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.tracker.adapters.DataPointTileArrayAdapter;
-import com.nonsense.planttracker.tracker.adapters.PlantRecordableTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 
 import java.util.ArrayList;

@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.nonsense.planttracker.R;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Derek Brooks on 7/1/2017.

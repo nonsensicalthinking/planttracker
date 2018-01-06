@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.tracker.impl.Group;
-import com.nonsense.planttracker.tracker.impl.Plant;
 
 import java.util.List;
 

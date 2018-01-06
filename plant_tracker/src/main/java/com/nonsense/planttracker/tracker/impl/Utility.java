@@ -8,7 +8,6 @@ import java.util.Date;
  */
 
 public class Utility {
-
     public static int calcDaysFromTime(Calendar start, Calendar end)    {
         Date startDate = start.getTime();
         Date endDate = end.getTime();
@@ -30,7 +29,4 @@ public class Utility {
 
         return (int)(diffDays + 1);    // shift to 1 based
     }
-
-
-
 }

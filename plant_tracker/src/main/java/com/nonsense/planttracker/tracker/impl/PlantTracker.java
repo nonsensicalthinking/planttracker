@@ -2,42 +2,30 @@ package com.nonsense.planttracker.tracker.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.nonsense.planttracker.tracker.exceptions.GroupNotFoundException;
 import com.nonsense.planttracker.tracker.exceptions.PlantNotFoundException;
 import com.nonsense.planttracker.tracker.impl.PlantActions.PlantAction;
-import com.nonsense.planttracker.tracker.interf.IPlantEventDoer;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 import com.nonsense.planttracker.tracker.interf.IPlantUpdateListener;
 import com.nonsense.planttracker.tracker.interf.ISettingsChangedListener;
 
-import java.io.BufferedInputStream;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
-import java.io.InvalidClassException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * Created by Derek Brooks on 6/30/2017.
  */
-public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListener {
+public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListener, Serializable {
     private PlantTrackerSettings settings;
     private ArrayList<Plant> plants;
     private transient IPlantTrackerListener uiListener;
@@ -543,6 +531,10 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
 
     public void removeGenericRecordTemplate(String name)    {
         settings.removeGenericRecordTemplate(name);
+    }
+
+    public void setPlantTrackerSettings(PlantTrackerSettings plantTrackerSettings) {
+        settings = plantTrackerSettings;
     }
 }
 

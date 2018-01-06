@@ -1,7 +1,6 @@
 package com.nonsense.planttracker.tracker.impl;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * Created by Derek Brooks on 7/29/2017.

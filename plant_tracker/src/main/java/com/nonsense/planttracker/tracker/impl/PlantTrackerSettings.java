@@ -6,8 +6,6 @@ import com.nonsense.planttracker.tracker.interf.ISettingsChangedListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -37,7 +35,10 @@ public class PlantTrackerSettings implements Serializable {
     }
 
     private void settingsChanged()  {
-        listener.settingsChanged();
+        // use of a listener is not required!
+        if (listener != null)   {
+            listener.settingsChanged();
+        }
     }
 
     void addGroup(Group g)  {

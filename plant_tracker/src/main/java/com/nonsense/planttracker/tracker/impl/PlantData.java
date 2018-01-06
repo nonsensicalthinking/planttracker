@@ -1,12 +1,13 @@
 package com.nonsense.planttracker.tracker.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
  * Created by Derek Brooks on 9/10/2017.
  */
-public class PlantData {
+public class PlantData implements Serializable  {
     public long plantId;
     public long parentPlantId;
     public String plantName;

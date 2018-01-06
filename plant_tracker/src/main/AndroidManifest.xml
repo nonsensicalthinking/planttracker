@@ -32,8 +32,14 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".activities.CollectPlantData" />
-        <activity android:name=".activities.CreateRecordType"></activity>
+        <activity android:name=".activities.CollectPlantData"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+
+        <activity android:name=".activities.CreateRecordType"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+
+        <activity android:name=".activities.ManageCustomEvents"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 
 </manifest>
