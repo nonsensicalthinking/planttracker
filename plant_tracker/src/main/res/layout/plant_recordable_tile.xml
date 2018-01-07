@@ -17,16 +17,21 @@
             android:id="@+id/observEventTypeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
-            android:gravity="top"
-            android:paddingLeft="8dp"
+            android:background="@drawable/rounded_corner"
+            android:paddingLeft="10dp"
+            android:requiresFadingEdge="horizontal|vertical"
+            android:shadowColor="@color/materialcolorpicker__white"
+            android:shadowDx="5"
+            android:shadowDy="5"
+            android:shadowRadius="10"
             android:text="WFO"
             android:textColor="@android:color/black"
-            android:textSize="14sp" />
+            android:textSize="16sp"
+            android:textStyle="normal" />
 
         <TextView
             android:id="@+id/dateTextView"

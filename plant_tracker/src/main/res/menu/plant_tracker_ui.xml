@@ -52,6 +52,14 @@
             android:visible="true"
             app:showAsAction="never" />
         <item
+            android:id="@+id/action_set_reminder"
+            android:checkable="false"
+            android:enabled="true"
+            android:orderInCategory="100"
+            android:title="Set Reminder"
+            android:visible="true"
+            app:showAsAction="never" />
+        <item
             android:id="@+id/action_rename"
             android:checkable="false"
             android:enabled="true"

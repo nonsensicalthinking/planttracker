@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.ColorInt;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -93,7 +94,7 @@ public class CreateRecordType extends AppCompatActivity {
                     @Override
                     public void onColorChosen(@ColorInt int color) {
                         record.color = color;
-                        colorPreviewTextView.setBackgroundColor(color);
+                        ((GradientDrawable)colorPreviewTextView.getBackground()).setColor(color);
                         cp.hide();
                     }
                 });
@@ -260,14 +261,14 @@ public class CreateRecordType extends AppCompatActivity {
         final Dialog dialog = new Dialog(CreateRecordType.this);
         dialog.setContentView(R.layout.dialog_new_data_point);
 
-        final EditText dataPointNameEditText = dialog.findViewById(
+        final EditText dataPointNameEditText = (EditText)dialog.findViewById(
                 R.id.dataPointNameEditText);
 
         dataPointNameEditText.setText(selectedDataPointName);
 
-        final Spinner dataPointTypeSpinner = dialog.findViewById(
+        final Spinner dataPointTypeSpinner = (Spinner)dialog.findViewById(
                 R.id.dataPointTypeSpinner);
-        final EditText defaultValueEditText = dialog.findViewById(
+        final EditText defaultValueEditText = (EditText)dialog.findViewById(
                 R.id.defaultValueEditText);
 
         final ArrayList<String> dataTypeOptions = new ArrayList<>();

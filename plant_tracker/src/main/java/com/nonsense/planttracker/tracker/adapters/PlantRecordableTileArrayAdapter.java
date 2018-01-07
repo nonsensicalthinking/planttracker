@@ -1,6 +1,8 @@
 package com.nonsense.planttracker.tracker.adapters;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +67,8 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             // display name
             TextView eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
             eventTypeTextView.setText(p.displayName);
-            eventTypeTextView.setBackgroundColor(p.color);
+            GradientDrawable gradientDrawable = (GradientDrawable)eventTypeTextView.getBackground();
+            gradientDrawable.setColor(p.color);
 
             // summary text
             TextView recordableSummaryTextView = (TextView)v.findViewById(
