@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 public class GenericRecord implements Serializable, Cloneable {
 
     public String displayName;
+    public int color;
     public Calendar time;
     public String notes;
     public TreeMap<String, Object> dataPoints;

@@ -21,10 +21,11 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_weight="1"
+            android:background="@color/colorPrimary"
             android:gravity="top"
             android:paddingLeft="8dp"
             android:text="WFO"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@android:color/black"
             android:textSize="14sp" />
 
         <TextView
@@ -41,10 +42,9 @@
         android:id="@+id/recordableSummaryTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/observEventTypeTextView"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentTop="false"
         android:paddingLeft="16dp"
         android:text="Fs: 0.5 pH: 6.4 Notes: lorem ispum dollar solat ..."
         android:textColor="@android:color/background_dark" />

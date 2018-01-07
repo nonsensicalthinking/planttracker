@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.support.annotation.ColorInt;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,10 +22,13 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.tracker.adapters.DataPointTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
+import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
+import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;
 
 import java.util.ArrayList;
 
@@ -33,6 +39,7 @@ public class CreateRecordType extends AppCompatActivity {
     private GenericRecord record;
 
     private EditText recordNameEditText;
+    private TextView colorPreviewTextView;
     private CheckBox showNotesFieldCheckBox;
 
     @Override
@@ -70,6 +77,26 @@ public class CreateRecordType extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 record.displayName = recordNameEditText.getText().toString();
+            }
+        });
+
+        colorPreviewTextView = (TextView)findViewById(R.id.colorPreviewTextView);
+        colorPreviewTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final ColorPicker cp = new ColorPicker(CreateRecordType.this, 66,
+                        0,0, 255);
+
+                cp.show();
+
+                cp.setCallback(new ColorPickerCallback() {
+                    @Override
+                    public void onColorChosen(@ColorInt int color) {
+                        record.color = color;
+                        colorPreviewTextView.setBackgroundColor(color);
+                        cp.hide();
+                    }
+                });
             }
         });
 

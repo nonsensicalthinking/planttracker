@@ -65,6 +65,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             // display name
             TextView eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
             eventTypeTextView.setText(p.displayName);
+            eventTypeTextView.setBackgroundColor(p.color);
 
             // summary text
             TextView recordableSummaryTextView = (TextView)v.findViewById(
