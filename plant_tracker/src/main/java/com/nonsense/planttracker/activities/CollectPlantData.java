@@ -46,7 +46,7 @@ public class CollectPlantData extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_data_points);
+        setContentView(R.layout.activity_collect_plant_data);
 
         Intent intent = getIntent();
 
