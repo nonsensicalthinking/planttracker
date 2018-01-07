@@ -212,6 +212,8 @@ public class CollectPlantData extends AppCompatActivity {
     }
 
     private void bindSharedControls()   {
+        record.time = Calendar.getInstance();
+
         final DatePicker datePicker = (DatePicker)findViewById(R.id.eventDatePicker);
         datePicker.updateDate(record.time.get(Calendar.YEAR), record.time.get(Calendar.MONTH),
                 record.time.get(Calendar.DAY_OF_MONTH));

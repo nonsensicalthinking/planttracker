@@ -32,11 +32,9 @@ public class CreateRecordType extends AppCompatActivity {
 
     private GenericRecord record;
 
-    private String selectedDataPointName;
-    private DataPointTileArrayAdapter dpta;
-
     private EditText recordNameEditText;
     private CheckBox showNotesFieldCheckBox;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,7 +119,7 @@ public class CreateRecordType extends AppCompatActivity {
         dataPointListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedDataPointName = dataPointTileArrayAdapter.getItem(i);
+                displayDataPointCollectionDialog(dataPointTileArrayAdapter.getItem(i));
             }
         });
 
@@ -159,7 +157,7 @@ public class CreateRecordType extends AppCompatActivity {
         addDataPointButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayDataPointCollectionDialog();
+                displayDataPointCollectionDialog(null);
             }
         });
     }
@@ -231,16 +229,18 @@ public class CreateRecordType extends AppCompatActivity {
         });
     }
 
-    private void displayDataPointCollectionDialog() {
+    private void displayDataPointCollectionDialog(String selectedDataPointName) {
         final Dialog dialog = new Dialog(CreateRecordType.this);
         dialog.setContentView(R.layout.dialog_new_data_point);
 
-        final EditText dataPointNameEditText = (EditText)dialog.findViewById(
+        final EditText dataPointNameEditText = dialog.findViewById(
                 R.id.dataPointNameEditText);
 
-        final Spinner dataPointTypeSpinner = (Spinner)dialog.findViewById(
+        dataPointNameEditText.setText(selectedDataPointName);
+
+        final Spinner dataPointTypeSpinner = dialog.findViewById(
                 R.id.dataPointTypeSpinner);
-        final EditText defaultValueEditText = (EditText)dialog.findViewById(
+        final EditText defaultValueEditText = dialog.findViewById(
                 R.id.defaultValueEditText);
 
         final ArrayList<String> dataTypeOptions = new ArrayList<>();
@@ -278,6 +278,26 @@ public class CreateRecordType extends AppCompatActivity {
                 return;
             }
         });
+
+        if (selectedDataPointName != null)  {
+            Object dpObj = record.getDataPoint(selectedDataPointName);
+
+            if (dpObj != null)  {
+
+                if (dpObj instanceof String)    {
+                    dataPointTypeSpinner.setSelection(adapter.getPosition("Text"));
+                    defaultValueEditText.setText((String)dpObj);
+                }
+                else if (dpObj instanceof Integer) {
+                    dataPointTypeSpinner.setSelection(adapter.getPosition("Integer"));
+                    defaultValueEditText.setText(((Integer)dpObj).toString());
+                }
+                else if (dpObj instanceof Double)  {
+                    dataPointTypeSpinner.setSelection(adapter.getPosition("Decimal"));
+                    defaultValueEditText.setText(((Double)dpObj).toString());
+                }
+            }
+        }
 
         final Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(new View.OnClickListener() {

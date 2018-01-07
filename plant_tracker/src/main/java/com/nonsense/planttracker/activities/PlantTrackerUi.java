@@ -512,9 +512,10 @@ public class PlantTrackerUi extends AppCompatActivity
             parentPlantTableRow.setVisibility(View.GONE);
         }
 
-        PlantRecordableTileArrayAdapter plantRecordableAdapter = new PlantRecordableTileArrayAdapter(
-                getBaseContext(), R.layout.plant_recordable_tile,
-                currentPlant.getAllGenericRecords(), currentPlant);
+        PlantRecordableTileArrayAdapter plantRecordableAdapter =
+                new PlantRecordableTileArrayAdapter(getBaseContext(),
+                        R.layout.plant_recordable_tile, currentPlant.getAllGenericRecords(),
+                        currentPlant);
 
         recordableEventListView.setAdapter(plantRecordableAdapter);
         recordableEventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
