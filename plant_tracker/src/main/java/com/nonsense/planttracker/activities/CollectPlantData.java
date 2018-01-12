@@ -290,7 +290,7 @@ public class CollectPlantData extends AppCompatActivity {
         final EditText editText = createNewInput();
         layout.addView(editText);
         editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
-        editText.setText(value);
+        editText.setText(String.valueOf(value));
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -331,7 +331,7 @@ public class CollectPlantData extends AppCompatActivity {
 
         final EditText editText = createNewInput();
         editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        editText.setText(value.toString());
+        editText.setText(String.valueOf(value));
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
