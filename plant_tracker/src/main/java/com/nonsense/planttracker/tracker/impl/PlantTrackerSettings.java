@@ -137,4 +137,11 @@ public class PlantTrackerSettings implements Serializable {
         genericRecordTemplates.remove(name);
         settingsChanged();
     }
+
+    final TreeMap<String, GenericRecord> getAllGenericRecordTemplates()    {
+        return genericRecordTemplates;
+
+    }
+
+
 }

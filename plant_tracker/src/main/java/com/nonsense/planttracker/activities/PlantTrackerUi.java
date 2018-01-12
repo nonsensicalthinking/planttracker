@@ -521,7 +521,7 @@ public class PlantTrackerUi extends AppCompatActivity
         PlantRecordableTileArrayAdapter plantRecordableAdapter =
                 new PlantRecordableTileArrayAdapter(getBaseContext(),
                         R.layout.plant_recordable_tile, currentPlant.getAllGenericRecords(),
-                        currentPlant);
+                        tracker.getAllRecordTemplates(), currentPlant);
 
         recordableEventListView.setAdapter(plantRecordableAdapter);
         recordableEventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

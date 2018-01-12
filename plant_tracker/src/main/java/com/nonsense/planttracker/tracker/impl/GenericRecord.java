@@ -43,7 +43,7 @@ public class GenericRecord implements Serializable, Cloneable {
         return dataPoints.get(key);
     }
 
-    public String getSummary()  {
+    public String getSummary(String summaryTemplate)  {
         if (summaryTemplate == null)    {
             return "";
         }

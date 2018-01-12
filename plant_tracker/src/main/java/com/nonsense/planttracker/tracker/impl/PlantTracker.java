@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Created by Derek Brooks on 6/30/2017.
@@ -528,6 +529,9 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         settings = plantTrackerSettings;
     }
 
+    public final TreeMap<String, GenericRecord> getAllRecordTemplates() {
+        return settings.getAllGenericRecordTemplates();
+    }
 }
 
 

@@ -82,6 +82,17 @@ public class CreateRecordType extends AppCompatActivity {
         });
 
         colorPreviewTextView = (TextView)findViewById(R.id.colorPreviewTextView);
+
+        int color;
+        if (record.color == 0)  {
+             color = Color.BLUE;
+        }
+        else    {
+            color = record.color;
+        }
+
+        ((GradientDrawable)colorPreviewTextView.getBackground()).setColor(color);
+
         colorPreviewTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
