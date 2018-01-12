@@ -9,13 +9,18 @@ package com.nonsense.planttracker.activities;
 // https://www.iconfinder.com/icons/248569/cloud_clouds_cloudy_crescent_forecast_moon_night_phase_phases_waning_weather_icon
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
+import android.support.v4.app.NotificationCompat;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -41,6 +46,7 @@ import android.widget.TabHost;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.nonsense.planttracker.R;
@@ -669,6 +675,10 @@ public class PlantTrackerUi extends AppCompatActivity
             case R.id.add_group:
                 presentAddGroupDialog();
                 break;
+
+            case R.id.action_set_reminder:
+                setReminder();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -814,7 +824,7 @@ public class PlantTrackerUi extends AppCompatActivity
             // prepare remove from group submenu
             if (removeFromGroup == null) {
                 removeFromGroup = (SubMenu) individualPlantMenu.findItem(R.id.action_groups)
-                        .getSubMenu().addSubMenu(10, 2, 2, "Remove from ...");
+                        .getSubMenu().addSubMenu(10, 2, 2,"Remove from ...");
             }
 
             removeFromGroup.clear();
@@ -1297,6 +1307,18 @@ public class PlantTrackerUi extends AppCompatActivity
                 }
                 break;
         }
+    }
+
+    private void setReminder()  {
+//        Intent reminderIntent = new Intent(this, PTBroadcastServiceIntent.class);
+//        PendingIntent pi = PendingIntent.getBroadcast(getBaseContext(), 1, reminderIntent, 0);
+//
+//        AlarmManager manager = (AlarmManager)(this.getSystemService( Context.ALARM_SERVICE ));
+//
+//        // set alarm to fire 5 sec (1000*5) from now (SystemClock.elapsedRealtime())
+//        manager.set( AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 1000*5, pi );
+//
+//        Toast.makeText(getBaseContext(), "Created reminder for 60s from now...", Toast.LENGTH_LONG).show();
     }
 
     /* Begin IPlantTrackerListener */

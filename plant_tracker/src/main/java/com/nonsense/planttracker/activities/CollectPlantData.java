@@ -304,8 +304,15 @@ public class CollectPlantData extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                Integer val = Integer.parseInt(editText.getText().toString());
-                record.setDataPoint(key, val);
+                try {
+                    if (!editText.getText().toString().equals(""))  {
+                        Integer val = Integer.parseInt(editText.getText().toString());
+                        record.setDataPoint(key, val);
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -338,8 +345,15 @@ public class CollectPlantData extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                Double val = Double.parseDouble(editText.getText().toString());
-                record.setDataPoint(key, val);
+                try {
+                    if (!editText.getText().toString().equals("")) {
+                        Double val = Double.parseDouble(editText.getText().toString());
+                        record.setDataPoint(key, val);
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
