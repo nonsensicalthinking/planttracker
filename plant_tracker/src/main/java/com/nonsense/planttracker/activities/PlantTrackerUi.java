@@ -3,10 +3,15 @@ package com.nonsense.planttracker.activities;
 // Additional source attribution for icon:
 // Plant Icon website http://www.freepik.com/free-icon/plant-growing_743982.htm
 
-// Bundle of Hay http://ic8.link/5291
+// Note pad and pen icon: https://www.flaticon.com/free-icon/note-and-pen_70667
+
+// Bundle of Hay http://ic8.link/5291 (https://icons8.com/icon/5291/hay)
 
 // Moon phase icon by Haikinator https://www.iconfinder.com/Haikinator
 // https://www.iconfinder.com/icons/248569/cloud_clouds_cloudy_crescent_forecast_moon_night_phase_phases_waning_weather_icon
+
+
+
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -137,6 +142,7 @@ public class PlantTrackerUi extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_plant_tracker_ui);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -364,7 +370,7 @@ public class PlantTrackerUi extends AppCompatActivity
         setFloatingButtonTextAndAction(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchCollectPlantDataIntent(currentPlant.getPhaseChangeRecord(), true);
+            	//TODO implement when new activity is in place.
             }
         });
 
@@ -737,14 +743,14 @@ public class PlantTrackerUi extends AppCompatActivity
                 startActivityForResult(manageRecordTemplates, MANAGE_RECORD_TEMPLATES_INTENT);
                 break;
 
-            case R.id.nav_manage_states:
-                if (switcher.getCurrentView() != allPlantsView) {
-                    switcherToPrevious();
-                    fillViewWithPlantPhases();
-                } else {
-                    fillViewWithPlantPhases();
-                }
-                break;
+//            case R.id.nav_manage_states:
+//                if (switcher.getCurrentView() != allPlantsView) {
+//                    switcherToPrevious();
+//                    fillViewWithPlantPhases();
+//                } else {
+//                    fillViewWithPlantPhases();
+//                }
+//                break;
 
             case R.id.nav_delete:
                 presentDeleteAllPlantsDialog();

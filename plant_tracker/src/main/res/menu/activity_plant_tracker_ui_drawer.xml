@@ -30,16 +30,16 @@
         <menu>
             <item
                 android:id="@+id/nav_manage_events"
-                android:icon="@drawable/ic_event"
-                android:title="Events"/>
+                android:icon="@drawable/ic_record_template"
+                android:title="Record Templates"/>
             <item
                 android:id="@+id/nav_manage_groups"
                 android:icon="@drawable/ic_bundle_of_hay"
                 android:title="Groups"/>
-            <item
-                android:id="@+id/nav_manage_states"
-                android:icon="@drawable/ic_moon_phase"
-                android:title="Plant Phases"/>
+            <!--<item-->
+                <!--android:id="@+id/nav_manage_states"-->
+                <!--android:icon="@drawable/ic_moon_phase"-->
+                <!--android:title="Plant Phases"/>-->
         </menu>
     </item>
 

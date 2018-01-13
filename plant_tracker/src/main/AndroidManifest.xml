@@ -33,13 +33,13 @@
         </provider>
 
         <activity android:name=".activities.CollectPlantData"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity android:name=".activities.CreateRecordType"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity android:name=".activities.ManageRecordTemplates"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

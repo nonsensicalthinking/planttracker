@@ -124,7 +124,9 @@ public class PlantTrackerSettings implements Serializable {
         try {
             GenericRecord record = genericRecordTemplates.get(name);
 
-            return (GenericRecord)record.clone();
+            if (record != null) {
+                return (GenericRecord)record.clone();
+            }
         }
         catch (Exception e) {
             e.printStackTrace();

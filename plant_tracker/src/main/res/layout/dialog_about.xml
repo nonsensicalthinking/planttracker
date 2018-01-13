@@ -7,7 +7,7 @@
 
     <RelativeLayout
         android:layout_width="346dp"
-        android:layout_height="165dp">
+        android:layout_height="279dp">
 
         <RelativeLayout
             android:id="@+id/relativeLayout8"
@@ -22,12 +22,12 @@
                 android:id="@+id/textView24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/textView19"
+                android:layout_alignParentTop="true"
+                android:layout_alignStart="@+id/textView19"
                 android:layout_marginTop="16dp"
                 android:text="https://github.com/nonsensicalthinking/planttracker"
-                android:textSize="12sp"
-                android:layout_alignParentTop="true"
-                android:layout_alignLeft="@+id/textView19"
-                android:layout_alignStart="@+id/textView19" />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/textView19"
@@ -50,6 +50,16 @@
                 android:layout_alignStart="@+id/textView19"
                 android:layout_below="@+id/textView19"
                 android:text="Copyright 2017-2018" />
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignStart="@+id/textView22"
+                android:layout_marginStart="14dp"
+                android:layout_marginTop="121dp"
+                app:srcCompat="@drawable/ic_bundle_of_hay" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -63,25 +73,51 @@
                 android:id="@+id/imageView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="11dp"
-                android:layout_marginStart="11dp"
-                app:srcCompat="@drawable/ic_growing_plant"
-                android:layout_alignBottom="@+id/textView23"
-                android:layout_toRightOf="@+id/textView23"
-                android:layout_toEndOf="@+id/textView23" />
+                android:layout_alignStart="@+id/textView23"
+                android:layout_below="@+id/textView23"
+                android:layout_marginStart="17dp"
+                android:layout_marginTop="12dp"
+                app:srcCompat="@drawable/ic_growing_plant" />
 
             <TextView
                 android:id="@+id/textView23"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginStart="25dp"
-                android:text="Icon made by Freepik from www.flaticon.com"
-                android:textSize="12sp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="24dp" />
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="14dp"
+                android:text="Icons made by Freepik from www.flaticon.com"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/imageView2"
+                android:layout_marginStart="14dp"
+                android:layout_toEndOf="@+id/imageView2"
+                app:srcCompat="@drawable/ic_record_template" />
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/textView23"
+                android:layout_below="@+id/imageView2"
+                android:layout_marginTop="15dp"
+                android:text="https://icons8.com/icon/5291/hay"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/imageView2"
+                android:layout_below="@+id/textView13"
+                android:layout_marginTop="14dp"
+                app:srcCompat="@drawable/ic_bundle_of_hay" />
+
         </RelativeLayout>
 
     </RelativeLayout>

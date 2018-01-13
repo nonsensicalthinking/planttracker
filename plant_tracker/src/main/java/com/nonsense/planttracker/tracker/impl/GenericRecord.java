@@ -13,21 +13,19 @@ import java.util.regex.Pattern;
 
 public class GenericRecord implements Serializable, Cloneable {
 
-    public String displayName;
-    public int color;
+    public String displayName = "";
+    public int color = 0;
     public Calendar time;
-    public String notes;
-    public TreeMap<String, Object> dataPoints;
-    public String summaryTemplate;
-    public boolean showNotes;
-    public int weeksSincePhase;
-    public int weeksSinceStart;
-    public int phaseCount;
+    public String notes = "";
+    public TreeMap<String, Object> dataPoints = new TreeMap<>();
+    public String summaryTemplate = "";
+    public boolean showNotes = false;
+    public int weeksSincePhase = 0;
+    public int weeksSinceStart = 0;
+    public int phaseCount = 0;
 
     public GenericRecord(String displayName)  {
         this.displayName = displayName;
-
-        this.dataPoints = new TreeMap<>();
         this.time = Calendar.getInstance();
     }
 
@@ -73,7 +71,8 @@ public class GenericRecord implements Serializable, Cloneable {
             }
         }
 
-        if (showNotes && !notes.equals(""))  {
+        if (showNotes && notes != null && !notes.equals(""))  {
+            // append comma if we already have some summary text
             if (!summary.equals("")) {
                 summary += ", ";
             }
