@@ -85,7 +85,7 @@ public class CreateRecordType extends AppCompatActivity {
 
         int color;
         if (record.color == 0)  {
-             color = Color.BLUE;
+             color = Color.GREEN;
         }
         else    {
             color = record.color;
@@ -387,4 +387,5 @@ public class CreateRecordType extends AppCompatActivity {
 
         dialog.show();
     }
+
 }

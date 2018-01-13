@@ -44,37 +44,41 @@ public class GenericRecord implements Serializable, Cloneable {
     }
 
     public String getSummary(String summaryTemplate)  {
-        if (summaryTemplate == null)    {
-            return "";
-        }
+        String summary = "";
 
-        String buildTemplate = summaryTemplate;
-        Pattern p = Pattern.compile("\\{(.*?)\\}");
-        Matcher m = p.matcher(summaryTemplate);
+        if (summaryTemplate != null) {
+            String buildTemplate = summaryTemplate;
+            Pattern p = Pattern.compile("\\{(.*?)\\}");
+            Matcher m = p.matcher(summaryTemplate);
 
-        ArrayList<String> placeholders = new ArrayList<>();
-        while(m.find()) {
-            String ph = m.group();
-            if (!placeholders.contains(ph))  {
-                placeholders.add(ph);
+            ArrayList<String> placeholders = new ArrayList<>();
+            while (m.find()) {
+                String ph = m.group();
+                if (!placeholders.contains(ph)) {
+                    placeholders.add(ph);
+                }
+            }
+
+            summary = summaryTemplate;
+            for (String ph : placeholders) {
+                String key = ph.replace('{', ' ')
+                        .replace('}', ' ').trim();
+
+                String regex = ph.replace("{", "\\{")
+                        .replace("}", "\\}");
+
+                if (dataPoints.containsKey(key)) {
+                    summary = summary.replaceAll(regex, dataPoints.get(key).toString());
+                }
             }
         }
 
-        String summary = summaryTemplate;
-        for(String ph : placeholders)   {
-            String key = ph.replace('{', ' ')
-                    .replace('}', ' ').trim();
-
-            String regex = ph.replace("{", "\\{")
-                    .replace("}", "\\}");
-
-            if (dataPoints.containsKey(key)) {
-                summary = summary.replaceAll(regex, dataPoints.get(key).toString());
+        if (showNotes && !notes.equals(""))  {
+            if (!summary.equals("")) {
+                summary += ", ";
             }
-        }
 
-        if (showNotes && notes != null)  {
-            summary += ", Notes: " + notes;
+            summary += "Notes: " + notes;
         }
 
         return summary;
