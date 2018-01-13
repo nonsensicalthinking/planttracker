@@ -21,6 +21,6 @@ __Future plans (in no particular order)__:
 * Desktop implementation for managing plants
 
 __Requirements__
-Android OS 7.0 (Nougat) or higher
+* Android OS 7.0 (Nougat) or higher
 
 The minimum system requirements may be lowered in the future.
