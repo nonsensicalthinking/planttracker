@@ -21,4 +21,4 @@ __Future plans (in no particular order)__:
 * Desktop implementation for managing plants
 
 __IMPORTANT__:
-* Android Oreo required.  Once I am closer to 1.0 I will work to lower the minimum API level.
+* Android 7 Nouget required.  Once I am closer to 1.0 I will work to further lower the minimum API level.
