@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.nonsense.planttracker"
         minSdkVersion 24
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         // Enabling multidex support.
@@ -17,7 +17,13 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
+        }
     }
+
     productFlavors {
     }
 }
@@ -28,8 +34,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.google.code.gson:gson:2.8.+'
-    compile 'com.android.support:appcompat-v7:25.+'
-    compile 'com.android.support:design:25.+'
+    compile 'com.android.support:appcompat-v7:26+'
+    compile 'com.android.support:design:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.pes.materialcolorpicker:library:1.2.0'
     testCompile 'junit:junit:4.12'
