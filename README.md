@@ -20,5 +20,7 @@ __Future plans (in no particular order)__:
 * Exporting plants and tracker configuration for easy backup
 * Desktop implementation for managing plants
 
-__IMPORTANT__:
-* Android 7 Nouget required.  Once I am closer to 1.0 I will work to further lower the minimum API level.
+__Requirements__
+Android OS 7.0 (Nougat) or higher
+
+The minimum system requirements may be lowered in the future.
