@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/menuBar">
 
-    <item android:title="Views" android:id="@+id/viewsMenuItem">
+    <item android:title="@string/drawer_title_view" android:id="@+id/viewsMenuItem">
         <menu>
             <item
                 android:id="@+id/nav_about_plant_tracker"
                 android:icon="@drawable/ic_about"
-                android:title="About Plant Tracker" />
+                android:title="@string/drawer_item_about" />
             <item
                 android:id="@+id/nav_add_plant"
                 android:checkable="false"
                 android:icon="@drawable/ic_add"
-                android:title="Add Plant" />
+                android:title="@string/drawer_item_add_plant" />
             <item
                 android:id="@+id/nav_active_plants"
                 android:icon="@drawable/ic_growing_plant"
-                android:title="Plants: Active" />
+                android:title="@string/drawer_item_active" />
             <item
                 android:id="@+id/nav_archived_plants"
                 android:icon="@drawable/ic_growing_plant"
-                android:title="Plants: Archived" />
+                android:title="@string/drawer_item_archived" />
             <item
                 android:id="@+id/nav_all_plants"
                 android:icon="@drawable/ic_growing_plant"
-                android:title="Plants: All" />
+                android:title="@string/drawer_item_all" />
         </menu>
     </item>
-    <item android:title="Manage">
+    <item android:title="@string/drawer_title_manage">
         <menu>
             <item
                 android:id="@+id/nav_manage_events"
                 android:icon="@drawable/ic_record_template"
-                android:title="Record Templates"/>
+                android:title="@string/drawer_item_record_templates"/>
             <item
                 android:id="@+id/nav_manage_groups"
                 android:icon="@drawable/ic_bundle_of_hay"
-                android:title="Groups"/>
+                android:title="@string/drawer_item_groups"/>
             <!--<item-->
                 <!--android:id="@+id/nav_manage_states"-->
                 <!--android:icon="@drawable/ic_moon_phase"-->
@@ -43,25 +43,25 @@
         </menu>
     </item>
 
-    <item android:title="Communicate">
+    <item android:title="@string/drawer_title_transfer">
         <menu>
             <item
                 android:id="@+id/nav_export"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Export" />
+                android:icon="@drawable/ic_export"
+                android:title="@string/drawer_item_export" />
             <item
                 android:id="@+id/nav_import"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Import" />
+                android:icon="@drawable/ic_import"
+                android:title="@string/drawer_item_import" />
         </menu>
     </item>
 
-    <item android:title="Delete">
+    <item android:title="@string/drawer_title_delete">
         <menu>
             <item
                 android:id="@+id/nav_delete"
                 android:icon="@drawable/ic_menu_manage"
-                android:title="Delete All Plants" />
+                android:title="@string/drawer_item_delete_all_plants" />
         </menu>
     </item>
 

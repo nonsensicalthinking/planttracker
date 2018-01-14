@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Plant Tracker</string>
+    <string name="app_copyright">Copyright 2017 - 2108</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -13,6 +14,33 @@
     <string name="record_not_found">Record not found</string>
     <string name="seed">Seed</string>
     <string name="clone">Clone</string>
+    <string name="loremipsum">Lorem ipsum dolar solat</string>
+    <string name="record_template">Record Template</string>
+    <string name="description">Description</string>
+
+    <string name="drawer_item_about">About Plant Tracker</string>
+    <string name="drawer_item_add_plant">Add Plant</string>
+    <string name="drawer_item_active">Plants: Active</string>
+    <string name="drawer_item_archived">Plants: Archived</string>
+    <string name="drawer_item_all">Plants: All</string>
+    <string name="drawer_item_record_templates">Record Templates</string>
+    <string name="drawer_item_groups">Groups</string>
+    <string name="drawer_item_export">Export</string>
+    <string name="drawer_item_import">Import</string>
+    <string name="drawer_item_delete_all_plants">Delete All Plants</string>
+
+    <string name="drawer_title_view">View</string>
+    <string name="drawer_title_manage">Manage</string>
+    <string name="drawer_title_transfer">Transfer</string>
+    <string name="drawer_title_delete">Delete</string>
+
+    <string name="plant_opt_archive">Archive</string>
+    <string name="plant_opt_unarchive">Unarchive</string>
+    <string name="plant_opt_clone_plant">Clone Plant</string>
+    <string name="plant_opt_groups">Groups</string>
+    <string name="plant_opt_add_group">Add Group</string>
+    <string name="plant_opt_rename_group">Rename Group</string>
+    <string name="plant_opt_delete_group">Delete Group</string>
 
     <string-array name="plant_event_options">
         <item>Add Event</item>

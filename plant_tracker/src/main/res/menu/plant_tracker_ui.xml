@@ -9,7 +9,7 @@
             android:checkable="false"
             android:enabled="true"
             android:orderInCategory="100"
-            android:title="Groups"
+            android:title="@string/plant_opt_groups"
             android:visible="true"
             app:showAsAction="never">
             <menu>
@@ -18,7 +18,7 @@
                     android:checkable="false"
                     android:enabled="true"
                     android:orderInCategory="0"
-                    android:title="Add Group"
+                    android:title="@string/plant_opt_add_group"
                     android:visible="true"
                     app:showAsAction="never"/>
                 <item
@@ -26,7 +26,7 @@
                     android:checkable="false"
                     android:enabled="true"
                     android:orderInCategory="0"
-                    android:title="Rename Group"
+                    android:title="@string/plant_opt_rename_group"
                     android:visible="true"
                     app:showAsAction="never">
                     <menu></menu>
@@ -36,7 +36,7 @@
                     android:checkable="false"
                     android:enabled="true"
                     android:orderInCategory="0"
-                    android:title="Delete Group"
+                    android:title="@string/plant_opt_delete_group"
                     android:visible="true"
                     app:showAsAction="never">
                     <menu></menu>
@@ -48,17 +48,17 @@
             android:checkable="false"
             android:enabled="true"
             android:orderInCategory="100"
-            android:title="Clone Plant"
+            android:title="@string/plant_opt_clone_plant"
             android:visible="true"
             app:showAsAction="never" />
-        <item
-            android:id="@+id/action_set_reminder"
-            android:checkable="false"
-            android:enabled="true"
-            android:orderInCategory="100"
-            android:title="Set Reminder"
-            android:visible="true"
-            app:showAsAction="never" />
+        <!--<item-->
+            <!--android:id="@+id/action_set_reminder"-->
+            <!--android:checkable="false"-->
+            <!--android:enabled="true"-->
+            <!--android:orderInCategory="100"-->
+            <!--android:title="Set Reminder"-->
+            <!--android:visible="true"-->
+            <!--app:showAsAction="never" />-->
         <item
             android:id="@+id/action_rename"
             android:checkable="false"
@@ -80,7 +80,7 @@
             android:checkable="false"
             android:enabled="true"
             android:orderInCategory="100"
-            android:title="Archive Plant"
+            android:title="@string/plant_opt_archive"
             android:visible="true"
             app:showAsAction="never" />
         <item
@@ -88,7 +88,7 @@
             android:checkable="false"
             android:enabled="true"
             android:orderInCategory="100"
-            android:title="Un-Archive Plant"
+            android:title="@string/plant_opt_unarchive"
             android:visible="true"
             app:showAsAction="never" />
     </group>

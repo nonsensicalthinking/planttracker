@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.2'
     defaultConfig {
         applicationId "com.nonsense.planttracker"
         minSdkVersion 24
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         // Enabling multidex support.
@@ -33,9 +33,9 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.google.code.gson:gson:2.8.+'
-    compile 'com.android.support:appcompat-v7:26+'
-    compile 'com.android.support:design:26.+'
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'com.android.support:appcompat-v7:27.0.2'
+    compile 'com.android.support:design:27.0.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.pes.materialcolorpicker:library:1.2.0'
     testCompile 'junit:junit:4.12'

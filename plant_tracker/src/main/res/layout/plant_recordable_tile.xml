@@ -17,18 +17,16 @@
             android:id="@+id/observEventTypeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="false"
-            android:layout_alignParentStart="false"
-            android:layout_alignParentTop="false"
-            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
             android:layout_weight="1"
             android:background="@drawable/rounded_corner"
-            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="0dp"
             android:shadowColor="@color/materialcolorpicker__white"
             android:shadowDx="5"
             android:shadowDy="5"
             android:shadowRadius="1"
-            android:text="WFO"
+            android:text="@string/record_template"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.SearchResult.Subtitle"
             android:textColor="@android:color/black"
             android:textColorHint="@color/materialcolorpicker__white"
@@ -40,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="right"
+            android:gravity="end"
             android:textColor="@color/colorPrimary" />
 
     </LinearLayout>
@@ -49,12 +47,9 @@
         android:id="@+id/recordableSummaryTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="false"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentTop="false"
-        android:paddingLeft="16dp"
-        android:text="Fs: 0.5 pH: 6.4 Notes: lorem ispum dollar solat ..."
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="@string/loremipsum"
         android:textColor="@android:color/background_dark" />
-
 
 </LinearLayout>

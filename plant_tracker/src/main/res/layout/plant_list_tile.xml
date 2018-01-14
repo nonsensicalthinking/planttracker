@@ -18,8 +18,8 @@
             android:layout_toEndOf="@+id/icon"
             android:ellipsize="marquee"
             android:gravity="top"
-            android:maxLines="1"
-            android:text="Description"
+            android:singleLine="true"
+            android:text="@string/description"
             android:textSize="12sp" />
 
         <TextView

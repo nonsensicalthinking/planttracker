@@ -682,9 +682,9 @@ public class PlantTrackerUi extends AppCompatActivity
                 presentAddGroupDialog();
                 break;
 
-            case R.id.action_set_reminder:
-                setReminder();
-                break;
+//            case R.id.action_set_reminder:
+//                setReminder();
+//                break;
         }
 
         return super.onOptionsItemSelected(item);

@@ -1,38 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/nav_header_height"
+    android:layout_height="150dp"
     android:background="@drawable/side_nav_bar"
+    android:gravity="bottom"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
-    android:orientation="vertical"
-    android:gravity="bottom"
     android:weightSum="1">
 
     <ImageView
-        android:layout_width="85dp"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@drawable/ic_growing_plant"
         android:id="@+id/imageView"
-        android:layout_weight="0.35" />
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_weight="0.01"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        app:srcCompat="@drawable/ic_growing_plant" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Android Plant Tracker"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:shadowColor="@color/materialcolorpicker__black"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="4"
+        android:text="@string/app_name"
+        android:textColor="@color/materialcolorpicker__white"
+        android:textSize="22sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Copyright 2017 - 2018" />
+        android:text="@string/app_copyright"
+        android:textColor="@color/materialcolorpicker__white"
+        android:textSize="12sp" />
 
 </LinearLayout>
