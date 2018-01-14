@@ -14,18 +14,13 @@ package com.nonsense.planttracker.activities;
 
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.Dialog;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.support.v4.app.NotificationCompat;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -51,7 +46,6 @@ import android.widget.TabHost;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.nonsense.planttracker.R;
@@ -62,7 +56,7 @@ import com.nonsense.planttracker.tracker.impl.Group;
 import com.nonsense.planttracker.tracker.adapters.PlantRecordableTileArrayAdapter;
 import com.nonsense.planttracker.tracker.adapters.PlantTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.Plant;
-import com.nonsense.planttracker.tracker.impl.PlantActions.PlantAction;
+import com.nonsense.planttracker.tracker.impl.actions.PlantAction;
 import com.nonsense.planttracker.tracker.impl.PlantTracker;
 import com.nonsense.planttracker.tracker.impl.Utility;
 import com.nonsense.planttracker.tracker.interf.IDialogHandler;

@@ -42,6 +42,11 @@
     <string name="plant_opt_rename_group">Rename Group</string>
     <string name="plant_opt_delete_group">Delete Group</string>
 
+    <string name="request_permission">Plant Tracker needs camera permission.</string>
+    <string name="camera_error">There was an error with the camera.</string>
+    <string name="intro_message">Intro message here?.</string>
+
+
     <string-array name="plant_event_options">
         <item>Add Event</item>
         <item>Change State</item>

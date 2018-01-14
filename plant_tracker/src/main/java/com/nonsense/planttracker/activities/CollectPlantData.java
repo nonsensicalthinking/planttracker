@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -228,6 +229,30 @@ public class CollectPlantData extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 applyToGroup = isChecked;
+            }
+        });
+
+        final Button cameraButton = (Button)findViewById(R.id.openCameraButton);
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent cameraIntent = new Intent(CollectPlantData.this,
+                        PlantCam.class);
+
+                startActivityForResult(cameraIntent, 0);
+            }
+        });
+
+        final Button galleryButton = (Button)findViewById(R.id.attachImagesButton);
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+
+                i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
+                startActivityForResult(i, 5);
             }
         });
 
