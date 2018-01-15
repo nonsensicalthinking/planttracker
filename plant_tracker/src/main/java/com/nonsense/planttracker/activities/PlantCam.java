@@ -37,6 +37,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.ExifInterface;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
@@ -85,8 +86,8 @@ public class PlantCam extends AppCompatActivity {
     private static final int MAX_PREVIEW_HEIGHT = 1080;
 
     static {
-        ORIENTATIONS.append(Surface.ROTATION_0, 0);
-        ORIENTATIONS.append(Surface.ROTATION_90, 90);
+        ORIENTATIONS.append(Surface.ROTATION_0, 90);
+        ORIENTATIONS.append(Surface.ROTATION_90, 0);
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
@@ -109,6 +110,8 @@ public class PlantCam extends AppCompatActivity {
     private int cameraState = STATE_PREVIEW;
     private int sensorOrientation;
     private HandlerThread backgroundThread;
+
+    private CameraCharacteristics characteristics;
 
     private ArrayList<String> fileNames = new ArrayList<>();
 
@@ -150,6 +153,59 @@ public class PlantCam extends AppCompatActivity {
         closeCamera();
         stopBackgroundThread();
         super.onPause();
+    }
+
+    @Override
+    public void onBackPressed()    {
+        launchImageChooser();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                new AlertDialog.Builder(this)
+                        .setMessage("BLAH!")
+                        .setPositiveButton(android.R.string.ok,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        cancelActivity();
+                                    }
+                                }).show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
+        switch(requestCode) {
+
+            case AndroidConstants.ACTIVITY_IMAGE_CHOOSER:
+                if (resultCode == RESULT_OK)    {
+                    try {
+                        ArrayList<String> selectedFiles = (ArrayList<String>)returnedIntent.
+                                getSerializableExtra("selectedFiles");
+
+                        Intent retIntent = new Intent();
+                        retIntent.putExtra("selectedFiles", selectedFiles);
+
+                        setResult(RESULT_OK, retIntent);
+                        finish();
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    cancelActivity();
+                }
+                else    {
+                    cancelActivity();
+                }
+                break;
+        }
     }
 
     private void bindUi()   {
@@ -257,34 +313,10 @@ public class PlantCam extends AppCompatActivity {
         }
     }
 
-    final CameraDevice.StateCallback callback = new CameraDevice.StateCallback() {
-        @Override
-        public void onOpened(@NonNull CameraDevice cameraDevice) {
-            cameraLock.release();
-            curCameraDevice = cameraDevice;
-            createCameraPreviewSession();
-        }
-
-        @Override
-        public void onDisconnected(@NonNull CameraDevice cameraDevice) {
-            cameraLock.release();
-            cameraDevice.close();
-            curCameraDevice = null;
-        }
-
-        @Override
-        public void onError(@NonNull CameraDevice cameraDevice, int i) {
-            cameraLock.release();
-            cameraDevice.close();
-            curCameraDevice = null;
-            cancelActivity();
-        }
-    };
-
     private void setupCameraOutputs(int width, int height)  {
         try {
             for(String cId : cameraManager.getCameraIdList())   {
-                CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cId);
+                characteristics = cameraManager.getCameraCharacteristics(cId);
 
                 Integer facingDirection = characteristics.get(CameraCharacteristics.LENS_FACING);
                 if (facingDirection != null &&
@@ -335,6 +367,7 @@ public class PlantCam extends AppCompatActivity {
                 }
 
                 Point displaySize = new Point();
+                getWindowManager().getDefaultDisplay().getSize(displaySize);
                 int rotatedPreviewWidth = width;
                 int rotatedPreviewHeight = height;
                 int maxPreviewWidth = displaySize.x;
@@ -355,7 +388,12 @@ public class PlantCam extends AppCompatActivity {
                     maxPreviewHeight = MAX_PREVIEW_HEIGHT;
                 }
 
-                cameraPreviewSize = new Size(maxPreviewWidth, maxPreviewHeight);
+                cameraPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
+                        rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth,
+                        maxPreviewHeight, largest);
+
+                cameraPreviewSize = new Size(cameraPreviewSize.getWidth(),
+                        cameraPreviewSize.getHeight());
 
                 Boolean available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 isFlashSupported = available == null ? false : available;
@@ -395,7 +433,6 @@ public class PlantCam extends AppCompatActivity {
         else if (rotation == Surface.ROTATION_180)  {
             matrix.postRotate(180, centerX, centerY);
         }
-
         cameraPreviewTextureView.setTransform(matrix);
     }
 
@@ -457,6 +494,244 @@ public class PlantCam extends AppCompatActivity {
                     CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
         }
     }
+
+    private static class ImageSaver implements Runnable {
+
+        /**
+         * The JPEG image
+         */
+        private final Image mImage;
+        /**
+         * The file we save the image into.
+         */
+        private final File mFile;
+
+        ImageSaver(Image image, File file) {
+            mImage = image;
+            mFile = file;
+        }
+
+        @Override
+        public void run() {
+            ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
+            byte[] bytes = new byte[buffer.remaining()];
+            buffer.get(bytes);
+            FileOutputStream output = null;
+            try {
+                output = new FileOutputStream(mFile);
+                output.write(bytes);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                mImage.close();
+                if (null != output) {
+                    try {
+                        output.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+    }
+
+    private Size chooseOptimalSize(Size[] choices, int textureViewWidth,
+          int textureViewHeight, int maxWidth, int maxHeight, Size aspectRatio) {
+
+        // Collect the supported resolutions that are at least as big as the preview Surface
+        List<Size> bigEnough = new ArrayList<>();
+        // Collect the supported resolutions that are smaller than the preview Surface
+        List<Size> notBigEnough = new ArrayList<>();
+        int w = aspectRatio.getWidth();
+        int h = aspectRatio.getHeight();
+        for (Size option : choices) {
+            if (option.getWidth() <= maxWidth && option.getHeight() <= maxHeight &&
+                    option.getHeight() == option.getWidth() * h / w) {
+                if (option.getWidth() >= textureViewWidth &&
+                        option.getHeight() >= textureViewHeight) {
+                    bigEnough.add(option);
+                } else {
+                    notBigEnough.add(option);
+                }
+            }
+        }
+
+        // Pick the smallest of those big enough. If there is no one big enough, pick the
+        // largest of those not big enough.
+        if (bigEnough.size() > 0) {
+            return Collections.min(bigEnough, new Comparator<Size>() {
+                @Override
+                public int compare(Size lhs, Size rhs) {
+                    // We cast here to ensure the multiplications won't overflow
+                    return Long.signum((long) lhs.getWidth() * lhs.getHeight() -
+                            (long) rhs.getWidth() * rhs.getHeight());
+                }
+
+            });
+        } else if (notBigEnough.size() > 0) {
+            return Collections.max(notBigEnough, new Comparator<Size>() {
+                @Override
+                public int compare(Size lhs, Size rhs) {
+                    // We cast here to ensure the multiplications won't overflow
+                    return Long.signum((long) lhs.getWidth() * lhs.getHeight() -
+                            (long) rhs.getWidth() * rhs.getHeight());
+                }
+
+            });
+        } else {
+            Toast.makeText(PlantCam.this, "Couldn't find any suitable preview size",
+                    Toast.LENGTH_LONG).show();
+
+            return choices[0];
+        }
+    }
+
+    private void captureStillPicture() {
+        try {
+            final CaptureRequest.Builder captureBuilder =
+                    curCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+            captureBuilder.addTarget(imageReader.getSurface());
+
+            // Use the same AE and AF modes as the preview.
+            captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
+                    CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+            setAutoFlash(captureBuilder);
+
+//            // Orientation
+            int rotation = getWindowManager().getDefaultDisplay().getRotation();
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, rotation);//getOrientation(rotation));
+
+            CameraCaptureSession.CaptureCallback captureCallback
+                    = new CameraCaptureSession.CaptureCallback() {
+
+                @Override
+                public void onCaptureCompleted(@NonNull CameraCaptureSession session,
+                                               @NonNull CaptureRequest request,
+                                               @NonNull TotalCaptureResult result) {
+                    Toast.makeText(PlantCam.this,
+                            "Saved: " + fileNames.get(fileNames.size()-1),
+                            Toast.LENGTH_SHORT).show();
+
+                    unlockFocus();
+                }
+            };
+
+            curCameraCaptureSession.stopRepeating();
+            curCameraCaptureSession.abortCaptures();
+            curCameraCaptureSession.capture(captureBuilder.build(), captureCallback, null);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void unlockFocus() {
+        try {
+            // Reset the auto-focus trigger
+            cameraPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+                    CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
+            setAutoFlash(cameraPreviewRequestBuilder);
+            curCameraCaptureSession.capture(cameraPreviewRequestBuilder.build(), cameraCaptureCallback,
+                    backgroundHandler);
+            // After this, the camera will go back to the normal state of preview.
+            cameraState = STATE_PREVIEW;
+            curCameraCaptureSession.setRepeatingRequest(curPreviewRequest, cameraCaptureCallback,
+                    backgroundHandler);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void runPrecaptureSequence() {
+        try {
+            // This is how to tell the camera to trigger.
+            cameraPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+                    CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+            // Tell #mCaptureCallback to wait for the precapture sequence to be set.
+            cameraState = STATE_WAITING_PRECAPTURE;
+            curCameraCaptureSession.capture(cameraPreviewRequestBuilder.build(), cameraCaptureCallback,
+                    backgroundHandler);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int getOrientation(int deviceOrientation) {
+        return (ORIENTATIONS.get(deviceOrientation) + sensorOrientation + 270) % 360;
+    }
+
+    private void startBackgroundThread() {
+        try {
+            backgroundThread = new HandlerThread("CameraBackground");
+            backgroundThread.start();
+            backgroundHandler = new Handler(backgroundThread.getLooper());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stopBackgroundThread() {
+        try {
+            backgroundThread.quitSafely();
+            backgroundThread.join();
+            backgroundThread = null;
+            backgroundHandler = null;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void launchImageChooser()   {
+        cleanUpActivity();
+        Intent imgPick = new Intent(this, CameraImagePicker.class);
+        imgPick.putExtra("files", fileNames);
+        startActivityForResult(imgPick, AndroidConstants.ACTIVITY_IMAGE_CHOOSER);
+    }
+
+    private void cleanUpActivity()  {
+        stopBackgroundThread();
+    }
+
+    private void cancelActivity()   {
+        cleanUpActivity();
+
+        setResult(RESULT_CANCELED);
+        finish();
+    }
+
+    private File getFileHandle()    {
+        String imageName = System.currentTimeMillis() + ".jpg";
+
+        fileNames.add(imageName);
+
+        return new File(getExternalFilesDir("camera/"), imageName);
+    }
+
+    final CameraDevice.StateCallback callback = new CameraDevice.StateCallback() {
+        @Override
+        public void onOpened(@NonNull CameraDevice cameraDevice) {
+            cameraLock.release();
+            curCameraDevice = cameraDevice;
+            createCameraPreviewSession();
+        }
+
+        @Override
+        public void onDisconnected(@NonNull CameraDevice cameraDevice) {
+            cameraLock.release();
+            cameraDevice.close();
+            curCameraDevice = null;
+        }
+
+        @Override
+        public void onError(@NonNull CameraDevice cameraDevice, int i) {
+            cameraLock.release();
+            cameraDevice.close();
+            curCameraDevice = null;
+            cancelActivity();
+        }
+    };
 
     private CameraCaptureSession.CaptureCallback cameraCaptureCallback
             = new CameraCaptureSession.CaptureCallback() {
@@ -523,27 +798,6 @@ public class PlantCam extends AppCompatActivity {
 
     };
 
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                new AlertDialog.Builder(this)
-                        .setMessage("BLAH!")
-                        .setPositiveButton(android.R.string.ok,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        cancelActivity();
-                                    }
-                                }).show();
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
     private final ImageReader.OnImageAvailableListener onImageAvailableListener
             = new ImageReader.OnImageAvailableListener() {
 
@@ -553,176 +807,6 @@ public class PlantCam extends AppCompatActivity {
         }
 
     };
-
-    private static class ImageSaver implements Runnable {
-
-        /**
-         * The JPEG image
-         */
-        private final Image mImage;
-        /**
-         * The file we save the image into.
-         */
-        private final File mFile;
-
-        ImageSaver(Image image, File file) {
-            mImage = image;
-            mFile = file;
-        }
-
-        @Override
-        public void run() {
-            ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
-            byte[] bytes = new byte[buffer.remaining()];
-            buffer.get(bytes);
-            FileOutputStream output = null;
-            try {
-                output = new FileOutputStream(mFile);
-                output.write(bytes);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                mImage.close();
-                if (null != output) {
-                    try {
-                        output.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-    }
-
-    private Size chooseOptimalSize(Size[] choices, int textureViewWidth,
-                                          int textureViewHeight, int maxWidth, int maxHeight,
-                                          Size aspectRatio) {
-
-        // Collect the supported resolutions that are at least as big as the preview Surface
-        List<Size> bigEnough = new ArrayList<>();
-        // Collect the supported resolutions that are smaller than the preview Surface
-        List<Size> notBigEnough = new ArrayList<>();
-        int w = aspectRatio.getWidth();
-        int h = aspectRatio.getHeight();
-        for (Size option : choices) {
-            if (option.getWidth() <= maxWidth && option.getHeight() <= maxHeight &&
-                    option.getHeight() == option.getWidth() * h / w) {
-                if (option.getWidth() >= textureViewWidth &&
-                        option.getHeight() >= textureViewHeight) {
-                    bigEnough.add(option);
-                } else {
-                    notBigEnough.add(option);
-                }
-            }
-        }
-
-        // Pick the smallest of those big enough. If there is no one big enough, pick the
-        // largest of those not big enough.
-        if (bigEnough.size() > 0) {
-            return Collections.min(bigEnough, new Comparator<Size>() {
-                @Override
-                public int compare(Size lhs, Size rhs) {
-                    // We cast here to ensure the multiplications won't overflow
-                    return Long.signum((long) lhs.getWidth() * lhs.getHeight() -
-                            (long) rhs.getWidth() * rhs.getHeight());
-                }
-
-            });
-        } else if (notBigEnough.size() > 0) {
-            return Collections.max(notBigEnough, new Comparator<Size>() {
-                @Override
-                public int compare(Size lhs, Size rhs) {
-                    // We cast here to ensure the multiplications won't overflow
-                    return Long.signum((long) lhs.getWidth() * lhs.getHeight() -
-                            (long) rhs.getWidth() * rhs.getHeight());
-                }
-
-            });
-        } else {
-            Toast.makeText(PlantCam.this, "Couldn't find any suitable preview size",
-                    Toast.LENGTH_LONG).show();
-
-            return choices[0];
-        }
-    }
-
-    private void captureStillPicture() {
-        try {
-            final CaptureRequest.Builder captureBuilder =
-                    curCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-            captureBuilder.addTarget(imageReader.getSurface());
-
-            // Use the same AE and AF modes as the preview.
-            captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-                    CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-            setAutoFlash(captureBuilder);
-
-            // Orientation
-            int rotation = getWindowManager().getDefaultDisplay().getRotation();
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, getOrientation(rotation));
-
-            CameraCaptureSession.CaptureCallback CaptureCallback
-                    = new CameraCaptureSession.CaptureCallback() {
-
-                @Override
-                public void onCaptureCompleted(@NonNull CameraCaptureSession session,
-                                               @NonNull CaptureRequest request,
-                                               @NonNull TotalCaptureResult result) {
-                    Toast.makeText(PlantCam.this,
-                            "Saved: " + fileNames.get(fileNames.size()-1),
-                            Toast.LENGTH_LONG).show();
-
-                    unlockFocus();
-                }
-            };
-
-            curCameraCaptureSession.stopRepeating();
-            curCameraCaptureSession.abortCaptures();
-            curCameraCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void unlockFocus() {
-        try {
-            // Reset the auto-focus trigger
-            cameraPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-                    CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
-            setAutoFlash(cameraPreviewRequestBuilder);
-            curCameraCaptureSession.capture(cameraPreviewRequestBuilder.build(), cameraCaptureCallback,
-                    backgroundHandler);
-            // After this, the camera will go back to the normal state of preview.
-            cameraState = STATE_PREVIEW;
-            curCameraCaptureSession.setRepeatingRequest(curPreviewRequest, cameraCaptureCallback,
-                    backgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void runPrecaptureSequence() {
-        try {
-            // This is how to tell the camera to trigger.
-            cameraPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-                    CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
-            // Tell #mCaptureCallback to wait for the precapture sequence to be set.
-            cameraState = STATE_WAITING_PRECAPTURE;
-            curCameraCaptureSession.capture(cameraPreviewRequestBuilder.build(), cameraCaptureCallback,
-                    backgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private int getOrientation(int rotation) {
-        // Sensor orientation is 90 for most devices, or 270 for some devices (eg. Nexus 5X)
-        // We have to take that into account and rotate JPEG properly.
-        // For devices with orientation of 90, we simply return our mapping from ORIENTATIONS.
-        // For devices with orientation of 270, we need to rotate the JPEG 180 degrees.
-        return (ORIENTATIONS.get(rotation) + sensorOrientation + 90) % 360;
-    }
 
     private final TextureView.SurfaceTextureListener surfaceTextureListener
             = new TextureView.SurfaceTextureListener() {
@@ -747,87 +831,5 @@ public class PlantCam extends AppCompatActivity {
         }
 
     };
-
-    @Override
-    public void onBackPressed()    {
-        launchImageChooser();
-    }
-
-    private void startBackgroundThread() {
-        try {
-            backgroundThread = new HandlerThread("CameraBackground");
-            backgroundThread.start();
-            backgroundHandler = new Handler(backgroundThread.getLooper());
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void stopBackgroundThread() {
-        try {
-            backgroundThread.quitSafely();
-            backgroundThread.join();
-            backgroundThread = null;
-            backgroundHandler = null;
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void launchImageChooser()   {
-        cleanUpActivity();
-        Intent imgPick = new Intent(this, CameraImagePicker.class);
-        imgPick.putExtra("files", fileNames);
-        startActivityForResult(imgPick, AndroidConstants.ACTIVITY_IMAGE_CHOOSER);
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
-        switch(requestCode) {
-
-            case AndroidConstants.ACTIVITY_IMAGE_CHOOSER:
-                if (resultCode == RESULT_OK)    {
-                    try {
-                        ArrayList<String> selectedFiles = (ArrayList<String>)returnedIntent.
-                                getSerializableExtra("selectedFiles");
-
-                        Intent retIntent = new Intent();
-                        retIntent.putExtra("selectedFiles", selectedFiles);
-
-                        setResult(RESULT_OK, retIntent);
-                        finish();
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    cancelActivity();
-                }
-                else    {
-                    cancelActivity();
-                }
-                break;
-        }
-    }
-
-    private void cleanUpActivity()  {
-        stopBackgroundThread();
-    }
-
-    private void cancelActivity()   {
-        cleanUpActivity();
-
-        setResult(RESULT_CANCELED);
-        finish();
-    }
-
-    private File getFileHandle()    {
-        String imageName = System.currentTimeMillis() + ".jpg";
-
-        fileNames.add(imageName);
-
-        return new File(getExternalFilesDir("camera/"), imageName);
-    }
 
 }

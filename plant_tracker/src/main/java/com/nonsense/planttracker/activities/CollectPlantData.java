@@ -452,9 +452,6 @@ public class CollectPlantData extends AppCompatActivity {
 
         record.time = cal;
 
-
-        //TODO Get selected images from images tab
-
         Intent retInt = new Intent();
 
         retInt.putExtra("genericRecord", record);
