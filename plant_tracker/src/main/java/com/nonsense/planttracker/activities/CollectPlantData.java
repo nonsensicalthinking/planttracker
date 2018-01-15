@@ -432,7 +432,7 @@ public class CollectPlantData extends AppCompatActivity {
 
     private void cancelActivity()   {
         if (record.images != null)  {
-            for(String s : record.images)   {
+            for(String s : mImages)   {
                 File f = new File(s);
                 f.delete();
             }

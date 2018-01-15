@@ -791,14 +791,6 @@ public class PlantCam extends AppCompatActivity {
                     try {
                         ArrayList<String> selectedFiles = (ArrayList<String>)returnedIntent.
                                 getSerializableExtra("selectedFiles");
-                        ArrayList<String> notSelectedFiles = (ArrayList<String>)returnedIntent.
-                                getSerializableExtra("notSelectedFiles");
-                        String baseDir = returnedIntent.getStringExtra("basePath");
-
-                        for(String file : notSelectedFiles)    {
-                            File f = new File(file);
-                            f.delete();
-                        }
 
                         Intent retIntent = new Intent();
                         retIntent.putExtra("selectedFiles", selectedFiles);
