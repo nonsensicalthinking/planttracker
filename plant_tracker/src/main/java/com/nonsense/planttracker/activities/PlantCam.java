@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -40,7 +39,6 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -55,7 +53,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.nonsense.planttracker.R;
-import com.nonsense.planttracker.tracker.impl.Plant;
+import com.nonsense.planttracker.android.AndroidConstants;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -70,11 +68,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static com.nonsense.planttracker.android.AndroidConstants.ACTIVITY_IMAGE_CHOOSER;
-
 public class PlantCam extends AppCompatActivity {
-
-
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final int STATE_PREVIEW = 0;
@@ -91,13 +85,12 @@ public class PlantCam extends AppCompatActivity {
     private static final int MAX_PREVIEW_HEIGHT = 1080;
 
     static {
-        ORIENTATIONS.append(Surface.ROTATION_0, 90);
-        ORIENTATIONS.append(Surface.ROTATION_90, 0);
+        ORIENTATIONS.append(Surface.ROTATION_0, 0);
+        ORIENTATIONS.append(Surface.ROTATION_90, 90);
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
 
-//    private TextureView cameraPreviewTextureView;
     private Size cameraPreviewSize;
 
     private CameraManager cameraManager;
@@ -108,8 +101,6 @@ public class PlantCam extends AppCompatActivity {
     private Semaphore cameraLock = new Semaphore(1);;
     private String cameraId;
 
-//    private File imageOutput;
-    private CameraDevice cameraDevice;
     private CaptureRequest.Builder cameraPreviewRequestBuilder;
     private ImageReader imageReader;
     private CaptureRequest curPreviewRequest;
@@ -119,29 +110,23 @@ public class PlantCam extends AppCompatActivity {
     private int sensorOrientation;
     private HandlerThread backgroundThread;
 
+    private ArrayList<String> fileNames = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plant_cam);
 
-        //imageOutput = new File(getExternalFilesDir("camera/"), "image1.jpg");
-
-        Intent intent = getIntent();
 
         bindUi();
 
         startBackgroundThread();
 
-        // When the screen is turned off and turned back on, the SurfaceTexture is already
-        // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
-        // a camera and start preview from here (otherwise, we wait until the surface is ready in
-        // the SurfaceTextureListener).
         if (cameraPreviewTextureView.isAvailable()) {
             openCamera(cameraPreviewTextureView.getWidth(), cameraPreviewTextureView.getHeight());
         } else {
             cameraPreviewTextureView.setSurfaceTextureListener(surfaceTextureListener);
         }
-
     }
 
     @Override
@@ -169,7 +154,8 @@ public class PlantCam extends AppCompatActivity {
 
     private void bindUi()   {
         cameraPreviewTextureView = (TextureView)findViewById(R.id.cameraPreviewTextureView);
-        cameraPreviewTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+        cameraPreviewTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener()
+        {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width,
                                                   int height) {
@@ -395,8 +381,11 @@ public class PlantCam extends AppCompatActivity {
         int rotation = getWindowManager().getDefaultDisplay().getRotation();
 
         if ( rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270)   {
-            bufferRect.offset(centerX - bufferRect.centerX(), centerY - bufferRect.centerY());
+            bufferRect.offset(centerX - bufferRect.centerX(),
+                    centerY - bufferRect.centerY());
+
             matrix.setRectToRect(viewRect, bufferRect, Matrix.ScaleToFit.FILL);
+
             float scale = Math.max((float) height / cameraPreviewSize.getHeight(),
                     (float) width / cameraPreviewSize.getWidth());
 
@@ -542,12 +531,13 @@ public class PlantCam extends AppCompatActivity {
             if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 new AlertDialog.Builder(this)
                         .setMessage("BLAH!")
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                cancelActivity();
-                            }
-                        }).show();
+                        .setPositiveButton(android.R.string.ok,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        cancelActivity();
+                                    }
+                                }).show();
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -731,7 +721,7 @@ public class PlantCam extends AppCompatActivity {
         // We have to take that into account and rotate JPEG properly.
         // For devices with orientation of 90, we simply return our mapping from ORIENTATIONS.
         // For devices with orientation of 270, we need to rotate the JPEG 180 degrees.
-        return (ORIENTATIONS.get(rotation) + sensorOrientation + 270) % 360;
+        return (ORIENTATIONS.get(rotation) + sensorOrientation + 90) % 360;
     }
 
     private final TextureView.SurfaceTextureListener surfaceTextureListener
@@ -763,8 +753,6 @@ public class PlantCam extends AppCompatActivity {
         launchImageChooser();
     }
 
-
-
     private void startBackgroundThread() {
         try {
             backgroundThread = new HandlerThread("CameraBackground");
@@ -783,50 +771,49 @@ public class PlantCam extends AppCompatActivity {
             backgroundThread = null;
             backgroundHandler = null;
         }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-
-
     private void launchImageChooser()   {
         cleanUpActivity();
         Intent imgPick = new Intent(this, CameraImagePicker.class);
         imgPick.putExtra("files", fileNames);
-        startActivityForResult(imgPick, ACTIVITY_IMAGE_CHOOSER);
+        startActivityForResult(imgPick, AndroidConstants.ACTIVITY_IMAGE_CHOOSER);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         switch(requestCode) {
 
-            case ACTIVITY_IMAGE_CHOOSER:
+            case AndroidConstants.ACTIVITY_IMAGE_CHOOSER:
                 if (resultCode == RESULT_OK)    {
-                    ArrayList<String> selectedFiles = (ArrayList<String>)returnedIntent.
-                            getSerializableExtra("selectedFiles");
+                    try {
+                        ArrayList<String> selectedFiles = (ArrayList<String>)returnedIntent.
+                                getSerializableExtra("selectedFiles");
+                        ArrayList<String> notSelectedFiles = (ArrayList<String>)returnedIntent.
+                                getSerializableExtra("notSelectedFiles");
+                        String baseDir = returnedIntent.getStringExtra("basePath");
 
-                    ArrayList<String> notSelectedFiles = (ArrayList<String>) returnedIntent.
-                            getSerializableExtra("notSelectedFiles");
+                        for(String file : notSelectedFiles)    {
+                            File f = new File(file);
+                            f.delete();
+                        }
 
-                    String baseDir = returnedIntent.getStringExtra("basePath");
+                        Intent retIntent = new Intent();
+                        retIntent.putExtra("selectedFiles", selectedFiles);
 
-                    for(String file : notSelectedFiles)    {
-                        File f = new File(file);
-                        f.delete();
+                        setResult(RESULT_OK, retIntent);
+                        finish();
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
                     }
 
-                    Intent retIntent = new Intent();
-                    retIntent.putExtra("selectedFiles", selectedFiles);
-
-                    setResult(RESULT_OK, retIntent);
-                    finish();
+                    cancelActivity();
                 }
                 else    {
-                    setResult(RESULT_CANCELED);
-                    finish();
+                    cancelActivity();
                 }
                 break;
         }
@@ -842,8 +829,6 @@ public class PlantCam extends AppCompatActivity {
         setResult(RESULT_CANCELED);
         finish();
     }
-
-    private ArrayList<String> fileNames = new ArrayList<>();
 
     private File getFileHandle()    {
         String imageName = System.currentTimeMillis() + ".jpg";

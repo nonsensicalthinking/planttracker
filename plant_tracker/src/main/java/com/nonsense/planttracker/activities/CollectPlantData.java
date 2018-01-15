@@ -31,6 +31,7 @@ import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
@@ -430,6 +431,13 @@ public class CollectPlantData extends AppCompatActivity {
     }
 
     private void cancelActivity()   {
+        if (record.images != null)  {
+            for(String s : record.images)   {
+                File f = new File(s);
+                f.delete();
+            }
+        }
+
         setResult(Activity.RESULT_CANCELED);
         finish();
     }
