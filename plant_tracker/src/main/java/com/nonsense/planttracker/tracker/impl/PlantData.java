@@ -18,6 +18,7 @@ public class PlantData implements Serializable  {
     public String currentStateName;
     public ArrayList<GenericRecord> genericRecords;
     public ArrayList<Long> groupIds;
+    public String thumbnail;
 
     public PlantData()  {
         genericRecords = new ArrayList<>();

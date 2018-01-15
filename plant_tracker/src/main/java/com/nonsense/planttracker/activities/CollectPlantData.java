@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.nonsense.planttracker.R;
+import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 
 import java.util.ArrayList;
@@ -43,6 +44,9 @@ public class CollectPlantData extends AppCompatActivity {
 
     private boolean showNotes;
     private TreeMap<String, Long> availableGroups;
+
+    private ArrayList<String> mImages = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -239,7 +243,7 @@ public class CollectPlantData extends AppCompatActivity {
                 Intent cameraIntent = new Intent(CollectPlantData.this,
                         PlantCam.class);
 
-                startActivityForResult(cameraIntent, 0);
+                startActivityForResult(cameraIntent, AndroidConstants.ACTIVITY_PLANT_CAM);
             }
         });
 
@@ -410,6 +414,21 @@ public class CollectPlantData extends AppCompatActivity {
         return editText;
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
+        super.onActivityResult(requestCode, resultCode, returnedIntent);
+        switch (requestCode) {
+
+            case AndroidConstants.ACTIVITY_PLANT_CAM:
+                if (resultCode == Activity.RESULT_OK) {
+                    ArrayList<String> selectedFiles = (ArrayList<String>)returnedIntent.
+                            getSerializableExtra("selectedFiles");
+
+                    mImages.addAll(selectedFiles);
+                }
+                break;
+        }
+    }
+
     private void cancelActivity()   {
         setResult(Activity.RESULT_CANCELED);
         finish();
@@ -433,6 +452,7 @@ public class CollectPlantData extends AppCompatActivity {
         retInt.putExtra("genericRecord", record);
         retInt.putExtra("applyToGroup", applyToGroup);
         retInt.putExtra("selectedGroup", selectedGroup);
+        retInt.putExtra("selectedFiles", mImages);
 
         setResult(Activity.RESULT_OK, retInt);
         finish();

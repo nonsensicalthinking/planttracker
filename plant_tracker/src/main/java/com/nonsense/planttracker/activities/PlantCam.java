@@ -70,7 +70,11 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static com.nonsense.planttracker.android.AndroidConstants.ACTIVITY_IMAGE_CHOOSER;
+
 public class PlantCam extends AppCompatActivity {
+
+
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final int STATE_PREVIEW = 0;
@@ -212,7 +216,7 @@ public class PlantCam extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    endActivity();
+                                cancelActivity();
                                 }
                             }).show();
 
@@ -287,7 +291,7 @@ public class PlantCam extends AppCompatActivity {
             cameraLock.release();
             cameraDevice.close();
             curCameraDevice = null;
-            endActivity();
+            cancelActivity();
         }
     };
 
@@ -541,7 +545,7 @@ public class PlantCam extends AppCompatActivity {
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                endActivity();
+                                cancelActivity();
                             }
                         }).show();
             }
@@ -756,7 +760,7 @@ public class PlantCam extends AppCompatActivity {
 
     @Override
     public void onBackPressed()    {
-        endActivity();
+        launchImageChooser();
     }
 
 
@@ -787,18 +791,55 @@ public class PlantCam extends AppCompatActivity {
         }
     }
 
-    private void endActivity()  {
+
+
+    private void launchImageChooser()   {
+        cleanUpActivity();
+        Intent imgPick = new Intent(this, CameraImagePicker.class);
+        imgPick.putExtra("files", fileNames);
+        startActivityForResult(imgPick, ACTIVITY_IMAGE_CHOOSER);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
+        switch(requestCode) {
+
+            case ACTIVITY_IMAGE_CHOOSER:
+                if (resultCode == RESULT_OK)    {
+                    ArrayList<String> selectedFiles = (ArrayList<String>)returnedIntent.
+                            getSerializableExtra("selectedFiles");
+
+                    ArrayList<String> notSelectedFiles = (ArrayList<String>) returnedIntent.
+                            getSerializableExtra("notSelectedFiles");
+
+                    String baseDir = returnedIntent.getStringExtra("basePath");
+
+                    for(String file : notSelectedFiles)    {
+                        File f = new File(file);
+                        f.delete();
+                    }
+
+                    Intent retIntent = new Intent();
+                    retIntent.putExtra("selectedFiles", selectedFiles);
+
+                    setResult(RESULT_OK, retIntent);
+                    finish();
+                }
+                else    {
+                    setResult(RESULT_CANCELED);
+                    finish();
+                }
+                break;
+        }
+    }
+
+    private void cleanUpActivity()  {
         stopBackgroundThread();
+    }
 
-//        Intent intent = new Intent(Intent.ACTION_VIEW);
-//        intent.setData(Uri.parse(getExternalFilesDir("camera/").getAbsolutePath()));
-//        startActivity(intent);
+    private void cancelActivity()   {
+        cleanUpActivity();
 
-//        Intent i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//        i.setType("image/*");
-//        i.setData(Uri.parse(getExternalFilesDir("camera/").getAbsolutePath()));
-//        startActivityForResult(i, 1);
-
+        setResult(RESULT_CANCELED);
         finish();
     }
 

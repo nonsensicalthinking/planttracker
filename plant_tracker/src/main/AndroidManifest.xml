@@ -48,6 +48,10 @@
 
         <activity android:name=".activities.PlantCam"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".activities.CameraImagePicker"
+            android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 
 </manifest>
