@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nonsense.planttracker.activities;
+package com.nonsense.planttracker.android.activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -179,6 +179,7 @@ public class PlantCam extends AppCompatActivity {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         switch(requestCode) {
 
@@ -186,10 +187,11 @@ public class PlantCam extends AppCompatActivity {
                 if (resultCode == RESULT_OK)    {
                     try {
                         ArrayList<String> selectedFiles = (ArrayList<String>)returnedIntent.
-                                getSerializableExtra("selectedFiles");
+                                getSerializableExtra(AndroidConstants.INTENTKEY_SELECTED_FILES);
 
                         Intent retIntent = new Intent();
-                        retIntent.putExtra("selectedFiles", selectedFiles);
+                        retIntent.putExtra(AndroidConstants.INTENTKEY_SELECTED_FILES,
+                                selectedFiles);
 
                         setResult(RESULT_OK, retIntent);
                         finish();
@@ -681,7 +683,7 @@ public class PlantCam extends AppCompatActivity {
     private void launchImageChooser()   {
         cleanUpActivity();
         Intent imgPick = new Intent(this, CameraImagePicker.class);
-        imgPick.putExtra("files", fileNames);
+        imgPick.putExtra(AndroidConstants.INTENTKEY_FILE_LIST, fileNames);
         startActivityForResult(imgPick, AndroidConstants.ACTIVITY_IMAGE_CHOOSER);
     }
 

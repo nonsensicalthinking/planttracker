@@ -1,4 +1,4 @@
-package com.nonsense.planttracker.activities;
+package com.nonsense.planttracker.android.activities;
 
 // Additional source attribution for icon:
 // Plant Icon website http://www.freepik.com/free-icon/plant-growing_743982.htm
@@ -468,7 +468,8 @@ public class PlantTrackerUi extends AppCompatActivity
                     case CREATE_NEW_GENERIC_RECORD_OPTION:
                         Intent intent = new Intent(PlantTrackerUi.this,
                                 CreateRecordType.class);
-                        intent.putExtra("genericRecord", new GenericRecord(""));
+                        intent.putExtra(AndroidConstants.INTENTKEY_GENERIC_RECORD,
+                                new GenericRecord(""));
 
                         startActivityForResult(intent,
                                 AndroidConstants.ACTIVITY_CREATE_GENERIC_RECORD_TEMPLATE);
@@ -564,9 +565,10 @@ public class PlantTrackerUi extends AppCompatActivity
 
     private void launchCollectPlantDataIntent(GenericRecord record, boolean showNotes) {
         Intent intent = new Intent(PlantTrackerUi.this, CollectPlantData.class);
-        intent.putExtra("availableGroups", getAvailableGroupsForPlant(currentPlant));
-        intent.putExtra("genericRecord", record);
-        intent.putExtra("showNotes", showNotes);
+        intent.putExtra(AndroidConstants.INTENTKEY_AVAILABLE_GROUPS,
+                getAvailableGroupsForPlant(currentPlant));
+        intent.putExtra(AndroidConstants.INTENTKEY_GENERIC_RECORD, record);
+        intent.putExtra(AndroidConstants.INTENTKEY_SHOW_NOTES, showNotes);
 
         startActivityForResult(intent, AndroidConstants.ACTIVITY_GENERIC_RECORD);
     }
@@ -1265,6 +1267,7 @@ public class PlantTrackerUi extends AppCompatActivity
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
         switch (requestCode) {
@@ -1272,13 +1275,16 @@ public class PlantTrackerUi extends AppCompatActivity
             case AndroidConstants.ACTIVITY_GENERIC_RECORD:
                 if (resultCode == Activity.RESULT_OK) {
                     GenericRecord record = (GenericRecord) returnedIntent.getSerializableExtra(
-                            "genericRecord");
+                            AndroidConstants.INTENTKEY_GENERIC_RECORD);
+
                     boolean applyToGroup = (boolean) returnedIntent.getBooleanExtra(
-                            "applyToGroup", false);
-                    long selectedGroup = (long) returnedIntent.getLongExtra("selectedGroup",
-                            0);
+                            AndroidConstants.INTENTKEY_APPLY_TO_GROUP, false);
+
+                    long selectedGroup = (long) returnedIntent.getLongExtra(
+                            AndroidConstants.INTENTKEY_SELECTED_GROUP, 0);
+
                     record.images = (ArrayList<String>)returnedIntent.
-                            getSerializableExtra("selectedFiles");
+                            getSerializableExtra(AndroidConstants.INTENTKEY_SELECTED_FILES);
 
                     PlantAction action = new PlantAction(record);
                     if (applyToGroup && selectedGroup > 0) {
@@ -1294,7 +1300,7 @@ public class PlantTrackerUi extends AppCompatActivity
             case AndroidConstants.ACTIVITY_CREATE_GENERIC_RECORD_TEMPLATE:
                 if (resultCode == Activity.RESULT_OK)   {
                     GenericRecord record = (GenericRecord)returnedIntent.getSerializableExtra(
-                            "genericRecord");
+                            AndroidConstants.INTENTKEY_GENERIC_RECORD);
 
                     tracker.addGenericRecordTemplate(record);
 
@@ -1305,7 +1311,7 @@ public class PlantTrackerUi extends AppCompatActivity
             case AndroidConstants.ACTIVITY_MANAGE_RECORD_TEMPLATES:
                 if (resultCode == Activity.RESULT_OK)   {
                     PlantTracker passedTracker = (PlantTracker) returnedIntent.getSerializableExtra(
-                            "tracker");
+                            AndroidConstants.INTENTKEY_PLANT_TRACKER);
                     tracker.setPlantTrackerSettings(passedTracker.getPlantTrackerSettings());
 
                     refreshListView();

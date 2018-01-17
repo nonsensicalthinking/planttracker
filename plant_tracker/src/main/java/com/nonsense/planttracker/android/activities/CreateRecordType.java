@@ -1,4 +1,4 @@
-package com.nonsense.planttracker.activities;
+package com.nonsense.planttracker.android.activities;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -25,6 +25,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.nonsense.planttracker.R;
+import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.android.adapters.DataPointTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
@@ -49,7 +50,8 @@ public class CreateRecordType extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        record = (GenericRecord)intent.getSerializableExtra("genericRecord");
+        record = (GenericRecord)intent.getSerializableExtra(
+                AndroidConstants.INTENTKEY_GENERIC_RECORD);
 
         bindUi();
     }
@@ -140,7 +142,7 @@ public class CreateRecordType extends AppCompatActivity {
             public void onClick(View view) {
                 Intent retInt = new Intent();
 
-                retInt.putExtra("genericRecord", record);
+                retInt.putExtra(AndroidConstants.INTENTKEY_GENERIC_RECORD, record);
 
                 setResult(Activity.RESULT_OK, retInt);
                 finish();

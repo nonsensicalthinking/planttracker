@@ -1,4 +1,4 @@
-package com.nonsense.planttracker.activities;
+package com.nonsense.planttracker.android.activities;
 
 import android.app.Dialog;
 import android.content.Context;

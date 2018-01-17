@@ -1,4 +1,4 @@
-package com.nonsense.planttracker.activities;
+package com.nonsense.planttracker.android.activities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -49,6 +49,7 @@ public class CollectPlantData extends AppCompatActivity {
     private ArrayList<String> mImages = new ArrayList<>();
 
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,10 +57,12 @@ public class CollectPlantData extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        record = (GenericRecord)intent.getSerializableExtra("genericRecord");
+        record = (GenericRecord)intent.getSerializableExtra(
+                AndroidConstants.INTENTKEY_GENERIC_RECORD);
         availableGroups = new TreeMap<>((Map<String, Long>)(intent.getSerializableExtra(
-                "availableGroups")));
-        showNotes = (boolean)intent.getBooleanExtra("showNotes", false);
+                AndroidConstants.INTENTKEY_AVAILABLE_GROUPS)));
+        showNotes = (boolean)intent.getBooleanExtra(AndroidConstants.INTENTKEY_SHOW_NOTES,
+                false);
 
         bindUi();
     }
@@ -415,6 +418,7 @@ public class CollectPlantData extends AppCompatActivity {
         return editText;
     }
 
+    @SuppressWarnings("unchecked")
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
         switch (requestCode) {
@@ -422,7 +426,7 @@ public class CollectPlantData extends AppCompatActivity {
             case AndroidConstants.ACTIVITY_PLANT_CAM:
                 if (resultCode == Activity.RESULT_OK) {
                     ArrayList<String> selectedFiles = (ArrayList<String>)returnedIntent.
-                            getSerializableExtra("selectedFiles");
+                            getSerializableExtra(AndroidConstants.INTENTKEY_SELECTED_FILES);
 
                     mImages.addAll(selectedFiles);
                 }
@@ -454,10 +458,10 @@ public class CollectPlantData extends AppCompatActivity {
 
         Intent retInt = new Intent();
 
-        retInt.putExtra("genericRecord", record);
-        retInt.putExtra("applyToGroup", applyToGroup);
-        retInt.putExtra("selectedGroup", selectedGroup);
-        retInt.putExtra("selectedFiles", mImages);
+        retInt.putExtra(AndroidConstants.INTENTKEY_GENERIC_RECORD, record);
+        retInt.putExtra(AndroidConstants.INTENTKEY_APPLY_TO_GROUP, applyToGroup);
+        retInt.putExtra(AndroidConstants.INTENTKEY_SELECTED_GROUP, selectedGroup);
+        retInt.putExtra(AndroidConstants.INTENTKEY_SELECTED_FILES, mImages);
 
         setResult(Activity.RESULT_OK, retInt);
         finish();

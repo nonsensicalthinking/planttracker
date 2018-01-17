@@ -1,4 +1,4 @@
-package com.nonsense.planttracker.activities;
+package com.nonsense.planttracker.android.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.GridView;
 
 import com.nonsense.planttracker.R;
+import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.android.adapters.ImageAdapter;
 
 import java.io.File;
@@ -78,7 +79,7 @@ public class CameraImagePicker extends AppCompatActivity {
         deleteFiles(notSelectedFiles);
 
         Intent retIntent = new Intent();
-        retIntent.putExtra("selectedFiles", selectedFiles);
+        retIntent.putExtra(AndroidConstants.INTENTKEY_SELECTED_FILES, selectedFiles);
 
         setResult(RESULT_OK, retIntent);
         finish();

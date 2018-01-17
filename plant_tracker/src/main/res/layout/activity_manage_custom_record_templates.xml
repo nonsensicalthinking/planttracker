@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_light"
-    tools:context="com.nonsense.planttracker.activities.ManageRecordTemplates">
+    tools:context=".android.activities.ManageRecordTemplates">
 
     <include
         layout="@layout/layout_plant_tracker_header"

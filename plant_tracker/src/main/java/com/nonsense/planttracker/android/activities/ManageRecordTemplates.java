@@ -1,4 +1,4 @@
-package com.nonsense.planttracker.activities;
+package com.nonsense.planttracker.android.activities;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.nonsense.planttracker.R;
+import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.android.adapters.CustomEventTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.PlantTracker;
@@ -44,7 +45,8 @@ public class ManageRecordTemplates extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        tracker = (PlantTracker) intent.getSerializableExtra("tracker");
+        tracker = (PlantTracker) intent.getSerializableExtra(
+                AndroidConstants.INTENTKEY_PLANT_TRACKER);
 
         bindUi();
         fillUi();
@@ -65,7 +67,8 @@ public class ManageRecordTemplates extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(ManageRecordTemplates.this,
                         CreateRecordType.class);
-                intent.putExtra("genericRecord", new GenericRecord(""));
+                intent.putExtra(AndroidConstants.INTENTKEY_GENERIC_RECORD,
+                        new GenericRecord(""));
 
                 startActivityForResult(intent, CREATE_GENERIC_RECORD_TEMPLATE_INTENT);
             }
@@ -119,7 +122,7 @@ public class ManageRecordTemplates extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Intent intent = new Intent(ManageRecordTemplates.this,
                         CreateRecordType.class);
-                intent.putExtra("genericRecord", tracker.getGenericRecordTemplate(events.get(
+                intent.putExtra(AndroidConstants.INTENTKEY_GENERIC_RECORD, tracker.getGenericRecordTemplate(events.get(
                         position)));
 
                 selectedRecord = tracker.getGenericRecordTemplate(events.get(position));
@@ -147,7 +150,7 @@ public class ManageRecordTemplates extends AppCompatActivity {
             case CREATE_GENERIC_RECORD_TEMPLATE_INTENT:
                 if (resultCode == Activity.RESULT_OK)   {
                     GenericRecord record = (GenericRecord)returnedIntent.getSerializableExtra(
-                            "genericRecord");
+                            AndroidConstants.INTENTKEY_GENERIC_RECORD);
 
                     tracker.addGenericRecordTemplate(record);
 
@@ -159,7 +162,7 @@ public class ManageRecordTemplates extends AppCompatActivity {
             case EDIT_GENERIC_RECORD_TEMPLATE_INTENT:
                 if (resultCode == Activity.RESULT_OK)   {
                     GenericRecord retRec = (GenericRecord) returnedIntent.getSerializableExtra(
-                            "genericRecord");
+                            AndroidConstants.INTENTKEY_GENERIC_RECORD);
 
                     if (selectedRecord.displayName.equals(retRec.displayName))   {
                         tracker.addGenericRecordTemplate(retRec);
