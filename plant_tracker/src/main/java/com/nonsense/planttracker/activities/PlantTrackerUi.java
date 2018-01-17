@@ -52,12 +52,12 @@ import android.widget.ViewSwitcher;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
-import com.nonsense.planttracker.tracker.adapters.GroupTileArrayAdapter;
-import com.nonsense.planttracker.tracker.adapters.PlantStateTileArrayAdapter;
+import com.nonsense.planttracker.android.adapters.GroupTileArrayAdapter;
+import com.nonsense.planttracker.android.adapters.PlantStateTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Group;
-import com.nonsense.planttracker.tracker.adapters.PlantRecordableTileArrayAdapter;
-import com.nonsense.planttracker.tracker.adapters.PlantTileArrayAdapter;
+import com.nonsense.planttracker.android.adapters.PlantRecordableTileArrayAdapter;
+import com.nonsense.planttracker.android.adapters.PlantTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.Plant;
 import com.nonsense.planttracker.tracker.impl.actions.PlantAction;
 import com.nonsense.planttracker.tracker.impl.PlantTracker;

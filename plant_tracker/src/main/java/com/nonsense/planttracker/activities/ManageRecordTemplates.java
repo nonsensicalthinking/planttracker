@@ -13,7 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.nonsense.planttracker.R;
-import com.nonsense.planttracker.tracker.adapters.CustomEventTileArrayAdapter;
+import com.nonsense.planttracker.android.adapters.CustomEventTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.PlantTracker;
 

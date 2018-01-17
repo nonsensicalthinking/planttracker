@@ -1,4 +1,4 @@
-package com.nonsense.planttracker.tracker.adapters;
+package com.nonsense.planttracker.android.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;

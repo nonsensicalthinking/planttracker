@@ -1,4 +1,4 @@
-package com.nonsense.planttracker.tracker.adapters;
+package com.nonsense.planttracker.android.adapters;
 
 import android.content.Context;
 import android.net.Uri;
@@ -9,7 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.nonsense.planttracker.R;
 

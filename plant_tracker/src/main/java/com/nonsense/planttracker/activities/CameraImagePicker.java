@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.GridView;
 
 import com.nonsense.planttracker.R;
-import com.nonsense.planttracker.tracker.adapters.ImageAdapter;
+import com.nonsense.planttracker.android.adapters.ImageAdapter;
 
 import java.io.File;
 import java.util.ArrayList;

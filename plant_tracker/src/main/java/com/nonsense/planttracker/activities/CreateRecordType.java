@@ -25,7 +25,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.nonsense.planttracker.R;
-import com.nonsense.planttracker.tracker.adapters.DataPointTileArrayAdapter;
+import com.nonsense.planttracker.android.adapters.DataPointTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;

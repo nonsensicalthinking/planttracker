@@ -1,4 +1,4 @@
-package com.nonsense.planttracker.tracker.adapters;
+package com.nonsense.planttracker.android.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,25 +8,24 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.nonsense.planttracker.R;
+import com.nonsense.planttracker.tracker.impl.Group;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Derek Brooks on 7/1/2017.
  */
 
-public class CustomEventTileArrayAdapter extends ArrayAdapter<String> {
+public class GroupTileArrayAdapter extends ArrayAdapter<Group> {
 
     private int viewResourceId;
 
-    public CustomEventTileArrayAdapter(Context context, int textViewResourceId) {
+    public GroupTileArrayAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
         viewResourceId = textViewResourceId;
     }
 
-    public CustomEventTileArrayAdapter(Context context, int resource,
-                                       List<String> items) {
+    public GroupTileArrayAdapter(Context context, int resource, List<Group> items) {
         super(context, resource, items);
         viewResourceId = resource;
     }
@@ -42,15 +41,20 @@ public class CustomEventTileArrayAdapter extends ArrayAdapter<String> {
             v = vi.inflate(viewResourceId, null);
         }
 
-        String entry = getItem(position);
+        Group g = getItem(position);
 
-        if (entry != null) {
-            TextView firstLine = (TextView)v.findViewById(R.id.firstLine);
-            TextView secondLine = (TextView)v.findViewById(R.id.secondLine);
+        if (g != null) {
+            TextView groupNameTextView = (TextView)v.findViewById(R.id.firstLine);
+            TextView groupSummaryTextView = (TextView)v.findViewById(R.id.secondLine);
             TextView archivedTextView = (TextView)v.findViewById(R.id.archivedTextView);
 
+            if (groupNameTextView != null) {
+                groupNameTextView.setText(g.getGroupName());
+            }
 
-            firstLine.setText( entry );
+            if (groupSummaryTextView != null) {
+                groupSummaryTextView.setText("");
+            }
         }
 
         return v;

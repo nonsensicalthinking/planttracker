@@ -6,6 +6,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingBottom="3dp"
+    android:paddingEnd="3dp"
+    android:paddingStart="3dp"
     android:paddingTop="3dp"
     android:theme="@style/Theme.Design">
 
@@ -18,8 +20,8 @@
             android:id="@+id/observEventTypeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
             android:layout_marginEnd="5dp"
+            android:layout_marginStart="4dp"
             android:background="@drawable/rounded_corner"
             android:paddingEnd="20dp"
             android:paddingStart="10dp"
@@ -34,17 +36,6 @@
             android:textSize="16sp"
             android:textStyle="normal" />
 
-        <ImageView
-            android:id="@+id/cameraIconImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-             />
-
-        <ImageView
-            android:id="@+id/dataPointsImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-             />
         <TextView
             android:id="@+id/dateTextView"
             android:layout_width="wrap_content"
@@ -55,14 +46,34 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/recordableSummaryTextView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:paddingEnd="16dp"
-        android:paddingStart="16dp"
-        android:text="@string/loremipsum"
-        android:textColor="@android:color/background_dark" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/recordableSummaryTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:text="@string/loremipsum"
+            android:textColor="@android:color/background_dark" />
+
+        <ImageView
+            android:id="@+id/dataPointsImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:alpha="0.13" />
+
+        <ImageView
+            android:id="@+id/cameraIconImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:alpha="0.13" />
+    </LinearLayout>
 
 </LinearLayout>
