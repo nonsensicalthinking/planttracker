@@ -211,9 +211,13 @@ public class Plant implements Serializable  {
                         record.time);
             }
 
+            if (record.images != null)  {
+                if (record.images.size() > 0)   {
+                    plantData.thumbnail = record.images.get(record.images.size()-1);
+                }
+            }
 
             // TODO update other plant summary fields
-
         }
     }
 
@@ -276,6 +280,10 @@ public class Plant implements Serializable  {
 
     public void plantLoadFinished() {
         updateSummaryInformation();
+    }
+
+    public String getThumbnail()    {
+        return plantData.thumbnail;
     }
 
 }

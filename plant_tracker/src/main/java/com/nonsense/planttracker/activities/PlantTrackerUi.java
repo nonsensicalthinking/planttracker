@@ -14,18 +14,14 @@ package com.nonsense.planttracker.activities;
 
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.Dialog;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.support.v4.app.NotificationCompat;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -42,6 +38,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -51,10 +48,10 @@ import android.widget.TabHost;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.nonsense.planttracker.R;
+import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.tracker.adapters.GroupTileArrayAdapter;
 import com.nonsense.planttracker.tracker.adapters.PlantStateTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
@@ -62,12 +59,13 @@ import com.nonsense.planttracker.tracker.impl.Group;
 import com.nonsense.planttracker.tracker.adapters.PlantRecordableTileArrayAdapter;
 import com.nonsense.planttracker.tracker.adapters.PlantTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.Plant;
-import com.nonsense.planttracker.tracker.impl.PlantActions.PlantAction;
+import com.nonsense.planttracker.tracker.impl.actions.PlantAction;
 import com.nonsense.planttracker.tracker.impl.PlantTracker;
 import com.nonsense.planttracker.tracker.impl.Utility;
 import com.nonsense.planttracker.tracker.interf.IDialogHandler;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -79,13 +77,6 @@ public class PlantTrackerUi extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, IPlantTrackerListener {
 
     private static String PT_FILE_EXTENSION = ".json";
-
-    // Intent constants
-    private static final int TAKE_PICTURES = 0;
-    private static final int IMAGE_CHOOSER_INTENT = 1;
-    private static final int GENERIC_RECORD_INTENT = 25;
-    private static final int CREATE_GENERIC_RECORD_TEMPLATE_INTENT = 26;
-    private static final int MANAGE_RECORD_TEMPLATES_INTENT = 27;
 
     private static final String CREATE_NEW_GENERIC_RECORD_OPTION = "Create new record type...";
 
@@ -259,7 +250,7 @@ public class PlantTrackerUi extends AppCompatActivity
         }
 
         PlantTileArrayAdapter adapter = new PlantTileArrayAdapter(getBaseContext(),
-                R.layout.plant_list_tile, currentDisplayArray);
+                R.layout.tile_plant_list, currentDisplayArray);
 
         plantListView.setAdapter(adapter);
         plantListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -317,7 +308,7 @@ public class PlantTrackerUi extends AppCompatActivity
         final ArrayList<Group> groups = tracker.getAllGroups();
 
         GroupTileArrayAdapter adapter = new GroupTileArrayAdapter(getBaseContext(),
-                R.layout.group_list_tile, groups);
+                R.layout.tile_group_list, groups);
 
         setEmptyViewCaption("No Groups Found");
 
@@ -378,7 +369,7 @@ public class PlantTrackerUi extends AppCompatActivity
         plantStates.addAll(tracker.getPlantTrackerSettings().getStateAutoComplete());
 
         PlantStateTileArrayAdapter adapter = new PlantStateTileArrayAdapter(getBaseContext(),
-                R.layout.plant_state_list_tile, plantStates);
+                R.layout.tile_plant_state_list, plantStates);
 
         setEmptyViewCaption("No Plant Phases Found");
 
@@ -428,6 +419,10 @@ public class PlantTrackerUi extends AppCompatActivity
 
         toolbar.setTitle(currentPlant.getPlantName());
 
+        if (currentPlant.getThumbnail() != null)    {
+            ImageView plantImage = (ImageView)findViewById(R.id.lastCaptureImageView);
+            plantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
+        }
 
         daysSinceGrowStartTextView.setText(""+Utility.calcDaysFromTime(
                 currentPlant.getPlantStartDate(), Calendar.getInstance()));
@@ -475,7 +470,8 @@ public class PlantTrackerUi extends AppCompatActivity
                                 CreateRecordType.class);
                         intent.putExtra("genericRecord", new GenericRecord(""));
 
-                        startActivityForResult(intent, CREATE_GENERIC_RECORD_TEMPLATE_INTENT);
+                        startActivityForResult(intent,
+                                AndroidConstants.ACTIVITY_CREATE_GENERIC_RECORD_TEMPLATE);
                         break;
 
                     default:
@@ -526,7 +522,7 @@ public class PlantTrackerUi extends AppCompatActivity
 
         PlantRecordableTileArrayAdapter plantRecordableAdapter =
                 new PlantRecordableTileArrayAdapter(getBaseContext(),
-                        R.layout.plant_recordable_tile, currentPlant.getAllGenericRecords(),
+                        R.layout.tile_plant_recordable, currentPlant.getAllGenericRecords(),
                         tracker.getAllRecordTemplates(), currentPlant);
 
         recordableEventListView.setAdapter(plantRecordableAdapter);
@@ -572,7 +568,7 @@ public class PlantTrackerUi extends AppCompatActivity
         intent.putExtra("genericRecord", record);
         intent.putExtra("showNotes", showNotes);
 
-        startActivityForResult(intent, GENERIC_RECORD_INTENT);
+        startActivityForResult(intent, AndroidConstants.ACTIVITY_GENERIC_RECORD);
     }
 
     private TreeMap<String, Long> getAvailableGroupsForPlant(Plant p)   {
@@ -740,7 +736,8 @@ public class PlantTrackerUi extends AppCompatActivity
                 //TODO pass data
                 manageRecordTemplates.putExtra("tracker", tracker);
 
-                startActivityForResult(manageRecordTemplates, MANAGE_RECORD_TEMPLATES_INTENT);
+                startActivityForResult(manageRecordTemplates,
+                        AndroidConstants.ACTIVITY_MANAGE_RECORD_TEMPLATES);
                 break;
 
 //            case R.id.nav_manage_states:
@@ -1272,7 +1269,7 @@ public class PlantTrackerUi extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, returnedIntent);
         switch (requestCode) {
 
-            case GENERIC_RECORD_INTENT:
+            case AndroidConstants.ACTIVITY_GENERIC_RECORD:
                 if (resultCode == Activity.RESULT_OK) {
                     GenericRecord record = (GenericRecord) returnedIntent.getSerializableExtra(
                             "genericRecord");
@@ -1280,6 +1277,8 @@ public class PlantTrackerUi extends AppCompatActivity
                             "applyToGroup", false);
                     long selectedGroup = (long) returnedIntent.getLongExtra("selectedGroup",
                             0);
+                    record.images = (ArrayList<String>)returnedIntent.
+                            getSerializableExtra("selectedFiles");
 
                     PlantAction action = new PlantAction(record);
                     if (applyToGroup && selectedGroup > 0) {
@@ -1292,7 +1291,7 @@ public class PlantTrackerUi extends AppCompatActivity
                 }
                 break;
 
-            case CREATE_GENERIC_RECORD_TEMPLATE_INTENT:
+            case AndroidConstants.ACTIVITY_CREATE_GENERIC_RECORD_TEMPLATE:
                 if (resultCode == Activity.RESULT_OK)   {
                     GenericRecord record = (GenericRecord)returnedIntent.getSerializableExtra(
                             "genericRecord");
@@ -1303,7 +1302,7 @@ public class PlantTrackerUi extends AppCompatActivity
                 }
                 break;
 
-            case MANAGE_RECORD_TEMPLATES_INTENT:
+            case AndroidConstants.ACTIVITY_MANAGE_RECORD_TEMPLATES:
                 if (resultCode == Activity.RESULT_OK)   {
                     PlantTracker passedTracker = (PlantTracker) returnedIntent.getSerializableExtra(
                             "tracker");

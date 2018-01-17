@@ -1,11 +1,7 @@
-package com.nonsense.planttracker.tracker.impl.PlantActions;
+package com.nonsense.planttracker.tracker.impl.actions;
 
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Plant;
-import com.nonsense.planttracker.tracker.impl.PlantTracker;
-import com.nonsense.planttracker.tracker.interf.IPlantEventDoer;
-
-import java.util.Calendar;
 
 /**
  * Created by Derek Brooks on 12/23/2017.

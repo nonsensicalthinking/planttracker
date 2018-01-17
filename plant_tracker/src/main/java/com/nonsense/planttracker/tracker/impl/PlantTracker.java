@@ -3,7 +3,7 @@ package com.nonsense.planttracker.tracker.impl;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nonsense.planttracker.tracker.exceptions.PlantNotFoundException;
-import com.nonsense.planttracker.tracker.impl.PlantActions.PlantAction;
+import com.nonsense.planttracker.tracker.impl.actions.PlantAction;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 import com.nonsense.planttracker.tracker.interf.IPlantUpdateListener;
 import com.nonsense.planttracker.tracker.interf.ISettingsChangedListener;

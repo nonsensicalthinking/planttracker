@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -27,8 +28,10 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.nonsense.planttracker.R;
+import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
@@ -42,6 +45,9 @@ public class CollectPlantData extends AppCompatActivity {
 
     private boolean showNotes;
     private TreeMap<String, Long> availableGroups;
+
+    private ArrayList<String> mImages = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -231,6 +237,30 @@ public class CollectPlantData extends AppCompatActivity {
             }
         });
 
+        final Button cameraButton = (Button)findViewById(R.id.openCameraButton);
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent cameraIntent = new Intent(CollectPlantData.this,
+                        PlantCam.class);
+
+                startActivityForResult(cameraIntent, AndroidConstants.ACTIVITY_PLANT_CAM);
+            }
+        });
+
+        final Button galleryButton = (Button)findViewById(R.id.attachImagesButton);
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+
+                i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
+                startActivityForResult(i, 5);
+            }
+        });
+
         final Button okButton = (Button)findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -385,7 +415,29 @@ public class CollectPlantData extends AppCompatActivity {
         return editText;
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
+        super.onActivityResult(requestCode, resultCode, returnedIntent);
+        switch (requestCode) {
+
+            case AndroidConstants.ACTIVITY_PLANT_CAM:
+                if (resultCode == Activity.RESULT_OK) {
+                    ArrayList<String> selectedFiles = (ArrayList<String>)returnedIntent.
+                            getSerializableExtra("selectedFiles");
+
+                    mImages.addAll(selectedFiles);
+                }
+                break;
+        }
+    }
+
     private void cancelActivity()   {
+        if (record.images != null)  {
+            for(String s : mImages)   {
+                File f = new File(s);
+                f.delete();
+            }
+        }
+
         setResult(Activity.RESULT_CANCELED);
         finish();
     }
@@ -400,14 +452,12 @@ public class CollectPlantData extends AppCompatActivity {
 
         record.time = cal;
 
-
-        //TODO Get selected images from images tab
-
         Intent retInt = new Intent();
 
         retInt.putExtra("genericRecord", record);
         retInt.putExtra("applyToGroup", applyToGroup);
         retInt.putExtra("selectedGroup", selectedGroup);
+        retInt.putExtra("selectedFiles", mImages);
 
         setResult(Activity.RESULT_OK, retInt);
         finish();

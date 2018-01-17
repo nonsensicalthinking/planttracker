@@ -8,7 +8,7 @@
     tools:context="com.nonsense.planttracker.activities.ManageRecordTemplates">
 
     <include
-        layout="@layout/app_bar_plant_tracker_ui"
+        layout="@layout/layout_plant_tracker_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

@@ -16,7 +16,7 @@
 
     <include
         android:id="@+id/emptyPlantListView"
-        layout="@layout/list_view_no_items_found"
+        layout="@layout/layout_list_view_no_items_found"
         android:visibility="gone" />
 
 </LinearLayout>

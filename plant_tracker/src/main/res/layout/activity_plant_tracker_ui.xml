@@ -10,7 +10,7 @@
 
 
     <include
-        layout="@layout/app_bar_plant_tracker_ui"
+        layout="@layout/layout_plant_tracker_header"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -20,7 +20,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_plant_tracker_ui"
+        app:headerLayout="@layout/layout_drawer_branding"
         app:menu="@menu/activity_plant_tracker_ui_drawer" />
 
     <ViewSwitcher
@@ -36,7 +36,7 @@
 
             <include
                 android:id="@+id/listPlantsView"
-                layout="@layout/list_all_plants"
+                layout="@layout/layout_list_all_plants"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"></include>
 
@@ -50,7 +50,7 @@
 
             <include
                 android:id="@+id/individualPlantViewLayout"
-                layout="@layout/individual_plant"
+                layout="@layout/layout_individual_plant"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"></include>
 

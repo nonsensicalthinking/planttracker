@@ -77,7 +77,7 @@ public class ManageRecordTemplates extends AppCompatActivity {
         final ArrayList<String> fEvents = events;
 
         CustomEventTileArrayAdapter adapter = new CustomEventTileArrayAdapter(getBaseContext(),
-                R.layout.custom_event_list_tile, events);
+                R.layout.tile_generic_record_list, events);
 
         customRecordTemplateListView.setAdapter(adapter);
 

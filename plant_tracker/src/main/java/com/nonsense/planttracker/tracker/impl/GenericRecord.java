@@ -23,6 +23,7 @@ public class GenericRecord implements Serializable, Cloneable {
     public int weeksSincePhase = 0;
     public int weeksSinceStart = 0;
     public int phaseCount = 0;
+    public ArrayList<String> images;
 
     public GenericRecord(String displayName)  {
         this.displayName = displayName;
