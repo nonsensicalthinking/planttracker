@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -152,7 +151,7 @@ public class CreateRecordType extends AppCompatActivity {
     private void bindDataPointList()    {
         final ListView dataPointListView = (ListView)findViewById(R.id.dataPointsListView);
         final DataPointTileArrayAdapter dataPointTileArrayAdapter = new DataPointTileArrayAdapter(
-                getBaseContext(), R.layout.plant_recordable_tile, record.dataPoints);
+                getBaseContext(), R.layout.tile_plant_recordable, record.dataPoints);
 
         dataPointListView.setAdapter(dataPointTileArrayAdapter);
         dataPointListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

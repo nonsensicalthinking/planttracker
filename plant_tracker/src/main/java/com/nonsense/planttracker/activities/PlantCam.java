@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -40,21 +41,25 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ExifInterface;
 import android.media.Image;
 import android.media.ImageReader;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
+import com.nonsense.planttracker.tracker.impl.android.AutoFitTextureView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -209,7 +214,7 @@ public class PlantCam extends AppCompatActivity {
     }
 
     private void bindUi()   {
-        cameraPreviewTextureView = (TextureView)findViewById(R.id.cameraPreviewTextureView);
+        cameraPreviewTextureView = (TextureView) findViewById(R.id.cameraPreviewTextureView);
         cameraPreviewTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener()
         {
             @Override
@@ -392,9 +397,6 @@ public class PlantCam extends AppCompatActivity {
                         rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth,
                         maxPreviewHeight, largest);
 
-                cameraPreviewSize = new Size(cameraPreviewSize.getWidth(),
-                        cameraPreviewSize.getHeight());
-
                 Boolean available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 isFlashSupported = available == null ? false : available;
 
@@ -533,7 +535,6 @@ public class PlantCam extends AppCompatActivity {
                 }
             }
         }
-
     }
 
     private Size chooseOptimalSize(Size[] choices, int textureViewWidth,
@@ -600,7 +601,7 @@ public class PlantCam extends AppCompatActivity {
 
 //            // Orientation
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, rotation);//getOrientation(rotation));
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, getOrientation(rotation));
 
             CameraCaptureSession.CaptureCallback captureCallback
                     = new CameraCaptureSession.CaptureCallback() {
@@ -609,8 +610,8 @@ public class PlantCam extends AppCompatActivity {
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
-                    Toast.makeText(PlantCam.this,
-                            "Saved: " + fileNames.get(fileNames.size()-1),
+
+                    Toast.makeText(PlantCam.this, "Image Saved",
                             Toast.LENGTH_SHORT).show();
 
                     unlockFocus();

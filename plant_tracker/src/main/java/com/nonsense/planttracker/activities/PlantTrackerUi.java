@@ -250,7 +250,7 @@ public class PlantTrackerUi extends AppCompatActivity
         }
 
         PlantTileArrayAdapter adapter = new PlantTileArrayAdapter(getBaseContext(),
-                R.layout.plant_list_tile, currentDisplayArray);
+                R.layout.tile_plant_list, currentDisplayArray);
 
         plantListView.setAdapter(adapter);
         plantListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -308,7 +308,7 @@ public class PlantTrackerUi extends AppCompatActivity
         final ArrayList<Group> groups = tracker.getAllGroups();
 
         GroupTileArrayAdapter adapter = new GroupTileArrayAdapter(getBaseContext(),
-                R.layout.group_list_tile, groups);
+                R.layout.tile_group_list, groups);
 
         setEmptyViewCaption("No Groups Found");
 
@@ -369,7 +369,7 @@ public class PlantTrackerUi extends AppCompatActivity
         plantStates.addAll(tracker.getPlantTrackerSettings().getStateAutoComplete());
 
         PlantStateTileArrayAdapter adapter = new PlantStateTileArrayAdapter(getBaseContext(),
-                R.layout.plant_state_list_tile, plantStates);
+                R.layout.tile_plant_state_list, plantStates);
 
         setEmptyViewCaption("No Plant Phases Found");
 
@@ -522,7 +522,7 @@ public class PlantTrackerUi extends AppCompatActivity
 
         PlantRecordableTileArrayAdapter plantRecordableAdapter =
                 new PlantRecordableTileArrayAdapter(getBaseContext(),
-                        R.layout.plant_recordable_tile, currentPlant.getAllGenericRecords(),
+                        R.layout.tile_plant_recordable, currentPlant.getAllGenericRecords(),
                         tracker.getAllRecordTemplates(), currentPlant);
 
         recordableEventListView.setAdapter(plantRecordableAdapter);

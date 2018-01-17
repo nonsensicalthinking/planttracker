@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nonsense.planttracker.R;
@@ -100,6 +101,15 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
 
             recordableSummaryTextView.setText(p.getSummary(summaryTemplate));
 
+            ImageView cameraIconImageView = (ImageView)v.findViewById(R.id.cameraIconImageView);
+            if (p.images != null && p.images.size() > 0) {
+                cameraIconImageView.setImageResource(R.drawable.ic_menu_camera);
+            }
+
+            ImageView dataPointIconImageView = (ImageView)v.findViewById(R.id.dataPointsImageView);
+            if (p.dataPoints != null && p.dataPoints.size() > 0) {
+                dataPointIconImageView.setImageResource(R.drawable.ic_menu_share);
+            }
         }
 
         return v;
