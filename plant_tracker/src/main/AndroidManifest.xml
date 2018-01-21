@@ -39,7 +39,7 @@
         </provider>
 
         <activity android:name=".android.activities.CollectPlantData"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.Dialog" />
 
         <activity android:name=".android.activities.CreateRecordType"
             android:theme="@style/AppTheme.NoActionBar" />

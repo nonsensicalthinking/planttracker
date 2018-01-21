@@ -82,6 +82,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private static String PT_FILE_EXTENSION = ".json";
 
     private static final String CREATE_NEW_GENERIC_RECORD_OPTION = "Create new record type...";
+    private static final String ADD_NEW_RECORD = "Add new record...";
 
     private ViewSwitcher switcher;
     private LinearLayout allPlantsView;
@@ -471,7 +472,7 @@ public class PlantTrackerUi extends AppCompatActivity
         fromSeedTextView.setText((currentPlant.isFromSeed() ? R.string.seed : R.string.clone));
 
         ArrayList<String> eventOptions = new ArrayList<>();
-        eventOptions.add("Select new record type...");
+        eventOptions.add(ADD_NEW_RECORD);
         eventOptions.addAll(tracker.getGenericRecordTypes());
         eventOptions.add(CREATE_NEW_GENERIC_RECORD_OPTION);
 
@@ -488,7 +489,7 @@ public class PlantTrackerUi extends AppCompatActivity
                 String selectedItem = adapter.getItem(position);
 
                 switch (selectedItem) {
-                    case "Select new record type...":
+                    case ADD_NEW_RECORD:
                         break;
 
                     case CREATE_NEW_GENERIC_RECORD_OPTION:
