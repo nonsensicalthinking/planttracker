@@ -98,7 +98,7 @@ public class PlantCam extends AppCompatActivity {
     private CameraCaptureSession curCameraCaptureSession;
 
     private Handler backgroundHandler;
-    private Semaphore cameraLock = new Semaphore(1);;
+    private Semaphore cameraLock = new Semaphore(1);
     private String cameraId;
 
     private CaptureRequest.Builder cameraPreviewRequestBuilder;

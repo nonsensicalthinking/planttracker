@@ -286,4 +286,15 @@ public class Plant implements Serializable  {
         return plantData.thumbnail;
     }
 
+    public ArrayList<String> getAllImagesForPlant() {
+        ArrayList<String> files = new ArrayList<>();
+
+        for(GenericRecord rec : plantData.genericRecords)   {
+            if (rec.images != null && rec.images.size() > 0)    {
+                files.addAll(rec.images);
+            }
+        }
+
+        return files;
+    }
 }

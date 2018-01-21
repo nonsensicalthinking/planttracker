@@ -53,6 +53,9 @@
         <activity android:name=".android.activities.CameraImagePicker"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity android:name=".android.activities.ImageSeriesViewer"
+            android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 
 </manifest>

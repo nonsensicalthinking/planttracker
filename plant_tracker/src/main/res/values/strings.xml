@@ -46,6 +46,7 @@
     <string name="camera_error">There was an error with the camera.</string>
     <string name="intro_message">Intro message here?.</string>
 
+    <string name="set_phase">[ Set ]</string>
 
     <string-array name="plant_event_options">
         <item>Add Event</item>

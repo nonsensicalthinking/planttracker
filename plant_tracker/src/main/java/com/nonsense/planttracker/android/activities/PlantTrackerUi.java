@@ -18,10 +18,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
+import android.text.Layout;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -103,6 +105,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private Menu individualPlantMenu;
     private SubMenu addToGroup;
     private SubMenu removeFromGroup;
+    private ImageView mPlantImage;
 
     // Data
     private TreeMap<Integer, Long> menuItemToGroupIdMapping = new TreeMap<>();
@@ -194,6 +197,8 @@ public class PlantTrackerUi extends AppCompatActivity
 
         daysSinceStateStartTextView = (TextView)findViewById(
                 R.id.daysSinceStateStartTextView);
+
+        mPlantImage = (ImageView)findViewById(R.id.lastCaptureImageView);
     }
 
     private void showFloatingActionButton() {
@@ -207,6 +212,8 @@ public class PlantTrackerUi extends AppCompatActivity
     }
 
     private void fillViewWithPlants() {
+        toolbar.setTitle(R.string.app_name);
+
         setEmptyViewCaption("No Plants Found");
 
         showFloatingActionButton();
@@ -420,26 +427,46 @@ public class PlantTrackerUi extends AppCompatActivity
         toolbar.setTitle(currentPlant.getPlantName());
 
         if (currentPlant.getThumbnail() != null)    {
-            ImageView plantImage = (ImageView)findViewById(R.id.lastCaptureImageView);
-            plantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
+            String thumbnail = currentPlant.getThumbnail();
+            if (thumbnail != null)  {
+                mPlantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
+                mPlantImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(PlantTrackerUi.this,
+                                ImageSeriesViewer.class);
+
+                        intent.putExtra("files", currentPlant.getAllImagesForPlant());
+                        startActivityForResult(intent, 97);
+                    }
+                });
+
+                LinearLayout layout = (LinearLayout)findViewById(R.id.imageLinearLayout);
+                layout.setBackgroundColor(Color.BLACK);
+            }
+        }
+        else    {
+            mPlantImage.setOnClickListener(null);
+            mPlantImage.setImageResource(R.drawable.ic_growing_plant);
+            LinearLayout layout = (LinearLayout)findViewById(R.id.imageLinearLayout);
+            layout.setBackgroundColor(Color.WHITE);
         }
 
-        daysSinceGrowStartTextView.setText(""+Utility.calcDaysFromTime(
-                currentPlant.getPlantStartDate(), Calendar.getInstance()));
-        weeksSinceGrowStartTextView.setText(""+Utility.calcWeeksFromTime(
-                currentPlant.getPlantStartDate(), Calendar.getInstance()));
-
+        daysSinceGrowStartTextView.setText(String.valueOf(Utility.calcDaysFromTime(
+                currentPlant.getPlantStartDate(), Calendar.getInstance())));
+        weeksSinceGrowStartTextView.setText(String.valueOf(Utility.calcWeeksFromTime(
+                currentPlant.getPlantStartDate(), Calendar.getInstance())));
 
         if (currentPlant.getPlantData().currentStateStartDate == null)  {
             daysSinceStateStartTextView.setText("--");
             weeksSinceStateStartTextView.setText("--");
         }
         else {
-            daysSinceStateStartTextView.setText("" + Utility.calcDaysFromTime(
-                    currentPlant.getPlantData().currentStateStartDate, Calendar.getInstance()));
+            daysSinceStateStartTextView.setText(String.valueOf(Utility.calcDaysFromTime(
+                    currentPlant.getPlantData().currentStateStartDate, Calendar.getInstance())));
 
-            weeksSinceStateStartTextView.setText("" + Utility.calcWeeksFromTime(
-                    currentPlant.getPlantData().currentStateStartDate, Calendar.getInstance()));
+            weeksSinceStateStartTextView.setText(String.valueOf(Utility.calcWeeksFromTime(
+                    currentPlant.getPlantData().currentStateStartDate, Calendar.getInstance())));
         }
 
         fromSeedTextView.setText((currentPlant.isFromSeed() ? R.string.seed : R.string.clone));
@@ -494,7 +521,7 @@ public class PlantTrackerUi extends AppCompatActivity
         if (stateName != null && !stateName.equals("")) {
             stateNameTextView.setText(currentPlant.getCurrentStateName());
         } else {
-            stateNameTextView.setText("[ Set ]");
+            stateNameTextView.setText(R.string.set_phase);
         }
 
         final Plant parentPlant = tracker.getPlantById(currentPlant.getParentPlantId());
