@@ -21,6 +21,7 @@ public class AndroidConstants {
     public static final String INTENTKEY_FILE_LIST = "files";
     public static final String INTENTKEY_SHOW_NOTES = "showNotes";
     public static final String INTENTKEY_AVAILABLE_GROUPS = "availableGroups";
+    public static final String INTENTKEY_BASE_DIRECTORY = "baseDir";
 
 
 

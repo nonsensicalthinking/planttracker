@@ -20,5 +20,7 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="AppTheme.DialogContainer" parent="Theme.AppCompat.Dialog" />
+    <style name="AppTheme.LightContainer" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

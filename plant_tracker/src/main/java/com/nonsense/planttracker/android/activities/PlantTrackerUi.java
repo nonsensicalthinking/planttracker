@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -437,15 +438,17 @@ public class PlantTrackerUi extends AppCompatActivity
                     }
                 });
 
-                LinearLayout layout = (LinearLayout)findViewById(R.id.imageLinearLayout);
-                layout.setBackgroundColor(Color.BLACK);
+                LinearLayout layout = (LinearLayout)findViewById(R.id.imageBackgroundLayout);
+                GradientDrawable gd = (GradientDrawable)layout.getBackground();
+                gd.setColor(Color.BLACK);
             }
         }
         else    {
             mPlantImage.setOnClickListener(null);
             mPlantImage.setImageResource(R.drawable.ic_growing_plant);
-            LinearLayout layout = (LinearLayout)findViewById(R.id.imageLinearLayout);
-            layout.setBackgroundColor(Color.WHITE);
+            LinearLayout layout = (LinearLayout)findViewById(R.id.imageBackgroundLayout);
+            GradientDrawable gd = (GradientDrawable)layout.getBackground();
+            gd.setColor(Color.WHITE);
         }
 
         daysSinceGrowStartTextView.setText(String.valueOf(Utility.calcDaysFromTime(

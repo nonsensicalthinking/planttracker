@@ -56,6 +56,10 @@
         <activity android:name=".android.activities.ImageSeriesViewer"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <!--<activity android:name=".android.activities.ImageSeriesViewer"-->
+            <!--android:theme="@style/Theme.AppCompat.Dialog"-->
+            <!--android:excludeFromRecents="true" />-->
+
     </application>
 
 </manifest>

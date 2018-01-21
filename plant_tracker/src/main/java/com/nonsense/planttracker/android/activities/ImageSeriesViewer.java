@@ -1,9 +1,12 @@
 package com.nonsense.planttracker.android.activities;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -42,6 +45,16 @@ public class ImageSeriesViewer extends AppCompatActivity {
         mPictureImageView = (ImageView)findViewById(R.id.pictureImageView);
 
         mPictureImageView.setOnTouchListener(new OnSwipeTouchListener(ImageSeriesViewer.this) {
+
+            public void onSwipeTop()    {
+                setTheme(R.style.AppTheme_LightContainer);
+            }
+
+            public void onSwipeBottom()    {
+                setTheme(R.style.AppTheme_DialogContainer);
+            }
+
+
             public void onSwipeRight() {
                 if (mSelectedImageIndex > 0) {
                     mSelectedImageIndex--;
@@ -49,7 +62,7 @@ public class ImageSeriesViewer extends AppCompatActivity {
                 }
                 else    {
                     Toast.makeText(ImageSeriesViewer.this,
-                            "No more images to the left", Toast.LENGTH_SHORT).show();
+                            "No more images to the left.", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -60,7 +73,7 @@ public class ImageSeriesViewer extends AppCompatActivity {
                 }
                 else    {
                     Toast.makeText(ImageSeriesViewer.this,
-                            "No more images to the right", Toast.LENGTH_SHORT).show();
+                            "No more images to the right.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

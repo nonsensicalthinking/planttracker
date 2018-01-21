@@ -23,14 +23,17 @@ public class CameraImagePicker extends AppCompatActivity {
     private ImageAdapter mImageAdapter;
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_image_picker);
 
         Intent intent = getIntent();
 
-        mFiles = (ArrayList<String>)intent.getSerializableExtra("files");
-        mBaseDir = intent.getStringExtra("baseDir");
+        mFiles = (ArrayList<String>)intent.getSerializableExtra(
+                AndroidConstants.INTENTKEY_FILE_LIST);
+
+        mBaseDir = intent.getStringExtra(AndroidConstants.INTENTKEY_BASE_DIRECTORY);
 
         if (mBaseDir == null || mBaseDir.equals(""))    {
             mBaseDir = getExternalFilesDir("camera/").getPath();

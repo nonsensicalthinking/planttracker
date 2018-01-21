@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingStart="5dp"
+    android:paddingEnd="5dp"
     android:orientation="vertical"
     android:weightSum="1">
 
@@ -11,6 +13,21 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_weight="0" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Spinner
+            android:id="@+id/addEventSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:elevation="5dp"
+            android:fadeScrollbars="false" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/imageLinearLayout"
@@ -22,15 +39,16 @@
             android:id="@+id/imageBackgroundLayout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:padding="2dp"
+            android:background="@drawable/rounded_corner">
 
             <ImageView
                 android:id="@+id/lastCaptureImageView"
                 android:layout_width="150dp"
                 android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/tableLayout"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_weight="1"
                 app:srcCompat="@drawable/ic_growing_plant" />
         </LinearLayout>
@@ -40,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/lastCaptureImageView"
+            android:layout_toEndOf="@+id/imageBackgroundLayout"
             android:background="@color/materialcolorpicker__white">
 
             <TableRow
@@ -209,21 +227,6 @@
             </TableRow>
 
         </TableLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Spinner
-            android:id="@+id/addEventSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:elevation="5dp"
-            android:fadeScrollbars="false" />
-
     </LinearLayout>
 
     <ListView
