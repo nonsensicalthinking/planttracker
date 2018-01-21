@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.nonsense.planttracker.R;
+import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.android.listeners.OnSwipeTouchListener;
 
 import java.io.File;
@@ -29,7 +30,9 @@ public class ImageSeriesViewer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_series_viewer);
 
-        files = (ArrayList<String>) getIntent().getSerializableExtra("files");
+        files = (ArrayList<String>) getIntent().getSerializableExtra(
+                AndroidConstants.INTENTKEY_FILE_LIST);
+
         mSelectedImageIndex = files.size() - 1;
 
         bindUi();

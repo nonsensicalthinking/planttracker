@@ -433,11 +433,7 @@ public class PlantTrackerUi extends AppCompatActivity
                 mPlantImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(PlantTrackerUi.this,
-                                ImageSeriesViewer.class);
-
-                        intent.putExtra("files", currentPlant.getAllImagesForPlant());
-                        startActivityForResult(intent, 97);
+                        launchImageSeriesViewer(currentPlant.getAllImagesForPlant());
                     }
                 });
 
@@ -1345,6 +1341,14 @@ public class PlantTrackerUi extends AppCompatActivity
                 }
                 break;
         }
+    }
+
+    private void launchImageSeriesViewer(ArrayList<String> files)   {
+        Intent intent = new Intent(PlantTrackerUi.this,
+                ImageSeriesViewer.class);
+
+        intent.putExtra(AndroidConstants.INTENTKEY_FILE_LIST, files);
+        startActivityForResult(intent, 97);
     }
 
     private void setReminder()  {

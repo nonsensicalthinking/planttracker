@@ -1,6 +1,7 @@
 package com.nonsense.planttracker.android.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,8 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nonsense.planttracker.R;
+import com.nonsense.planttracker.android.AndroidConstants;
+import com.nonsense.planttracker.android.activities.ImageSeriesViewer;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Plant;
 
@@ -52,7 +56,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             v = vi.inflate(viewResourceId, null);
         }
 
-        GenericRecord p = getItem(position);
+        final GenericRecord p = getItem(position);
         if (p != null) {
             // Build phase string
             int phaseCount = p.phaseCount;
@@ -103,6 +107,14 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             ImageView cameraIconImageView = (ImageView)v.findViewById(R.id.cameraIconImageView);
             if (p.images != null && p.images.size() > 0) {
                 cameraIconImageView.setImageResource(R.drawable.ic_menu_camera);
+                cameraIconImageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getContext(), ImageSeriesViewer.class);
+                        intent.putExtra(AndroidConstants.INTENTKEY_FILE_LIST, p.images);
+                        getContext().startActivity(intent);
+                    }
+                });
             }
 
             ImageView dataPointIconImageView = (ImageView)v.findViewById(R.id.dataPointsImageView);
