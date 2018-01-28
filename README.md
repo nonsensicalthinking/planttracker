@@ -11,12 +11,12 @@ __Currently implemented features__:
   * Event: Watering Record
   * Event: Feeding Record
   * Event: Custom Records with Data Points
+* Camera integration
 
 __Future plans (in no particular order)__:
 * Automated sensor data collection
 * Graphing
 * Custom scheduled reminders
-* Camera integration
 * Exporting plants and tracker configuration for easy backup
 * Desktop implementation for managing plants
 
