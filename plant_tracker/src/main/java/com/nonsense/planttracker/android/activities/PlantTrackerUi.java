@@ -18,8 +18,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -57,7 +55,6 @@ import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.android.adapters.GroupTileArrayAdapter;
 import com.nonsense.planttracker.android.adapters.PlantStateTileArrayAdapter;
-import com.nonsense.planttracker.android.listeners.OnSwipeTouchListener;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Group;
 import com.nonsense.planttracker.android.adapters.PlantRecordableTileArrayAdapter;
@@ -1070,6 +1067,18 @@ public class PlantTrackerUi extends AppCompatActivity
                 LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.applyToGroupLayout);
                 layout.setVisibility(View.GONE);
 
+                if (parentPlantId > 0)  {
+                    RadioGroup rg = (RadioGroup) dialog.findViewById(R.id.originRadioGroup);
+                    rg.setVisibility(View.GONE);
+
+                    EditText plantNameEditText = (EditText) dialog.findViewById(
+                            R.id.plantNameEditText);
+
+                    Plant parentPlant = tracker.getPlantById(parentPlantId);
+                    plantNameEditText.setText(parentPlant.getPlantName() + ".1");
+                }
+
+
                 Button okButton = (Button) dialog.findViewById(R.id.okButton);
                 okButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1100,14 +1109,14 @@ public class PlantTrackerUi extends AppCompatActivity
                         Calendar c = getEventCalendar(dialog);
 
                         if (parentPlantId > 0) {
-                            tracker.addPlant(c, plantName, parentPlantId);
+                            currentPlant = tracker.addPlant(c, plantName, parentPlantId);
                         } else {
-                            tracker.addPlant(c, plantName, isFromSeed);
+                            currentPlant = tracker.addPlant(c, plantName, isFromSeed);
                         }
 
                         dialog.dismiss();
 
-                        fillViewWithPlants();
+                        refreshListView();
                     }
                 });
 

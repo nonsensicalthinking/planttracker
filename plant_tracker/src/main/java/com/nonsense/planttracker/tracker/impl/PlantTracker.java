@@ -166,19 +166,23 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         addPlant(Calendar.getInstance(), plantName, isFromSeed);
     }
 
-    public void addPlant(Calendar c, String plantName, boolean isFromSeed) {
+    public Plant addPlant(Calendar c, String plantName, boolean isFromSeed) {
         Plant p = new Plant(c, plantName, isFromSeed);
         p.addUpdateListener(this);
         plants.add(p);
         plantUpdate(p);
+
+        return p;
     }
 
-    public void addPlant(Calendar c, String plantName, long parentPlantId) {
+    public Plant addPlant(Calendar c, String plantName, long parentPlantId) {
         Plant p = new Plant(c, plantName, false);
         p.addUpdateListener(this);
         p.setParentPlantId(parentPlantId);
         plants.add(p);
         plantUpdate(p);
+
+        return p;
     }
 
     public void removePlant(int plantIndex) {
