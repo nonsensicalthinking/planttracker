@@ -1,5 +1,7 @@
 package com.nonsense.planttracker.tracker.impl;
 
+import android.graphics.Color;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nonsense.planttracker.tracker.exceptions.PlantNotFoundException;
@@ -78,10 +80,12 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     private void initGenericRecords() {
         GenericRecord record = null;
 
-        if (settings.getGenericRecordTemplate("Changing Phase") == null) {
-            record = new GenericRecord("Changing Phase");
+        if (settings.getGenericRecordTemplate("Phase Change") == null) {
+            record = new GenericRecord("Phase Change");
             record.setDataPoint("Phase Name", new String());
+            record.showNotes = true;
             record.summaryTemplate = "Plant entered a new phase, {Phase Name}";
+            record.color = Color.rgb(255,192,203);  // a light pink
             settings.addGenericRecordTemplate(record);
         }
 
@@ -89,14 +93,41 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
             record = new GenericRecord("Feeding");
             record.setDataPoint("pH", new Double(6.5));
             record.setDataPoint("Food Strength", new Double(0.5));
+            record.showNotes = true;
             record.summaryTemplate = "pH of food {pH} with strength of {Food Strength}";
+            record.color = Color.rgb(210,105,30);   // orange-brown
             settings.addGenericRecordTemplate(record);
         }
 
         if (settings.getGenericRecordTemplate("Water") == null) {
             record = new GenericRecord("Water");
             record.setDataPoint("pH", new Double(6.5));
+            record.showNotes = true;
             record.summaryTemplate = "pH of water {pH}";
+            record.color = Color.	rgb(135,206,250);   // light sky blue
+            settings.addGenericRecordTemplate(record);
+        }
+
+        if (settings.getGenericRecordTemplate("Pictures") == null)  {
+            record = new GenericRecord("Pictures");
+            record.color = Color.rgb(220,220,220);  // light grey
+            record.showNotes = true;
+            settings.addGenericRecordTemplate(record);
+        }
+
+        if (settings.getGenericRecordTemplate("Potting") == null)  {
+            record = new GenericRecord("Potting");
+            record.color = Color.rgb(220,20,60);    // crimson
+            record.setDataPoint("Pot Size", "");
+            record.showNotes = true;
+            record.summaryTemplate = "Planted into {Pot Size} pot";
+            settings.addGenericRecordTemplate(record);
+        }
+
+        if (settings.getGenericRecordTemplate("Observation") == null)   {
+            record = new GenericRecord("Observation");
+            record.color = Color.rgb(255,165,0); // orange
+            record.showNotes = true;
             settings.addGenericRecordTemplate(record);
         }
     }

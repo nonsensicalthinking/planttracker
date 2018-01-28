@@ -52,7 +52,7 @@
     <string name="phase_week">Phase Wk.</string>
     <string name="phase_day">Phase Day</string>
 
-    <string name="add_new_record">Add new record...</string>
+    <string name="add_new_record">-- Add new record --</string>
 
 
     <string name="set_phase">[ Set ]</string>

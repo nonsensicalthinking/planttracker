@@ -57,6 +57,7 @@ import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.android.adapters.GroupTileArrayAdapter;
 import com.nonsense.planttracker.android.adapters.PlantStateTileArrayAdapter;
+import com.nonsense.planttracker.android.listeners.OnSwipeTouchListener;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Group;
 import com.nonsense.planttracker.android.adapters.PlantRecordableTileArrayAdapter;
@@ -82,7 +83,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private static String PT_FILE_EXTENSION = ".json";
 
     private static final String CREATE_NEW_GENERIC_RECORD_OPTION = "Create new record type...";
-    private static final String ADD_NEW_RECORD = "Add new record...";
+    private static final String ADD_NEW_RECORD = "-- Add new record --";
 
     private ViewSwitcher switcher;
     private LinearLayout allPlantsView;
@@ -438,18 +439,11 @@ public class PlantTrackerUi extends AppCompatActivity
                         launchImageSeriesViewer(currentPlant.getAllImagesForPlant());
                     }
                 });
-
-                LinearLayout layout = (LinearLayout)findViewById(R.id.imageBackgroundLayout);
-                GradientDrawable gd = (GradientDrawable)layout.getBackground();
-                gd.setColor(Color.BLACK);
             }
         }
         else    {
             mPlantImage.setOnClickListener(null);
             mPlantImage.setImageResource(R.drawable.ic_growing_plant);
-            LinearLayout layout = (LinearLayout)findViewById(R.id.imageBackgroundLayout);
-            GradientDrawable gd = (GradientDrawable)layout.getBackground();
-            gd.setColor(Color.WHITE);
         }
 
         daysSinceGrowStartTextView.setText(String.valueOf(Utility.calcDaysFromTime(

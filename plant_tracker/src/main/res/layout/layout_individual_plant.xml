@@ -2,32 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/individualPlantLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="5dp"
-    android:paddingEnd="5dp"
     android:orientation="vertical"
+    android:paddingEnd="5dp"
+    android:paddingStart="5dp"
     android:weightSum="1">
 
     <Space
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_weight="0" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Spinner
-            android:id="@+id/addEventSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:elevation="5dp"
-            android:fadeScrollbars="false" />
-
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/imageLinearLayout"
@@ -39,11 +25,10 @@
             android:id="@+id/imageBackgroundLayout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
-            android:padding="2dp"
-            android:background="@drawable/rounded_corner">
+            android:layout_marginEnd="5dp"
+            android:orientation="horizontal"
+            android:padding="2dp">
 
             <ImageView
                 android:id="@+id/lastCaptureImageView"
@@ -225,6 +210,23 @@
             </TableRow>
 
         </TableLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="3dp"
+        android:paddingTop="3dp">
+
+        <Spinner
+            android:id="@+id/addEventSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fadeScrollbars="false"
+            android:foregroundGravity="center_vertical|center_horizontal" />
+
     </LinearLayout>
 
     <ListView
