@@ -252,17 +252,18 @@ public class CollectPlantData extends AppCompatActivity {
         });
 
         final Button galleryButton = (Button)findViewById(R.id.attachImagesButton);
-        galleryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(Intent.ACTION_PICK,
-                        MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-
-                i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-
-                startActivityForResult(i, 5);
-            }
-        });
+        galleryButton.setEnabled(false);
+//        galleryButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent i = new Intent(Intent.ACTION_PICK,
+//                        MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+//
+//                i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//
+//                startActivityForResult(i, 5);
+//            }
+//        });
 
         final Button okButton = (Button)findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {

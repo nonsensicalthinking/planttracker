@@ -611,12 +611,13 @@ public class PlantTrackerUi extends AppCompatActivity
         });
 
         Button attachImagesButton = (Button) dialog.findViewById(R.id.attachImagesButton);
-        attachImagesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //FIXME open picture browser for selecting existing images
-            }
-        });
+        attachImagesButton.setEnabled(false);
+//        attachImagesButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //FIXME open picture browser for selecting existing images
+//            }
+//        });
 
     }
 
