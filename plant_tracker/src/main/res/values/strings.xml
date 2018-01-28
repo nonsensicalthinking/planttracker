@@ -11,6 +11,7 @@
     <string name="action_rename">Rename Plant</string>
     <string name="action_change_start_date">Change Plant Date</string>
     <string name="action_change_flower_date">Change Flower Date</string>
+    <string name="action_copy">Copy Plant</string>
     <string name="record_not_found">Record not found</string>
     <string name="seed">Seed</string>
     <string name="clone">Clone</string>

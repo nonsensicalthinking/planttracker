@@ -43,18 +43,18 @@
         </menu>
     </item>
 
-    <item android:title="@string/drawer_title_transfer">
-        <menu>
-            <item
-                android:id="@+id/nav_export"
-                android:icon="@drawable/ic_export"
-                android:title="@string/drawer_item_export" />
-            <item
-                android:id="@+id/nav_import"
-                android:icon="@drawable/ic_import"
-                android:title="@string/drawer_item_import" />
-        </menu>
-    </item>
+    <!--<item android:title="@string/drawer_title_transfer">-->
+        <!--<menu>-->
+            <!--<item-->
+                <!--android:id="@+id/nav_export"-->
+                <!--android:icon="@drawable/ic_export"-->
+                <!--android:title="@string/drawer_item_export" />-->
+            <!--<item-->
+                <!--android:id="@+id/nav_import"-->
+                <!--android:icon="@drawable/ic_import"-->
+                <!--android:title="@string/drawer_item_import" />-->
+        <!--</menu>-->
+    <!--</item>-->
 
     <item android:title="@string/drawer_title_delete">
         <menu>
