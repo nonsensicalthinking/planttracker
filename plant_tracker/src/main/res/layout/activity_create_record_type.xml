@@ -7,7 +7,16 @@
     android:orientation="vertical"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
+    android:paddingTop="10dp"
     tools:context=".android.activities.CreateRecordType">
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Record Template"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,14 +27,16 @@
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingEnd="5dp"
             android:text="Record Name" />
 
         <EditText
             android:id="@+id/recordNameEditText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autoText="false"
             android:ems="10"
-            android:inputType="textCapSentences" />
+            android:inputType="textCapWords" />
 
     </LinearLayout>
 
@@ -46,8 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/rounded_corner"
-            />
+            android:background="@drawable/rounded_corner" />
 
     </LinearLayout>
 
@@ -86,6 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="top"
+            android:paddingEnd="5dp"
             android:text="Summary Template" />
 
         <Spinner
@@ -101,7 +112,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPersonName" />
+        android:inputType="textCapSentences" />
 
     <LinearLayout
         android:layout_width="match_parent"

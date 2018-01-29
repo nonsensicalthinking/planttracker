@@ -37,7 +37,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:27.0.2'
     compile 'com.android.support:design:27.0.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.pes.materialcolorpicker:library:1.2.0'
+//    compile 'com.pes.materialcolorpicker:library:1.2.0'
     testCompile 'junit:junit:4.12'
     implementation 'com.android.support:gridlayout-v7:27.0.2'
 }

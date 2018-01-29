@@ -28,8 +28,6 @@ import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.android.adapters.DataPointTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
-import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
-import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;
 
 import java.util.ArrayList;
 
@@ -62,6 +60,19 @@ public class CreateRecordType extends AppCompatActivity {
         finish();
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
+        super.onActivityResult(requestCode, resultCode, returnedIntent);
+        switch (requestCode) {
+            case AndroidConstants.ACTIVITY_COLOR_PICKER:
+                if (resultCode == RESULT_OK)    {
+                    int color = returnedIntent.getIntExtra("color", 0);
+                    record.color = color;
+                    updateColorPickerPreview(color);
+                }
+                break;
+        }
+    }
+
     private void bindUi()   {
         recordNameEditText = (EditText)findViewById(R.id.recordNameEditText);
         recordNameEditText.setText(record.displayName);
@@ -84,9 +95,9 @@ public class CreateRecordType extends AppCompatActivity {
 
         colorPreviewTextView = (TextView)findViewById(R.id.colorPreviewTextView);
 
-        int color;
+        final int color;
         if (record.color == 0)  {
-             color = Color.GREEN;
+             color = ColorPicker.generateRandomColor();
         }
         else    {
             color = record.color;
@@ -97,19 +108,10 @@ public class CreateRecordType extends AppCompatActivity {
         colorPreviewTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final ColorPicker cp = new ColorPicker(CreateRecordType.this, 66,
-                        0,0, 255);
+                Intent intent = new Intent(CreateRecordType.this, ColorPicker.class);
+                intent.putExtra("color", color);
 
-                cp.show();
-
-                cp.setCallback(new ColorPickerCallback() {
-                    @Override
-                    public void onColorChosen(@ColorInt int color) {
-                        record.color = color;
-                        ((GradientDrawable)colorPreviewTextView.getBackground()).setColor(color);
-                        cp.hide();
-                    }
-                });
+                startActivityForResult(intent, AndroidConstants.ACTIVITY_COLOR_PICKER);
             }
         });
 
@@ -388,5 +390,10 @@ public class CreateRecordType extends AppCompatActivity {
 
         dialog.show();
     }
+
+    private void updateColorPickerPreview(int color) {
+        ((GradientDrawable)colorPreviewTextView.getBackground()).setColor(color);
+    }
+
 
 }

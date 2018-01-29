@@ -24,12 +24,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:shadowColor="@color/materialcolorpicker__black"
+        android:shadowColor="@color/black"
         android:shadowDx="2"
         android:shadowDy="2"
         android:shadowRadius="4"
         android:text="@string/app_name"
-        android:textColor="@color/materialcolorpicker__white"
+        android:textColor="@color/white"
         android:textSize="22sp"
         android:textStyle="bold" />
 
@@ -38,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_copyright"
-        android:textColor="@color/materialcolorpicker__white"
+        android:textColor="@color/white"
         android:textSize="12sp" />
 
 </LinearLayout>

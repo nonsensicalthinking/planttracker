@@ -25,14 +25,14 @@
             android:background="@drawable/rounded_corner"
             android:paddingEnd="20dp"
             android:paddingStart="10dp"
-            android:shadowColor="@color/materialcolorpicker__white"
+            android:shadowColor="@color/white"
             android:shadowDx="5"
             android:shadowDy="5"
             android:shadowRadius="1"
             android:text="@string/record_template"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.SearchResult.Subtitle"
             android:textColor="@android:color/black"
-            android:textColorHint="@color/materialcolorpicker__white"
+            android:textColorHint="@color/white"
             android:textSize="16sp"
             android:textStyle="normal" />
 

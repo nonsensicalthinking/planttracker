@@ -11,6 +11,7 @@ public class AndroidConstants {
     public static final int ACTIVITY_MANAGE_RECORD_TEMPLATES = 4;
     public static final int ACTIVITY_PLANT_CAM = 5;
     public static final int ACTIVITY_IMAGE_CHOOSER = 6;
+    public static final int ACTIVITY_COLOR_PICKER = 7;
 
 
     public static final String INTENTKEY_GENERIC_RECORD = "genericRecord";

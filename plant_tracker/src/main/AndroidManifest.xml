@@ -56,6 +56,11 @@
         <activity android:name=".android.activities.ImageSeriesViewer"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity android:name=".android.activities.ColorPicker"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"
+            android:excludeFromRecents="true" />
+
+
         <!--<activity android:name=".android.activities.ImageSeriesViewer"-->
             <!--android:theme="@style/Theme.AppCompat.Dialog"-->
             <!--android:excludeFromRecents="true" />-->
