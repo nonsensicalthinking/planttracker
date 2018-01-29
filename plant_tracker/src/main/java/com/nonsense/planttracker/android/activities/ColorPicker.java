@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +17,9 @@ import android.widget.SeekBar;
 
 import com.nonsense.planttracker.R;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Random;
 
 /**
@@ -36,6 +40,8 @@ public class ColorPicker extends AppCompatActivity {
     private SeekBar mGreenSeekBar;
     private SeekBar mBlueSeekBar;
 
+    private ArrayList<Integer> mExistingColors;
+
     @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,34 +49,33 @@ public class ColorPicker extends AppCompatActivity {
         setContentView(R.layout.activity_color_picker);
 
         Intent intent = getIntent();
+
         mColor = intent.getIntExtra("color", 0);
+        mExistingColors = (ArrayList<Integer>)intent.getSerializableExtra("existingColors");
 
         bindUi();
     }
 
     private void bindUi()   {
-
         mAlphaSeekBar = findViewById(R.id.alphaSeekBar);
-        mRedSeekBar = findViewById(R.id.redSeekBar);
-        mGreenSeekBar = findViewById(R.id.greenSeekBar);
-        mBlueSeekBar = findViewById(R.id.blueSeekBar);
-
         mAlphaSeekBar.setMax(255);
         mAlphaSeekBar.setProgress(mAlpha, true);
+        mAlphaSeekBar.setOnSeekBarChangeListener(alphaSeekBarChangeListener);
+
+        mRedSeekBar = findViewById(R.id.redSeekBar);
         mRedSeekBar.setMax(255);
         mRedSeekBar.setProgress(mRed, true);
-        mGreenSeekBar.setMax(255);
-        mGreenSeekBar.setProgress(mGreen, true);
-        mBlueSeekBar.setMax(255);
-        mBlueSeekBar.setProgress(mBlue, true);
-
         mRedSeekBar.setOnSeekBarChangeListener(redSeekBarChangeListener);
 
+        mGreenSeekBar = findViewById(R.id.greenSeekBar);
+        mGreenSeekBar.setMax(255);
+        mGreenSeekBar.setProgress(mGreen, true);
         mGreenSeekBar.setOnSeekBarChangeListener(greenSeekBarChangeListener);
 
+        mBlueSeekBar = findViewById(R.id.blueSeekBar);
+        mBlueSeekBar.setMax(255);
+        mBlueSeekBar.setProgress(mBlue, true);
         mBlueSeekBar.setOnSeekBarChangeListener(blueSeekBarChangeListener);
-
-        mAlphaSeekBar.setOnSeekBarChangeListener(alphaSeekBarChangeListener);
 
         final EditText hexColor = findViewById(R.id.hexColorEditText);
         hexColor.addTextChangedListener(mColorTextWatcher);
@@ -79,9 +84,7 @@ public class ColorPicker extends AppCompatActivity {
         randomButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mColor = ColorPicker.generateRandomColor();
-                updateSliders();
-                updateColorPreview();
+                setPreviewColor(ColorPicker.generateRandomColor());
             }
         });
 
@@ -113,34 +116,43 @@ public class ColorPicker extends AppCompatActivity {
     }
 
     public String getColorHexString()  {
-        return ColorPicker.getColorHexString(mRed, mGreen, mBlue, mAlpha);
+        return ColorPicker.getColorHexString(mColor);
+    }
+
+    public static String getColorHexString(int color) {
+        int a = (color >> 24) & 0xff; // or color >>> 24
+        int r = (color >> 16) & 0xff;
+        int g = (color >> 8) & 0xff;
+        int b = (color) & 0xff;
+
+        return ColorPicker.getColorHexString(r, g, b, a);
     }
 
     public static String getColorHexString(int r, int g, int b, int a)  {
         StringBuilder sb = new StringBuilder("#");
 
-        if (a > 16) {
+        if (a > 15) {
             sb.append(Integer.toHexString(a));
         }
         else {
             sb.append("0" + Integer.toHexString(a));
         }
 
-        if (r > 16) {
+        if (r > 15) {
             sb.append(Integer.toHexString(r));
         }
         else {
             sb.append("0" + Integer.toHexString(r));
         }
 
-        if (g > 16) {
+        if (g > 15) {
             sb.append(Integer.toHexString(g));
         }
         else {
             sb.append("0" + Integer.toHexString(g));
         }
 
-        if (b > 16) {
+        if (b > 15) {
             sb.append(Integer.toHexString(b));
         }
         else {
@@ -150,6 +162,30 @@ public class ColorPicker extends AppCompatActivity {
         return sb.toString();
     }
 
+	// Called from hex color editing
+    private void setPreviewColor(String hex)    {
+        mColor = Color.parseColor(hex);
+
+        updateSliders();
+        updateColorPreview();
+    }
+
+	// Called from slider adjustments
+    private void setPreviewColor()  {
+        mColor = Color.argb(mAlpha, mRed, mGreen, mBlue);
+
+        setColorPreviewText();
+        updateColorPreview();
+    }
+
+    private void setPreviewColor(int color) {
+        mColor = color;
+
+        setColorPreviewText();
+        updateSliders();
+        updateColorPreview();
+    }
+
 
     private void updateColorPreview()   {
         String hexColor = getColorHexString();
@@ -157,8 +193,6 @@ public class ColorPicker extends AppCompatActivity {
         try {
             ImageView colorPreviewImageView = findViewById(R.id.colorPickerImageView);
             ColorDrawable gd = (ColorDrawable)colorPreviewImageView.getDrawable();
-            int parsedColor = Color.parseColor(hexColor);
-
             gd.setColor(Color.parseColor(hexColor));
         }
         catch (Exception e) {
@@ -181,8 +215,7 @@ public class ColorPicker extends AppCompatActivity {
         public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
             mRed = i;
 
-            setColorPreviewText();
-            updateColorPreview();
+            setPreviewColor();
         }
 
         @Override
@@ -202,8 +235,7 @@ public class ColorPicker extends AppCompatActivity {
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                     mGreen = i;
 
-                    setColorPreviewText();
-                    updateColorPreview();
+                    setPreviewColor();
                 }
 
                 @Override
@@ -222,8 +254,8 @@ public class ColorPicker extends AppCompatActivity {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                     mBlue = i;
-                    setColorPreviewText();
-                    updateColorPreview();
+
+                    setPreviewColor();
                 }
 
                 @Override
@@ -242,8 +274,8 @@ public class ColorPicker extends AppCompatActivity {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                     mAlpha = i;
-                    setColorPreviewText();
-                    updateColorPreview();
+
+                    setPreviewColor();
                 }
 
                 @Override
@@ -273,12 +305,9 @@ public class ColorPicker extends AppCompatActivity {
             try {
                 final EditText hexColor = findViewById(R.id.hexColorEditText);
 
-                if (!hexColor.getText().toString().equals("") &&
-                        (hexColor.length() == 7 || hexColor.length() == 9)) {
+                if (!hexColor.getText().toString().equals("") && hexColor.length() == 9) {
                     String colorHex = hexColor.getText().toString();
-                    mColor = Color.parseColor(colorHex);
-                    updateColorPreview();
-                    updateSliders();
+                    setPreviewColor(colorHex);
                 }
             }
             catch (Exception e) {
@@ -288,11 +317,6 @@ public class ColorPicker extends AppCompatActivity {
     };
 
     private void updateSliders()    {
-//        mAlphaSeekBar.setOnSeekBarChangeListener(null);
-//        mRedSeekBar.setOnSeekBarChangeListener(null);
-//        mGreenSeekBar.setOnSeekBarChangeListener(null);
-//        mBlueSeekBar.setOnSeekBarChangeListener(null);
-
         mAlpha = (mColor >> 24) & 0xff; // or color >>> 24
         mRed = (mColor >> 16) & 0xff;
         mGreen = (mColor >>  8) & 0xff;
@@ -317,5 +341,14 @@ public class ColorPicker extends AppCompatActivity {
 
     public static int generateRandomColor() {
         return Color.parseColor(generateRandomHexColor());
+    }
+
+    private void sortColors()   {
+        Collections.sort(mExistingColors, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o1.compareTo(o2);
+            }
+        });
     }
 }
