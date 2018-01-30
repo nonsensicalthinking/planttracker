@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
@@ -72,9 +71,10 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             dateTextView.setText(sdf.format(p.time.getTime()) + " " +
                     ((phaseDisplay == null) ? "" : phaseDisplay));
 
-            // TODO Get record id which should be a long representing the instant the template was created
-            // TODO this is so we can change the display name of the template and still know which records are which
-            // TODO ultimately we want to be able to make everything editable and apply across all records, store only data!
+            // TODO Get record id which should be a long representing the instant the template was
+            // TODO created this is so we can change the display name of the template and still know
+            // TODO which records are which ultimately we want to be able to make everything
+            // TODO editable and apply across all records, store only data!
             GenericRecord template = recordTemplates.get(p.displayName);
 
             String displayName;
@@ -104,6 +104,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
 
             recordableSummaryTextView.setText(p.getSummary(summaryTemplate));
 
+            // images
             ImageView cameraIconImageView = (ImageView)v.findViewById(R.id.cameraIconImageView);
             if (p.images != null && p.images.size() > 0) {
                 cameraIconImageView.setImageResource(R.drawable.ic_menu_camera);
@@ -115,11 +116,21 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
                         getContext().startActivity(intent);
                     }
                 });
+                cameraIconImageView.setVisibility(View.VISIBLE);
+            }
+            else    {
+                cameraIconImageView.setVisibility(View.GONE);
             }
 
+			// datapoints
             ImageView dataPointIconImageView = (ImageView)v.findViewById(R.id.dataPointsImageView);
             if (p.dataPoints != null && p.dataPoints.size() > 0) {
                 dataPointIconImageView.setImageResource(R.drawable.ic_menu_share);
+                //TODO add click handler to launch graphing stuff
+                dataPointIconImageView.setVisibility(View.VISIBLE);
+            }
+            else    {
+                dataPointIconImageView.setVisibility(View.GONE);
             }
         }
 
