@@ -53,6 +53,7 @@ import android.widget.ViewSwitcher;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
+import com.nonsense.planttracker.android.Zipper;
 import com.nonsense.planttracker.android.adapters.GroupTileArrayAdapter;
 import com.nonsense.planttracker.android.adapters.PlantStateTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
@@ -160,7 +161,7 @@ public class PlantTrackerUi extends AppCompatActivity
                 drawerView.bringToFront();
             }
         };
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         parentPlantViewStack = new Stack<>();
@@ -760,6 +761,23 @@ public class PlantTrackerUi extends AppCompatActivity
                 startActivityForResult(manageRecordTemplates,
                         AndroidConstants.ACTIVITY_MANAGE_RECORD_TEMPLATES);
                 break;
+
+            case R.id.nav_export:
+                ArrayList<String> files = new ArrayList<>();
+                files.add(getFilesDir() + "/settings/tracker_settings.json");
+                files.add(getFilesDir() + "/plants");
+                files.add(getExternalFilesDir("camera").getPath());
+
+                Zipper.compressTrackerData(files,
+                        getExternalFilesDir("archive").getPath() +
+                                "/" + System.currentTimeMillis() + ".zip");
+                break;
+
+//            case R.id.nav_import:
+//                Zipper.importTrackerDataArchive(getExternalFilesDir("extracted").getPath(),
+//                        getExternalFilesDir("archive") +  "/test-foo-export.zip" );
+//                break;
+
 
 //            case R.id.nav_manage_states:
 //                if (switcher.getCurrentView() != allPlantsView) {
