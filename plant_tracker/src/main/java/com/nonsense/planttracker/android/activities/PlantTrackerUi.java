@@ -866,7 +866,8 @@ public class PlantTrackerUi extends AppCompatActivity
             // prepare remove from group submenu
             if (removeFromGroup == null) {
                 removeFromGroup = (SubMenu) individualPlantMenu.findItem(R.id.action_groups)
-                        .getSubMenu().addSubMenu(10, 2, 2,"Remove from ...");
+                        .getSubMenu().addSubMenu(10, 2, 2,
+                                "Remove from ...");
             }
 
             removeFromGroup.clear();
@@ -1031,8 +1032,8 @@ public class PlantTrackerUi extends AppCompatActivity
         });
 
         for (Group g : allGroups) {
-            MenuItem groupMenuItem = sm.getSubMenu().add(334, count, count, "Group: " +
-                    g.getGroupName());
+            MenuItem groupMenuItem = sm.getSubMenu().add(334, count, count,
+                    "Group: " + g.getGroupName());
             groupMenuItem.setIcon(R.drawable.ic_bundle_of_hay);
             menuItemToGroupIdMapping.put(groupMenuItem.getItemId(), g.getGroupId());
             count++;
