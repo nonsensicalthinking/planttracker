@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -18,7 +17,7 @@ import java.util.zip.ZipOutputStream;
  */
 
 public class Zipper {
-    private static final int BUFFER_SIZE = 2048;
+    private static final int BUFFER_SIZE = 4096;
 
 
     public static boolean importTrackerDataArchive(String basePath, String zipFile)  {
@@ -57,28 +56,17 @@ public class Zipper {
         return false;
     }
 
-//    private static void unZipFiles(ZipInputStream zis, String path)    {
-//        File f = new File(path);
-//        if (f.isDirectory())    {
-//
-//        }
-//        else    {
-//
-//        }
-//
-//
-//    }
-
     public static boolean compressTrackerData(ArrayList<String> files, String zipFile)    {
         try {
             ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile));
 
             for(String file : files) {
+                String archivePath = file.substring(file.lastIndexOf('/')+1);
                 if ((new File(file)).isDirectory())   {
-                    zipFolders(zos, file);
+                    zipFolders(zos, archivePath, file);
                 }
                 else    {
-                    zipFile(zos, file);
+                    zipFile(zos, archivePath, file);
                 }
             }
 
@@ -93,25 +81,25 @@ public class Zipper {
         return false;
     }
 
-    private static void zipFolders(ZipOutputStream zos, String path) throws IOException    {
+    private static void zipFolders(ZipOutputStream zos, String archivePath, String path) throws
+            IOException    {
+        Log.d("ZIP-OUT-FOLDER", archivePath);
+        ZipEntry ze = new ZipEntry(archivePath);
+        zos.putNextEntry(ze);
+
         File folder = new File(path);
-
-//        String entryPath = archivePath + "/";
-        Log.d("ZIP-OUT", path);
-//        ZipEntry ze = new ZipEntry(path);
-//        zos.putNextEntry(ze);
-
         for(File f : folder.listFiles()) {
             if (f.isDirectory())    {
-                zipFolders(zos, f.getPath());
+                zipFolders(zos, archivePath + f.getName() + "/", f.getPath());
             }
             else    {
-                zipFile(zos, f.getPath());
+                zipFile(zos, archivePath, f.getPath());
             }
         }
     }
 
-    private static void zipFile(ZipOutputStream zos, String file) throws IOException    {
+    private static void zipFile(ZipOutputStream zos, String archivePath, String file) throws
+            IOException    {
         BufferedInputStream bis = null;
         FileInputStream fis = new FileInputStream(file);
 
@@ -119,9 +107,9 @@ public class Zipper {
 
         String fileName = file.substring(file.lastIndexOf("/") + 1);
 
-        String entryPath = fileName;
-        Log.d("ZIP-OUT", fileName);
-        ZipEntry entry = new ZipEntry(fileName);
+        String entryPath = archivePath + "/" + fileName;
+        Log.d("ZIP-OUT-FILE", entryPath);
+        ZipEntry entry = new ZipEntry(entryPath);
         zos.putNextEntry(entry);
 
         int readBytes = 0;
@@ -133,37 +121,4 @@ public class Zipper {
         zos.closeEntry();
         bis.close();
     }
-
-
-    //TODO unzip!
-
-//
-//    public void zip() {
-//        try  {
-//            BufferedInputStream origin = null;
-//            FileOutputStream dest = new FileOutputStream(_zipFile);
-//
-//            ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
-//
-//            byte data[] = new byte[BUFFER];
-//
-//            for(int i=0; i < _files.length; i++) {
-//                Log.v("Compress", "Adding: " + _files[i]);
-//                FileInputStream fi = new FileInputStream(_files[i]);
-//                origin = new BufferedInputStream(fi, BUFFER);
-//                ZipEntry entry = new ZipEntry(_files[i].substring(_files[i].lastIndexOf("/") + 1));
-//                out.putNextEntry(entry);
-//                int count;
-//                while ((count = origin.read(data, 0, BUFFER)) != -1) {
-//                    out.write(data, 0, count);
-//                }
-//                origin.close();
-//            }
-//
-//            out.close();
-//        } catch(Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
 }
