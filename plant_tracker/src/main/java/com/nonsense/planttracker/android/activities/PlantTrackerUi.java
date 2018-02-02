@@ -165,7 +165,7 @@ public class PlantTrackerUi extends AppCompatActivity
         toggle.syncState();
 
         parentPlantViewStack = new Stack<>();
-        tracker = new PlantTracker(getFilesDir().toString());
+        tracker = new PlantTracker(getExternalFilesDir("").getPath());
 
         tracker.setPlantTrackerListener(this);
 
@@ -764,8 +764,8 @@ public class PlantTrackerUi extends AppCompatActivity
 
             case R.id.nav_export:
                 ArrayList<String> files = new ArrayList<>();
-                files.add(getFilesDir() + "/settings/tracker_settings.json");
-                files.add(getFilesDir() + "/plants");
+                files.add(getExternalFilesDir("settings").getPath() + "/tracker_settings.json");
+                files.add(getExternalFilesDir("plants").getPath());
                 files.add(getExternalFilesDir("camera").getPath());
 
                 Zipper.compressTrackerData(files,

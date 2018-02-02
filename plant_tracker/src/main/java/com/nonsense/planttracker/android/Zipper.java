@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -74,13 +75,10 @@ public class Zipper {
 
             for(String file : files) {
                 if ((new File(file)).isDirectory())   {
-                    ZipEntry ze = new ZipEntry(file);
-                    zos.putNextEntry(ze);
-                    String archivePath = file.substring(file.lastIndexOf('/') + 1);
-                    zipFolders(zos, archivePath, file);
+                    zipFolders(zos, file);
                 }
                 else    {
-                    zipFile(zos, "", file);
+                    zipFile(zos, file);
                 }
             }
 
@@ -95,31 +93,35 @@ public class Zipper {
         return false;
     }
 
-    private static void zipFolders(ZipOutputStream zos, String archivePath, String path) throws
-            IOException    {
-
+    private static void zipFolders(ZipOutputStream zos, String path) throws IOException    {
         File folder = new File(path);
+
+//        String entryPath = archivePath + "/";
+        Log.d("ZIP-OUT", path);
+//        ZipEntry ze = new ZipEntry(path);
+//        zos.putNextEntry(ze);
 
         for(File f : folder.listFiles()) {
             if (f.isDirectory())    {
-                zipFolders(zos, "/" + archivePath + "/" + f.getName(), f.getPath());
+                zipFolders(zos, f.getPath());
             }
             else    {
-                zipFile(zos, archivePath, f.getPath());
+                zipFile(zos, f.getPath());
             }
         }
     }
 
-    private static void zipFile(ZipOutputStream zos, String archivePath, String file) throws
-            IOException {
-
+    private static void zipFile(ZipOutputStream zos, String file) throws IOException    {
         BufferedInputStream bis = null;
         FileInputStream fis = new FileInputStream(file);
 
         bis = new BufferedInputStream(fis);
 
         String fileName = file.substring(file.lastIndexOf("/") + 1);
-        ZipEntry entry = new ZipEntry(archivePath + "/" + fileName);
+
+        String entryPath = fileName;
+        Log.d("ZIP-OUT", fileName);
+        ZipEntry entry = new ZipEntry(fileName);
         zos.putNextEntry(entry);
 
         int readBytes = 0;
@@ -128,6 +130,7 @@ public class Zipper {
             zos.write(buf, 0, readBytes);
         }
 
+        zos.closeEntry();
         bis.close();
     }
 
