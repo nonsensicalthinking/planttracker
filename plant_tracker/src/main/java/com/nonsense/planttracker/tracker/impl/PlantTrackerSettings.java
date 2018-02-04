@@ -59,13 +59,13 @@ public class PlantTrackerSettings implements Serializable {
         settingsChanged();
     }
 
-    Group getGroup(long groupId) throws GroupNotFoundException {
+    Group getGroup(long groupId) {
         Group g = new Group(groupId, null);
         if (groups.contains(g)) {
             return groups.get(groups.indexOf(g));
         }
 
-        throw new GroupNotFoundException("Unable to locate group with id: " + groupId);
+        return null;
     }
 
     final ArrayList<Group> getGroups() {

@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.Layout;
 import android.view.SubMenu;
@@ -42,6 +43,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -68,12 +70,15 @@ import com.nonsense.planttracker.tracker.interf.IDialogHandler;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Stack;
 import java.util.TreeMap;
+
+import static android.os.ParcelFileDescriptor.MODE_READ_ONLY;
 
 public class PlantTrackerUi extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, IPlantTrackerListener {
@@ -596,7 +601,9 @@ public class PlantTrackerUi extends AppCompatActivity
         TreeMap<String, Long> availableGroups = new TreeMap<>();
         for (Long key : p.getGroups()) {
             Group g = tracker.getGroup(key);
-            availableGroups.put(g.getGroupName(), g.getGroupId());
+            if (g != null)  {
+                availableGroups.put(g.getGroupName(), g.getGroupId());
+            }
         }
 
         return availableGroups;
@@ -763,20 +770,26 @@ public class PlantTrackerUi extends AppCompatActivity
                 break;
 
             case R.id.nav_export:
+                Dialog d = com.nonsense.planttracker.android.Utility.
+                        displayOperationInProgressDialog(PlantTrackerUi.this, "Export");
+
                 ArrayList<String> files = new ArrayList<>();
-                files.add(getExternalFilesDir("settings").getPath() + "/tracker_settings.json");
+                files.add(getExternalFilesDir("settings").getPath());
                 files.add(getExternalFilesDir("plants").getPath());
                 files.add(getExternalFilesDir("camera").getPath());
 
                 Zipper.compressTrackerData(files,
                         getExternalFilesDir("archive").getPath() +
                                 "/" + System.currentTimeMillis() + ".zip");
+
+                d.hide();
                 break;
 
-//            case R.id.nav_import:
-//                Zipper.importTrackerDataArchive(getExternalFilesDir("extracted").getPath(),
-//                        getExternalFilesDir("archive") +  "/test-foo-export.zip" );
-//                break;
+            case R.id.nav_import:
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("application/zip");
+                startActivityForResult(intent, AndroidConstants.ACTIVITY_IMPORT_SELECT);
+                break;
 
 
 //            case R.id.nav_manage_states:
@@ -878,15 +891,17 @@ public class PlantTrackerUi extends AppCompatActivity
             for (Group mg : membershipGroups) {
                 final Group currentGroup = mg;
 
-                MenuItem m = removeFromGroup.add(mg.getGroupName());
-                m.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        final long groupId = currentGroup.getGroupId();
-                        tracker.removeMemberFromGroup(currentPlant.getPlantId(), groupId);
-                        return true;
-                    }
-                });
+                if (currentGroup != null)   {
+                    MenuItem m = removeFromGroup.add(mg.getGroupName());
+                    m.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            final long groupId = currentGroup.getGroupId();
+                            tracker.removeMemberFromGroup(currentPlant.getPlantId(), groupId);
+                            return true;
+                        }
+                    });
+                }
             }
 
             if (membershipGroups.size() == 0) {
@@ -1366,6 +1381,19 @@ public class PlantTrackerUi extends AppCompatActivity
 
                     refreshListView();
                 }
+                break;
+
+            case AndroidConstants.ACTIVITY_IMPORT_SELECT:
+//                if (resultCode == Activity.RESULT_OK)   {
+//                    try {
+//                        Zipper.importTrackerDataArchive(
+//                                getExternalFilesDir("extracted/").getPath(),
+//                                new File((new FileProvider()).openFile(returnedIntent.getData(), MODE_READ_ONLY).getFileDescriptor())); //new FileInputStream(new File(returnedIntent.getData().getPath())));
+//                    }
+//                    catch(Exception e)  {
+//                        e.printStackTrace();
+//                    }
+//                }
                 break;
         }
     }

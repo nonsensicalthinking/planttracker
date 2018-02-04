@@ -1,5 +1,6 @@
 package com.nonsense.planttracker.android;
 
+import android.net.Uri;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -7,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -20,11 +22,15 @@ public class Zipper {
     private static final int BUFFER_SIZE = 4096;
 
 
-    public static boolean importTrackerDataArchive(String basePath, String zipFile)  {
+    public static boolean importTrackerDataArchive(String basePath, String zipFile) throws
+            IOException {
+        return importTrackerDataArchive(basePath, new FileInputStream(zipFile));
+    }
 
+    public static boolean importTrackerDataArchive(String basePath, InputStream inputStream)  {
         try {
             ZipInputStream zis = new ZipInputStream(new BufferedInputStream(
-                    new FileInputStream(zipFile)));
+                    inputStream));
 
             ZipEntry ze = null;
             while((ze=zis.getNextEntry()) != null)   {
@@ -84,8 +90,6 @@ public class Zipper {
     private static void zipFolders(ZipOutputStream zos, String archivePath, String path) throws
             IOException    {
         Log.d("ZIP-OUT-FOLDER", archivePath);
-        ZipEntry ze = new ZipEntry(archivePath);
-        zos.putNextEntry(ze);
 
         File folder = new File(path);
         for(File f : folder.listFiles()) {
