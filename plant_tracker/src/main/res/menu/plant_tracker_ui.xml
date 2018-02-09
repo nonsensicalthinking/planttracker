@@ -75,14 +75,14 @@
             android:title="@string/action_rename"
             android:visible="true"
             app:showAsAction="never" />
-        <!--<item-->
-            <!--android:id="@+id/action_change_start_date"-->
-            <!--android:checkable="false"-->
-            <!--android:enabled="true"-->
-            <!--android:orderInCategory="100"-->
-            <!--android:title="@string/action_change_start_date"-->
-            <!--android:visible="true"-->
-            <!--app:showAsAction="never" />-->
+        <item
+            android:id="@+id/action_change_start_date"
+            android:checkable="false"
+            android:enabled="true"
+            android:orderInCategory="100"
+            android:title="@string/action_change_start_date"
+            android:visible="true"
+            app:showAsAction="never" />
         <item
             android:id="@+id/action_archive_plant"
             android:checkable="false"

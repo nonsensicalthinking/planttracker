@@ -161,6 +161,13 @@ public class Plant implements Serializable  {
         return plantData.startDate;
     }
 
+    public void changePlantStartDate(Calendar startDate)    {
+        plantData.startDate = startDate;
+
+        updateSummaryInformation();
+        notifyUpdateListeners();
+    }
+
     // plant object maintenance
     private void sortEvents()   {
         plantData.genericRecords.sort(new Comparator<GenericRecord>() {

@@ -747,6 +747,10 @@ public class PlantTrackerUi extends AppCompatActivity
                 presentAddPlantDialog(currentPlant.getPlantId());
                 break;
 
+            case R.id.action_change_start_date:
+                presentChangePlantStartDateDialog();
+                break;
+
             case R.id.add_group:
                 presentAddGroupDialog();
                 break;
@@ -998,12 +1002,7 @@ public class PlantTrackerUi extends AppCompatActivity
         return true;
     }
 
-    private void presentGenericEventDialog(int layoutId, IDialogHandler dialogHandler) {
-        presentGenericEventDialog("", "", layoutId, dialogHandler);
-    }
-
-    private void presentGenericEventDialog(String code, String displayName, final int layoutId,
-                                           IDialogHandler dialogHandler) {
+    private void presentGenericEventDialog(final int layoutId, IDialogHandler dialogHandler) {
         final Dialog dialog = new Dialog(PlantTrackerUi.this);
         dialog.setContentView(R.layout.dialog_generic_event);
         TabHost tabs = (TabHost) dialog.findViewById(R.id.tabHost);
@@ -1011,9 +1010,11 @@ public class PlantTrackerUi extends AppCompatActivity
         tabs.setCurrentTab(0);
 
         TabHost.TabSpec dialogTab = tabs.newTabSpec("Tab1");
-        dialogTab.setIndicator("Info");
-        dialogTab.setContent(layoutId);
-        tabs.addTab(dialogTab);
+        if (layoutId > 0) {
+            dialogTab.setIndicator("Info");
+            dialogTab.setContent(layoutId);
+            tabs.addTab(dialogTab);
+        }
 
         TabHost.TabSpec changeDateTab = tabs.newTabSpec("Tab2");
         changeDateTab.setIndicator("Set Date");
@@ -1297,6 +1298,36 @@ public class PlantTrackerUi extends AppCompatActivity
     private void presentAddPlantDialog(final long parentPlantId) {
         presentGenericEventDialog(R.id.dialogNewPlantLayout,
                 getAddPlantDialogHandler(parentPlantId));
+    }
+
+    private void presentChangePlantStartDateDialog()    {
+        presentGenericEventDialog(0,
+                new IDialogHandler() {
+                    @Override
+                    public void bindDialog(final Dialog dialog) {
+                        Button okButton = (Button)dialog.findViewById(R.id.okButton);
+                        okButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                DatePicker dp = (DatePicker)dialog.findViewById(R.id.eventDatePicker);
+                                TimePicker tp = (TimePicker)dialog.findViewById(R.id.eventTimePicker);
+
+                                Calendar c = Calendar.getInstance();
+                                c.set(dp.getYear(), dp.getMonth(), dp.getDayOfMonth(), tp.getHour(), tp.getMinute());
+                                currentPlant.changePlantStartDate(c);
+                                dialog.hide();
+                            }
+                        });
+
+                        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+                        cancelButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.hide();
+                            }
+                        });
+                    }
+                });
     }
 
     private void presentAboutDialog() {
