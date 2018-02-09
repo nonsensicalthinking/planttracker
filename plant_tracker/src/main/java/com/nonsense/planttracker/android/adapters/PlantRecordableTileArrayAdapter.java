@@ -62,8 +62,14 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             int stateWeekCount = p.weeksSincePhase;
             int growWeekCount = p.weeksSinceStart;
 
-            String phaseDisplay = "[P" + phaseCount + "Wk." + stateWeekCount + "/" +
-                    growWeekCount + "]";
+            String phaseDisplay = "";
+            if (p.phaseCount > 0)   {
+                phaseDisplay = "[P" + phaseCount + "Wk." + stateWeekCount + "/" +
+                        growWeekCount + "]";
+            }
+            else    {
+                phaseDisplay = "[Wk. " +  growWeekCount + "]";
+            }
 
             // date/relative weeks
             TextView dateTextView = (TextView)v.findViewById(R.id.dateTextView);

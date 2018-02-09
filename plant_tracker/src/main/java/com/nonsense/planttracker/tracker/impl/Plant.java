@@ -214,9 +214,10 @@ public class Plant implements Serializable  {
             if (nearestPhaseDate != null)   {
                 record.phaseCount = phaseCount;
                 record.weeksSincePhase = Utility.calcWeeksFromTime(nearestPhaseDate, record.time);
-                record.weeksSinceStart = Utility.calcWeeksFromTime(getPlantStartDate(),
-                        record.time);
             }
+
+            record.weeksSinceStart = Utility.calcWeeksFromTime(getPlantStartDate(),
+                    record.time);
 
             if (record.images != null)  {
                 if (record.images.size() > 0)   {
