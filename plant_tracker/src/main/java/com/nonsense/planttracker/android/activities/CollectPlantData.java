@@ -4,12 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,11 +33,21 @@ import android.widget.TimePicker;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
+import com.nonsense.planttracker.android.Utility;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -244,26 +258,21 @@ public class CollectPlantData extends AppCompatActivity {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent cameraIntent = new Intent(CollectPlantData.this,
-                        PlantCam.class);
-
-                startActivityForResult(cameraIntent, AndroidConstants.ACTIVITY_PLANT_CAM);
+                dispatchTakePictureIntent();
             }
         });
 
         final Button galleryButton = (Button)findViewById(R.id.attachImagesButton);
-        galleryButton.setEnabled(false);
-//        galleryButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent i = new Intent(Intent.ACTION_PICK,
-//                        MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-//
-//                i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-//
-//                startActivityForResult(i, 5);
-//            }
-//        });
+        galleryButton.setEnabled(true);
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                startActivityForResult(i, AndroidConstants.ACTIVITY_IMAGE_CHOOSER);
+            }
+        });
 
         final Button okButton = (Button)findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
@@ -419,20 +428,91 @@ public class CollectPlantData extends AppCompatActivity {
         return editText;
     }
 
+    private ArrayList<String> mUriPaths = new ArrayList<>();
+
     @SuppressWarnings("unchecked")
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
         switch (requestCode) {
+            case AndroidConstants.ACTIVITY_IMAGE_CHOOSER:
+                if (resultCode == -1)   {
+                    int selectedItems = returnedIntent.getClipData().getItemCount();
 
-            case AndroidConstants.ACTIVITY_PLANT_CAM:
-                if (resultCode == Activity.RESULT_OK) {
-                    ArrayList<String> selectedFiles = (ArrayList<String>)returnedIntent.
-                            getSerializableExtra(AndroidConstants.INTENTKEY_SELECTED_FILES);
-
-                    mImages.addAll(selectedFiles);
+                    for(int x = 0; x < selectedItems; x++)  {
+                        Uri selected = returnedIntent.getClipData().getItemAt(x).getUri();
+                        File f = new File(selected.getPath());
+                        String filePath = getExternalFilesDir("camera") + "/" + f.getName() +
+                                ".jpg";
+                        Log.d("SELECTED_URI_FOO", "Gallery Image Selected: " + filePath);
+                        try {
+                            InputStream is = getContentResolver().openInputStream(selected);
+                            Utility.copyUriToLocation(is, filePath);
+                            mImages.add(filePath);
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 break;
+
+            case AndroidConstants.ACTIVITY_PLANT_CAM:
+                if (resultCode == -1)   {
+                    mImages.add(photoURI.getPath());
+                    dispatchTakePictureIntent();
+                }
+                break;
+
+//            case AndroidConstants.ACTIVITY_PLANT_CAM:
+//                if (resultCode == Activity.RESULT_OK) {
+//                    ArrayList<String> selectedFiles = (ArrayList<String>)returnedIntent.
+//                            getSerializableExtra(AndroidConstants.INTENTKEY_SELECTED_FILES);
+//
+//                    mImages.addAll(selectedFiles);
+//                }
+//                break;
         }
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                ex.printStackTrace();
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                photoURI = FileProvider.getUriForFile(this,
+                        "com.nonsense.planttracker.debug.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, AndroidConstants.ACTIVITY_PLANT_CAM);
+            }
+        }
+    }
+
+    private Uri photoURI;
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        //mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     private void cancelActivity()   {

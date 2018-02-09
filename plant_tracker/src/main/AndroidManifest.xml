@@ -30,7 +30,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="${applicationId}.provider"
+            android:authorities="com.nonsense.planttracker.debug.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -45,12 +45,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity android:name=".android.activities.ManageRecordTemplates"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".android.activities.PlantCam"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".android.activities.CameraImagePicker"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity android:name=".android.activities.ImageSeriesViewer"

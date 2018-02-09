@@ -20,10 +20,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.system.Os;
 import android.text.Layout;
+import android.util.Log;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -69,12 +73,23 @@ import com.nonsense.planttracker.tracker.impl.Utility;
 import com.nonsense.planttracker.tracker.interf.IDialogHandler;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Stack;
 import java.util.TreeMap;
 
@@ -180,7 +195,36 @@ public class PlantTrackerUi extends AppCompatActivity
         refreshDrawerGroups();
 
         fillViewWithPlants();
+
+
+
+
+
+
+//        linkFilesTest();
     }
+
+//    private void linkFilesTest()    {
+//        try {
+//            String original = getExternalFilesDir("plants") + "/plant1test.json";
+//            String symLinkLocation = getExternalFilesDir("linkTest") + "/plant1test.json";
+//
+//            Os.symlink(original, symLinkLocation);
+//
+//            BufferedReader br = new BufferedReader(new FileReader(symLinkLocation));
+//
+//            String input = "";
+//            while((input = br.readLine()) != null) {
+//                Log.d("LinkFileTest", input);
+//            }
+//
+//            br.close();
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
 
     private void bindIndividualPlantView() {
         daysSinceGrowStartTextView = (TextView)findViewById(R.id.daysSinceGrowStartTextView);
@@ -786,9 +830,10 @@ public class PlantTrackerUi extends AppCompatActivity
                 break;
 
             case R.id.nav_import:
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("application/zip");
-                startActivityForResult(intent, AndroidConstants.ACTIVITY_IMPORT_SELECT);
+//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//                intent.setType("application/zip");
+//                startActivityForResult(intent, AndroidConstants.ACTIVITY_IMPORT_SELECT);
+                dispatchTakePictureIntent();
                 break;
 
 
@@ -827,6 +872,51 @@ public class PlantTrackerUi extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    static final int REQUEST_IMAGE_CAPTURE = 98;
+
+    String mCurrentPhotoPath;
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                ex.printStackTrace();
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                photoURI = FileProvider.getUriForFile(this,
+                        "com.nonsense.planttracker.debug.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    private Uri photoURI;
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     // Individual plant menu
@@ -1332,10 +1422,29 @@ public class PlantTrackerUi extends AppCompatActivity
         }
     }
 
+    private ArrayList<String> mUriPaths = new ArrayList<>();
+
     @SuppressWarnings("unchecked")
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
         switch (requestCode) {
+
+            case REQUEST_IMAGE_CAPTURE:
+                if (resultCode == -1)   {
+                    //TODO add image to list of images captured for session
+                    mUriPaths.add(photoURI.getPath());
+                    dispatchTakePictureIntent();
+                }
+                else    {
+                    if (mUriPaths.size() > 0)   {
+                        for(String path : mUriPaths)    {
+                            Log.d("Saved image paths", "Path: " + path);
+                        }
+
+                        mUriPaths.clear();
+                    }
+                }
+                break;
 
             case AndroidConstants.ACTIVITY_GENERIC_RECORD:
                 if (resultCode == Activity.RESULT_OK) {
