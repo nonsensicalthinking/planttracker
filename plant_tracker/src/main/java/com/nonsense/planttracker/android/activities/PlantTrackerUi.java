@@ -1496,7 +1496,7 @@ public class PlantTrackerUi extends AppCompatActivity
 
     /* Begin IPlantTrackerListener */
     @Override
-    public void plantUpdated() {
+    public void plantUpdated(Plant p) {
         refreshListView();
     }
 

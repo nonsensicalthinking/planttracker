@@ -382,7 +382,7 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     @Override
     public void plantUpdate(Plant p) {
         savePlant(p);
-        uiListener.plantUpdated();
+        uiListener.plantUpdated(p);
     }
 
     @Override
