@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.tracker.exceptions.PlantNotFoundException;
 import com.nonsense.planttracker.tracker.impl.actions.PlantAction;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
@@ -43,7 +44,7 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
 
 
     public PlantTracker() {
-        this("plants/");
+        this(AndroidConstants.PATH_TRACKER_DATA);
     }
 
     public PlantTracker(String plantFolderPath) {
@@ -218,9 +219,6 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
             BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
             Gson g = new Gson();
             String json = g.toJson(p.getPlantData());
-
-            System.out.println("plant json: " + json);
-
             bw.write(json);
             bw.close();
         } catch (Exception e) {

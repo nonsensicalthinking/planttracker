@@ -818,9 +818,9 @@ public class PlantTrackerUi extends AppCompatActivity
                         displayOperationInProgressDialog(PlantTrackerUi.this, "Export");
 
                 ArrayList<String> files = new ArrayList<>();
-                files.add(getExternalFilesDir("settings").getPath());
-                files.add(getExternalFilesDir("plants").getPath());
-                files.add(getExternalFilesDir("camera").getPath());
+                files.add(getExternalFilesDir(AndroidConstants.PATH_TRACKER_SETTINGS).getPath());
+                files.add(getExternalFilesDir(AndroidConstants.PATH_TRACKER_DATA).getPath());
+                files.add(getExternalFilesDir(AndroidConstants.PATH_TRACKER_IMAGES).getPath());
 
                 Zipper.compressTrackerData(files,
                         getExternalFilesDir("archive").getPath() +
@@ -833,7 +833,6 @@ public class PlantTrackerUi extends AppCompatActivity
 //                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 //                intent.setType("application/zip");
 //                startActivityForResult(intent, AndroidConstants.ACTIVITY_IMPORT_SELECT);
-                dispatchTakePictureIntent();
                 break;
 
 
@@ -872,51 +871,6 @@ public class PlantTrackerUi extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    static final int REQUEST_IMAGE_CAPTURE = 98;
-
-    String mCurrentPhotoPath;
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-                ex.printStackTrace();
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                photoURI = FileProvider.getUriForFile(this,
-                        "com.nonsense.planttracker.debug.fileprovider",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
-        }
-    }
-
-    private Uri photoURI;
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
     }
 
     // Individual plant menu
@@ -1074,7 +1028,7 @@ public class PlantTrackerUi extends AppCompatActivity
         TabHost.TabSpec attachImagesTab = tabs.newTabSpec("Tab4");
         attachImagesTab.setIndicator("Attach Images");
         attachImagesTab.setContent(R.id.tab4);
-        tabs.addTab(attachImagesTab);
+//        tabs.addTab(attachImagesTab);
 
         tabs.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
@@ -1428,24 +1382,6 @@ public class PlantTrackerUi extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
         switch (requestCode) {
-
-            case REQUEST_IMAGE_CAPTURE:
-                if (resultCode == -1)   {
-                    //TODO add image to list of images captured for session
-                    mUriPaths.add(photoURI.getPath());
-                    dispatchTakePictureIntent();
-                }
-                else    {
-                    if (mUriPaths.size() > 0)   {
-                        for(String path : mUriPaths)    {
-                            Log.d("Saved image paths", "Path: " + path);
-                        }
-
-                        mUriPaths.clear();
-                    }
-                }
-                break;
-
             case AndroidConstants.ACTIVITY_GENERIC_RECORD:
                 if (resultCode == Activity.RESULT_OK) {
                     GenericRecord record = (GenericRecord) returnedIntent.getSerializableExtra(

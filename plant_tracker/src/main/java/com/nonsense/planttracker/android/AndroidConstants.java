@@ -25,6 +25,10 @@ public class AndroidConstants {
     public static final String INTENTKEY_AVAILABLE_GROUPS = "availableGroups";
     public static final String INTENTKEY_BASE_DIRECTORY = "baseDir";
 
+    public static final String PATH_TRACKER_IMAGES = "camera";
+    public static final String PATH_TRACKER_SETTINGS = "settings";
+    public static final String PATH_TRACKER_DATA = "plants";
+
 
 
 }

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +12,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,14 +34,9 @@ import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.android.Utility;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -60,7 +53,8 @@ public class CollectPlantData extends AppCompatActivity {
     private boolean showNotes;
     private TreeMap<String, Long> availableGroups;
 
-    private ArrayList<String> mImages = new ArrayList<>();
+    private Uri photoURI;
+    private ArrayList<String> images = new ArrayList<>();
 
 
     @SuppressWarnings("unchecked")
@@ -439,15 +433,16 @@ public class CollectPlantData extends AppCompatActivity {
                     int selectedItems = returnedIntent.getClipData().getItemCount();
 
                     for(int x = 0; x < selectedItems; x++)  {
-                        Uri selected = returnedIntent.getClipData().getItemAt(x).getUri();
-                        File f = new File(selected.getPath());
-                        String filePath = getExternalFilesDir("camera") + "/" + f.getName() +
-                                ".jpg";
-                        Log.d("SELECTED_URI_FOO", "Gallery Image Selected: " + filePath);
                         try {
+                            Uri selected = returnedIntent.getClipData().getItemAt(x).getUri();
+                            File f = new File(selected.getPath());
+                            String filePath =
+                                    getExternalFilesDir(AndroidConstants.PATH_TRACKER_IMAGES) +
+                                            "/" + f.getName() + ".jpg";
+
                             InputStream is = getContentResolver().openInputStream(selected);
                             Utility.copyUriToLocation(is, filePath);
-                            mImages.add(filePath);
+                            images.add(filePath);
                         }
                         catch (Exception e) {
                             e.printStackTrace();
@@ -458,23 +453,18 @@ public class CollectPlantData extends AppCompatActivity {
 
             case AndroidConstants.ACTIVITY_PLANT_CAM:
                 if (resultCode == -1)   {
-                    mImages.add(photoURI.getPath());
+                    File f = new File(photoURI.getPath());
+                    String path = getExternalFilesDir(AndroidConstants.PATH_TRACKER_IMAGES) + "/" +
+                            f.getName();
+                    images.add(path);
                     dispatchTakePictureIntent();
                 }
                 break;
-
-//            case AndroidConstants.ACTIVITY_PLANT_CAM:
-//                if (resultCode == Activity.RESULT_OK) {
-//                    ArrayList<String> selectedFiles = (ArrayList<String>)returnedIntent.
-//                            getSerializableExtra(AndroidConstants.INTENTKEY_SELECTED_FILES);
-//
-//                    mImages.addAll(selectedFiles);
-//                }
-//                break;
         }
     }
 
     private void dispatchTakePictureIntent() {
+        //TODO ask for permission to use camera, otherwise we just get an exception thrown about not having permissions!
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -488,36 +478,28 @@ public class CollectPlantData extends AppCompatActivity {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
+                String path = getApplicationContext().getPackageName();
                 photoURI = FileProvider.getUriForFile(this,
-                        "com.nonsense.planttracker.debug.fileprovider",
-                        photoFile);
+                        path + ".fileprovider", photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, AndroidConstants.ACTIVITY_PLANT_CAM);
             }
         }
     }
 
-    private Uri photoURI;
-
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
+        File storageDir = getExternalFilesDir(AndroidConstants.PATH_TRACKER_IMAGES);
+        File image = File.createTempFile(imageFileName,".jpg", storageDir);
 
-        // Save a file: path for use with ACTION_VIEW intents
-        //mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
 
     private void cancelActivity()   {
         if (record.images != null)  {
-            for(String s : mImages)   {
+            for(String s : images)   {
                 File f = new File(s);
                 f.delete();
             }
@@ -542,7 +524,7 @@ public class CollectPlantData extends AppCompatActivity {
         retInt.putExtra(AndroidConstants.INTENTKEY_GENERIC_RECORD, record);
         retInt.putExtra(AndroidConstants.INTENTKEY_APPLY_TO_GROUP, applyToGroup);
         retInt.putExtra(AndroidConstants.INTENTKEY_SELECTED_GROUP, selectedGroup);
-        retInt.putExtra(AndroidConstants.INTENTKEY_SELECTED_FILES, mImages);
+        retInt.putExtra(AndroidConstants.INTENTKEY_SELECTED_FILES, images);
 
         setResult(Activity.RESULT_OK, retInt);
         finish();
