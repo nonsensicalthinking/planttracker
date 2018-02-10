@@ -12,12 +12,12 @@ __Currently implemented features__:
   * Event: Feeding Record
   * Event: Custom Records with Data Points
 * Camera integration
+* Import/Export plants and settings for easy backup.
 
 __Future plans (in no particular order)__:
 * Automated sensor data collection
 * Graphing
 * Custom scheduled reminders
-* Exporting plants and tracker configuration for easy backup
 * Desktop implementation for managing plants
 
 __Requirements__
