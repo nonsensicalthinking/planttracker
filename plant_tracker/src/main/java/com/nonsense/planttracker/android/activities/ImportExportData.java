@@ -319,7 +319,6 @@ public class ImportExportData extends AppCompatActivity {
                         getExternalFilesDir(AndroidConstants.PATH_TRACKER_IMAGES).getPath());
             }
 
-            //TODO tracker groups and record templates
             String reqJson = Zipper.extractJsonFileContents(cr.openInputStream(packageUri),
                     "/" + p.getPlantId() + "_req.json");
 
@@ -413,6 +412,7 @@ public class ImportExportData extends AppCompatActivity {
 
         setResult(RESULT_OK);
         finish();
-        Toast.makeText(ImportExportData.this, "Export Complete.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(ImportExportData.this, "Export Complete.",
+                Toast.LENGTH_SHORT).show();
     }
 }

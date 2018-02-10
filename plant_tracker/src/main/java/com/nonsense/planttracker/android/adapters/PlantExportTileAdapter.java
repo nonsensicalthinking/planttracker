@@ -21,7 +21,6 @@ import java.util.List;
 
 public class PlantExportTileAdapter extends ArrayAdapter<Plant> {
 
-//    private Plant currentPlant;
     private int viewResourceId;
 
     private ArrayList<Long> selectedPlants;
@@ -30,7 +29,6 @@ public class PlantExportTileAdapter extends ArrayAdapter<Plant> {
                                   ArrayList<Long> selectedPlants) {
         super(context, textViewResourceId, items);
         viewResourceId = textViewResourceId;
-        //currentPlant = plant;
 
         this.selectedPlants = selectedPlants;
     }
