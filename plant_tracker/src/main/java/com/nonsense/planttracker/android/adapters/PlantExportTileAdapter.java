@@ -53,7 +53,8 @@ public class PlantExportTileAdapter extends ArrayAdapter<Plant> {
 
             TextView exportSummary = v.findViewById(R.id.plantExportSummaryTextView);
 
-            String summary = "" + p.getGroups().size() + " Groups - " + " 0 Record Types";
+            String summary = "" + p.getGroups().size() + " Groups - " +
+                    p.getUniqueRecordTemplatesUsed().size() + " Record Types";
 
             exportSummary.setText(summary);
 

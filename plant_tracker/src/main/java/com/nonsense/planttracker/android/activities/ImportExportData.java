@@ -160,7 +160,8 @@ public class ImportExportData extends AppCompatActivity {
     @SuppressWarnings("unchecked")
     private void readPlantsFromArchive()    {
         try {
-            ZipInputStream zis = new ZipInputStream(getContentResolver().openInputStream(packageUri));
+            ZipInputStream zis = new ZipInputStream(
+                    getContentResolver().openInputStream(packageUri));
             Gson g = new Gson();
             String zipInput = Zipper.extractJsonFileContents(
                     getContentResolver().openInputStream(packageUri), "/package.json");
