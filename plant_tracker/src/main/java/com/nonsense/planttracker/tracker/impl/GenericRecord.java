@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 public class GenericRecord implements Serializable, Cloneable {
 
+    public long id;
     public String displayName = "";
     public int color = 0;
     public Calendar time;
@@ -28,6 +29,7 @@ public class GenericRecord implements Serializable, Cloneable {
     public GenericRecord(String displayName)  {
         this.displayName = displayName;
         this.time = Calendar.getInstance();
+        this.id = this.time.getTimeInMillis();
     }
 
     public void setDataPoint(String key, Object value) {

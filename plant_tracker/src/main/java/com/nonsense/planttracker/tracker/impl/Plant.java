@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Created by Derek Brooks on 6/30/2017.
@@ -235,6 +237,18 @@ public class Plant implements Serializable  {
                 pul.plantUpdate(this);
             }
         }
+    }
+
+    public ArrayList<Long> getUniqueRecordTemplatesUsed()  {
+        ArrayList<Long> uniqueRecords = new ArrayList<>();
+
+        for(GenericRecord gr : plantData.genericRecords)    {
+            if (!uniqueRecords.contains(gr.id))   {
+                uniqueRecords.add(gr.id);
+            }
+        }
+
+        return uniqueRecords;
     }
 
     public void archivePlant() {

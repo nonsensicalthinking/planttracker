@@ -54,13 +54,13 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         archivedPlants = new ArrayList<>();
         activePlants = new ArrayList<>();
 
-        if (!loadSettings()) {
-            System.err.println("Unable to load tracker settings, created new settings file.");
-        }
+        loadSettings();
 
         loadPlants();
 
         initGenericRecords();
+
+        temporaryLegacyActions();
     }
 
     private boolean loadSettings() {
@@ -68,7 +68,6 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         if (!settingsFile.exists()) {
             settings = new PlantTrackerSettings();
             savePlantTrackerSettings();
-            return false;
         } else {
             loadPlantTrackerSettings();
         }
@@ -76,6 +75,17 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         settings.setListener(this);
 
         return true;
+    }
+
+    private void temporaryLegacyActions()   {
+        for(String key : settings.getAllGenericRecordTemplates().keySet())  {
+            GenericRecord gr = settings.getAllGenericRecordTemplates().get(key);
+            if (gr.id == 0) {
+                gr.id = gr.time.getTimeInMillis();
+            }
+        }
+
+        settingsChanged();
     }
 
     private void initGenericRecords() {
@@ -225,6 +235,12 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
             e.printStackTrace();
         }
     }
+
+    public void importFinished()   {
+        loadPlants();
+        loadSettings();
+    }
+
 
     private void loadPlants() {
         // search plants folder for plant files
@@ -404,6 +420,10 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         return addGroup(System.currentTimeMillis(), groupName);
     }
 
+    public void addGroup(Group g)   {
+        settings.addGroup(g);
+    }
+
     private long addGroup(long groupId, String groupName) {
         Group g = new Group(groupId, groupName);
         settings.addGroup(g);
@@ -553,6 +573,10 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
 
     public GenericRecord getGenericRecordTemplate(String name) {
         return settings.getGenericRecordTemplate(name);
+    }
+
+    public GenericRecord getGenericRecordTemplate(long id)  {
+        return settings.getGenericRecordTemplate(id);
     }
 
     public void removeGenericRecordTemplate(String name) {

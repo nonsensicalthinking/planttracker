@@ -13,6 +13,8 @@ public class AndroidConstants {
     public static final int ACTIVITY_IMAGE_CHOOSER = 6;
     public static final int ACTIVITY_COLOR_PICKER = 7;
     public static final int ACTIVITY_IMPORT_SELECT = 8;
+    public static final int ACTIVITY_EXPORT_SELECT = 9;
+    public static final int ACTIVITY_IMPORT_CHOOSER = 10;
 
 
     public static final String INTENTKEY_GENERIC_RECORD = "genericRecord";

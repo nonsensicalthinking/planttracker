@@ -20,13 +20,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
-import android.system.Os;
-import android.text.Layout;
 import android.util.Log;
 import android.view.SubMenu;
 import android.view.View;
@@ -47,7 +42,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -55,11 +49,11 @@ import android.widget.TabHost;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
-import com.nonsense.planttracker.android.Zipper;
 import com.nonsense.planttracker.android.adapters.GroupTileArrayAdapter;
 import com.nonsense.planttracker.android.adapters.PlantStateTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
@@ -73,27 +67,13 @@ import com.nonsense.planttracker.tracker.impl.Utility;
 import com.nonsense.planttracker.tracker.interf.IDialogHandler;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Stack;
 import java.util.TreeMap;
-
-import static android.os.ParcelFileDescriptor.MODE_READ_ONLY;
 
 public class PlantTrackerUi extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, IPlantTrackerListener {
@@ -512,6 +492,13 @@ public class PlantTrackerUi extends AppCompatActivity
 
         fromSeedTextView.setText((currentPlant.isFromSeed() ? R.string.seed : R.string.clone));
 
+        for(String key : tracker.getGenericRecordTypes())   {
+            GenericRecord gr = tracker.getGenericRecordTemplate(key);
+            Log.d("RECTYPES", "Time: " + gr.time.getTime().toString());
+            gr.id = gr.time.getTimeInMillis();
+
+        }
+
         ArrayList<String> eventOptions = new ArrayList<>();
         eventOptions.add(ADD_NEW_RECORD);
         eventOptions.addAll(tracker.getGenericRecordTypes());
@@ -818,25 +805,17 @@ public class PlantTrackerUi extends AppCompatActivity
                 break;
 
             case R.id.nav_export:
-                Dialog d = com.nonsense.planttracker.android.Utility.
-                        displayOperationInProgressDialog(PlantTrackerUi.this, "Export");
-
-                ArrayList<String> files = new ArrayList<>();
-                files.add(getExternalFilesDir(AndroidConstants.PATH_TRACKER_SETTINGS).getPath());
-                files.add(getExternalFilesDir(AndroidConstants.PATH_TRACKER_DATA).getPath());
-                files.add(getExternalFilesDir(AndroidConstants.PATH_TRACKER_IMAGES).getPath());
-
-                Zipper.compressTrackerData(files,
-                        getExternalFilesDir("archive").getPath() +
-                                "/" + System.currentTimeMillis() + ".zip");
-
-                d.hide();
+                Intent exportIntent = new Intent(this, ImportExportData.class);
+                exportIntent.putExtra(AndroidConstants.INTENTKEY_PLANT_TRACKER, tracker);
+                exportIntent.putExtra("isExport", true);
+                startActivityForResult(exportIntent, AndroidConstants.ACTIVITY_EXPORT_SELECT);
                 break;
 
             case R.id.nav_import:
-//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-//                intent.setType("application/zip");
-//                startActivityForResult(intent, AndroidConstants.ACTIVITY_IMPORT_SELECT);
+                Intent importIntent = new Intent(this, ImportExportData.class);
+                importIntent.putExtra(AndroidConstants.INTENTKEY_PLANT_TRACKER, tracker);
+                importIntent.putExtra("isExport", false);
+                startActivityForResult(importIntent, AndroidConstants.ACTIVITY_IMPORT_CHOOSER);
                 break;
 
 
@@ -1459,17 +1438,13 @@ public class PlantTrackerUi extends AppCompatActivity
                 }
                 break;
 
-            case AndroidConstants.ACTIVITY_IMPORT_SELECT:
-//                if (resultCode == Activity.RESULT_OK)   {
-//                    try {
-//                        Zipper.importTrackerDataArchive(
-//                                getExternalFilesDir("extracted/").getPath(),
-//                                new File((new FileProvider()).openFile(returnedIntent.getData(), MODE_READ_ONLY).getFileDescriptor())); //new FileInputStream(new File(returnedIntent.getData().getPath())));
-//                    }
-//                    catch(Exception e)  {
-//                        e.printStackTrace();
-//                    }
-//                }
+            case AndroidConstants.ACTIVITY_IMPORT_CHOOSER:
+                if (resultCode == Activity.RESULT_OK)   {
+                    tracker.importFinished();
+                    refreshListView();
+                    Toast.makeText(PlantTrackerUi.this, "Finished plant import.",
+                            Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
