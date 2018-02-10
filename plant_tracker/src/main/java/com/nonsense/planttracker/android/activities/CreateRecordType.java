@@ -97,11 +97,10 @@ public class CreateRecordType extends AppCompatActivity {
 
         final int color;
         if (record.color == 0)  {
-             color = ColorPicker.generateRandomColor();
+             record.color = ColorPicker.generateRandomColor();
         }
-        else    {
-            color = record.color;
-        }
+
+        color = record.color;
 
         ((GradientDrawable)colorPreviewTextView.getBackground()).setColor(color);
 
