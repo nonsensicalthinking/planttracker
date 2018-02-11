@@ -46,6 +46,10 @@
     <item android:title="@string/drawer_title_transfer">
         <menu>
             <item
+                android:id="@+id/nav_backup"
+                android:icon="@drawable/ic_export"
+                android:title="@string/drawer_item_backup" />
+            <item
                 android:id="@+id/nav_export"
                 android:icon="@drawable/ic_export"
                 android:title="@string/drawer_item_export" />

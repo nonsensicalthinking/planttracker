@@ -23,18 +23,14 @@
             android:layout_marginEnd="5dp"
             android:layout_marginStart="4dp"
             android:background="@drawable/rounded_corner"
-            android:paddingEnd="20dp"
+            android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:shadowColor="@color/white"
-            android:shadowDx="5"
-            android:shadowDy="5"
-            android:shadowRadius="1"
             android:text="@string/record_template"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.SearchResult.Subtitle"
-            android:textColor="@android:color/black"
-            android:textColorHint="@color/white"
+            android:textColor="@color/white"
+            android:shadowColor="@color/black"
+            android:shadowRadius="100"
             android:textSize="16sp"
-            android:textStyle="normal" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/dateTextView"

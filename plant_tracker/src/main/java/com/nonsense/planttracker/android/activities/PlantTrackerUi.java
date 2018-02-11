@@ -101,7 +101,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private TextView stateNameTextView;
     private TextView fromSeedTextView;
     private ListView recordableEventListView;
-    private TableRow parentPlantTableRow;
+    private LinearLayout parentPlantLinearLayout;
     private Spinner addEventSpinner;
     private Menu individualPlantMenu;
     private SubMenu addToGroup;
@@ -211,7 +211,7 @@ public class PlantTrackerUi extends AppCompatActivity
         weeksSinceGrowStartTextView = (TextView)findViewById(R.id.weeksSinceGrowStartTextView);
         fromSeedTextView = (TextView) findViewById(R.id.fromSeedTextView);
         recordableEventListView = (ListView)findViewById(R.id.recordableEventListView);
-        parentPlantTableRow = (TableRow)findViewById(R.id.parentPlantTableRow);
+        parentPlantLinearLayout = (LinearLayout)findViewById(R.id.parentPlantLinearLayout);
         addEventSpinner = (Spinner)findViewById(R.id.addEventSpinner);
 
         stateNameTextView = (TextView) findViewById(R.id.stateNameTextView);
@@ -243,6 +243,7 @@ public class PlantTrackerUi extends AppCompatActivity
 
     private void fillViewWithPlants() {
         toolbar.setTitle(R.string.app_name);
+        toolbar.setElevation(10);
 
         setEmptyViewCaption("No Plants Found");
 
@@ -505,11 +506,12 @@ public class PlantTrackerUi extends AppCompatActivity
         eventOptions.add(CREATE_NEW_GENERIC_RECORD_OPTION);
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, eventOptions);
+                R.layout.item_spinner_lightfg, eventOptions);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         addEventSpinner.setAdapter(adapter);
+
         addEventSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -571,9 +573,9 @@ public class PlantTrackerUi extends AppCompatActivity
                 parentPlantTextView.setText(R.string.record_not_found);
             }
 
-            parentPlantTableRow.setVisibility(View.VISIBLE);
+            parentPlantLinearLayout.setVisibility(View.VISIBLE);
         } else {
-            parentPlantTableRow.setVisibility(View.GONE);
+            parentPlantLinearLayout.setVisibility(View.GONE);
         }
 
         PlantRecordableTileArrayAdapter plantRecordableAdapter =
@@ -791,6 +793,10 @@ public class PlantTrackerUi extends AppCompatActivity
                 } else {
                     fillViewWithGroups();
                 }
+                break;
+
+            case R.id.nav_backup:
+                //TODO full backup
                 break;
 
             case R.id.nav_manage_events:

@@ -422,8 +422,6 @@ public class CollectPlantData extends AppCompatActivity {
         return editText;
     }
 
-    private ArrayList<String> mUriPaths = new ArrayList<>();
-
     @SuppressWarnings("unchecked")
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
