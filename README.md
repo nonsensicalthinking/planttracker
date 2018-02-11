@@ -7,26 +7,35 @@ __App Screenshots__:
 
 __Currently implemented features__:
 * Create plants
-* Clone plants
+* Clone plants, when cloning plants the app will track plant lineage and link to parent plants.
 * Archive plants
 * Plant grouping
-* Apply plant events to plant groups
-  * Event: Plant phase tracking shows days/weeks on events (Seedling, Veg, Flower, Harvest)
-  * Event: Watering Record
-  * Event: Feeding Record
-  * Event: Custom Records with Data Points
+* Fully customizable record system
+    * Name
+    * Color code
+    * Data points (a system to track grow specific values like pH, temperature, food strength, etc...)
+    * Include notes
+    * Customizable summary string
+* Built in record templates (customizable)
+    * Watering
+    * Feeding
+    * Phase Change (Seedling, Veg, Flower, Harvest)
+    * Pictures
+    * Potting
+    * Observation
+* Easily create custom record templates
 * Camera integration
-* Import/Export plants and settings for easy backup.
+* Import/Export plants and settings to json/zip archive for easy backup.
 
 __Future plans (in no particular order)__:
 * Automated sensor data collection
-* Graphing
+* Graphing (to display collected data point values)
 * Custom scheduled reminders
 * Desktop implementation for managing plants
 
 __Requirements__
 * Android OS 7.0 (Nougat) or higher
 
-The minimum system requirements may be lowered in the future.
+The minimum system requirements may be lowered in the future, ideally I would like to see OS 5 supported.
 
 
