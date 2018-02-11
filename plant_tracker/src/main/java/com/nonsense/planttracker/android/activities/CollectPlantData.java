@@ -441,22 +441,17 @@ public class CollectPlantData extends AppCompatActivity {
         switch (requestCode) {
             case AndroidConstants.ACTIVITY_IMAGE_CHOOSER:
                 if (resultCode == -1)   {
-                    int selectedItems = returnedIntent.getClipData().getItemCount();
-
-                    for(int x = 0; x < selectedItems; x++)  {
-                        try {
+                    if (returnedIntent.getClipData() != null)   {
+                        int selectedItems = returnedIntent.getClipData().getItemCount();
+                        for(int x = 0; x < selectedItems; x++)  {
                             Uri selected = returnedIntent.getClipData().getItemAt(x).getUri();
-                            File f = new File(selected.getPath());
-                            String filePath =
-                                    getExternalFilesDir(AndroidConstants.PATH_TRACKER_IMAGES) +
-                                            "/" + f.getName() + ".jpg";
-
-                            InputStream is = getContentResolver().openInputStream(selected);
-                            Utility.copyUriToLocation(is, filePath);
-                            images.add(filePath);
+                            makeLocalCopyOfAttachedImage(selected);
                         }
-                        catch (Exception e) {
-                            e.printStackTrace();
+                    }
+                    else    {
+                        // they may have only attached one image and running an older version of android
+                        if (returnedIntent.getData() != null)   {
+                            makeLocalCopyOfAttachedImage(returnedIntent.getData());
                         }
                     }
                 }
@@ -471,6 +466,23 @@ public class CollectPlantData extends AppCompatActivity {
                     dispatchTakePictureIntent();
                 }
                 break;
+        }
+    }
+
+    private void makeLocalCopyOfAttachedImage(Uri selected) {
+        try {
+//            Uri selected = returnedIntent.getClipData().getItemAt(x).getUri();
+            File f = new File(selected.getPath());
+            String filePath =
+                    getExternalFilesDir(AndroidConstants.PATH_TRACKER_IMAGES) +
+                            "/" + f.getName() + ".jpg";
+
+            InputStream is = getContentResolver().openInputStream(selected);
+            Utility.copyUriToLocation(is, filePath);
+            images.add(filePath);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
