@@ -59,7 +59,7 @@
                     android:shadowRadius="@integer/text_shading_pad"
                     android:text="Parent Plant"
                     android:textAlignment="textStart"
-                    android:textColor="@color/white"
+                    android:textColor="@color/yellow"
                     android:textSize="18sp" />
 
                 <TextView
@@ -95,7 +95,7 @@
                     android:shadowRadius="@integer/text_shading_pad"
                     android:text="Plant Source"
                     android:textAlignment="textStart"
-                    android:textColor="@color/white"
+                    android:textColor="@color/yellow"
                     android:textSize="18sp" />
 
                 <TextView
@@ -106,7 +106,7 @@
                     android:shadowColor="@color/black"
                     android:shadowRadius="@integer/text_shading_pad"
                     android:text="Clone"
-                    android:textColor="@color/white"
+                    android:textColor="@color/yellow"
                     android:textSize="18sp" />
 
             </LinearLayout>
@@ -125,7 +125,7 @@
                     android:shadowRadius="@integer/text_shading_pad"
                     android:paddingEnd="5dp"
                     android:text="@string/grow_week"
-                    android:textColor="@color/white"
+                    android:textColor="@color/yellow"
                     android:textSize="18sp" />
 
                 <TextView
@@ -137,7 +137,7 @@
                     android:shadowRadius="@integer/text_shading_pad"
                     android:paddingEnd="10dp"
                     android:text="6"
-                    android:textColor="@color/white"
+                    android:textColor="@color/yellow"
                     android:textSize="18sp" />
 
                 <TextView
@@ -149,7 +149,7 @@
                     android:shadowColor="@color/black"
                     android:shadowRadius="@integer/text_shading_pad"
                     android:text="@string/grow_day"
-                    android:textColor="@color/white"
+                    android:textColor="@color/yellow"
                     android:textSize="18sp" />
 
                 <TextView
@@ -160,7 +160,7 @@
                     android:shadowColor="@color/black"
                     android:shadowRadius="@integer/text_shading_pad"
                     android:text="41"
-                    android:textColor="@color/white"
+                    android:textColor="@color/yellow"
                     android:textSize="18sp" />
 
             </LinearLayout>
@@ -178,7 +178,7 @@
                     android:shadowColor="@color/black"
                     android:shadowRadius="@integer/text_shading_pad"
                     android:text="@string/grow_phase"
-                    android:textColor="@color/white"
+                    android:textColor="@color/yellow"
                     android:textSize="18sp" />
             </LinearLayout>
 
@@ -217,7 +217,7 @@
                     android:shadowColor="@color/black"
                     android:shadowRadius="@integer/text_shading_pad"
                     android:text="@string/phase_week"
-                    android:textColor="@color/white"
+                    android:textColor="@color/yellow"
                     android:textSize="18sp" />
 
                 <TextView
@@ -229,7 +229,7 @@
                     android:shadowColor="@color/black"
                     android:shadowRadius="@integer/text_shading_pad"
                     android:text="2"
-                    android:textColor="@color/white"
+                    android:textColor="@color/yellow"
                     android:textSize="18sp" />
 
                 <TextView
@@ -241,7 +241,7 @@
                     android:shadowColor="@color/black"
                     android:shadowRadius="@integer/text_shading_pad"
                     android:text="@string/phase_day"
-                    android:textColor="@color/white"
+                    android:textColor="@color/yellow"
                     android:textSize="18sp" />
 
                 <TextView
@@ -252,7 +252,7 @@
                     android:shadowColor="@color/black"
                     android:shadowRadius="@integer/text_shading_pad"
                     android:text="13"
-                    android:textColor="@color/white"
+                    android:textColor="@color/yellow"
                     android:textSize="18sp" />
             </LinearLayout>
         </LinearLayout>
