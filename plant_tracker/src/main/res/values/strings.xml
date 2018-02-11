@@ -33,7 +33,7 @@
 
     <string name="drawer_title_view">View</string>
     <string name="drawer_title_manage">Manage</string>
-    <string name="drawer_title_transfer">Transfer</string>
+    <string name="drawer_title_transfer">Plant Data</string>
     <string name="drawer_title_delete">Delete</string>
 
     <string name="plant_opt_archive">Archive</string>
