@@ -31,6 +31,6 @@ public class AndroidConstants {
     public static final String PATH_TRACKER_SETTINGS = "settings";
     public static final String PATH_TRACKER_DATA = "plants";
 
-
+    public static final int PERMISSION_REQ_CAMERA = 54;
 
 }

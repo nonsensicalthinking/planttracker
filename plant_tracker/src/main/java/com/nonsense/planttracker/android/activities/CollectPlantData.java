@@ -1,11 +1,15 @@
 package com.nonsense.planttracker.android.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,6 +32,7 @@ import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
@@ -252,7 +257,15 @@ public class CollectPlantData extends AppCompatActivity {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dispatchTakePictureIntent();
+                if (ContextCompat.checkSelfPermission(CollectPlantData.this,
+                        Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED)    {
+                    ActivityCompat.requestPermissions(CollectPlantData.this,
+                            new String[] {Manifest.permission.CAMERA},
+                            AndroidConstants.PERMISSION_REQ_CAMERA);
+                }
+                else    {
+                    dispatchTakePictureIntent();
+                }
             }
         });
 
@@ -493,6 +506,24 @@ public class CollectPlantData extends AppCompatActivity {
         File image = File.createTempFile(imageFileName,".jpg", storageDir);
 
         return image;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[],
+                                           int[] grantResults) {
+        switch (requestCode) {
+            case AndroidConstants.PERMISSION_REQ_CAMERA:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    dispatchTakePictureIntent();
+                }
+                else {
+                    Toast.makeText(CollectPlantData.this,
+                            "You must allow camera usage to take pictures.",
+                            Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
     }
 
     private void cancelActivity()   {
