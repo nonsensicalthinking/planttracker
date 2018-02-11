@@ -55,6 +55,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingEnd="5dp"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="@integer/text_shading_pad"
                     android:text="Parent Plant"
                     android:textAlignment="textStart"
                     android:textColor="@color/white"
@@ -64,10 +66,15 @@
                     android:id="@+id/parentPlantIdTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
                     android:layout_weight="1"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="@integer/text_shading_pad"
                     android:text="White Dwarf (#3) G2"
-                    android:textColor="?android:attr/textColorTertiaryInverse"
-                    android:textSize="18sp" />
+                    android:textColor="@color/testcolor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -84,6 +91,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingEnd="5dp"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="@integer/text_shading_pad"
                     android:text="Plant Source"
                     android:textAlignment="textStart"
                     android:textColor="@color/white"
@@ -94,6 +103,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="@integer/text_shading_pad"
                     android:text="Clone"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
@@ -110,6 +121,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="@integer/text_shading_pad"
                     android:paddingEnd="5dp"
                     android:text="@string/grow_week"
                     android:textColor="@color/white"
@@ -120,6 +133,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="@integer/text_shading_pad"
                     android:paddingEnd="10dp"
                     android:text="6"
                     android:textColor="@color/white"
@@ -131,6 +146,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingEnd="5dp"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="@integer/text_shading_pad"
                     android:text="@string/grow_day"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
@@ -140,6 +157,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="@integer/text_shading_pad"
                     android:text="41"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
@@ -156,6 +175,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="@integer/text_shading_pad"
                     android:text="@string/grow_phase"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
@@ -171,8 +192,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="@integer/text_shading_pad"
                     android:text="Flowering"
-                    android:textColor="@color/blue"
+                    android:textColor="@color/testcolor"
                     android:textIsSelectable="false"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -191,6 +214,8 @@
                     android:layout_weight="1"
                     android:lineSpacingExtra="24sp"
                     android:paddingRight="5dp"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="@integer/text_shading_pad"
                     android:text="@string/phase_week"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
@@ -201,6 +226,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingRight="10dp"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="@integer/text_shading_pad"
                     android:text="2"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
@@ -211,6 +238,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingRight="5dp"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="@integer/text_shading_pad"
                     android:text="@string/phase_day"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
@@ -220,6 +249,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="@integer/text_shading_pad"
                     android:text="13"
                     android:textColor="@color/white"
                     android:textSize="18sp" />

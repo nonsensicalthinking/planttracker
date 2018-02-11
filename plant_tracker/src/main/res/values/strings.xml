@@ -57,7 +57,7 @@
     <string name="add_new_record">-- Add new record --</string>
 
 
-    <string name="set_phase">[ Set ]</string>
+    <string name="set_phase">[ Set Phase ]</string>
 
     <string-array name="plant_event_options">
         <item>Add Event</item>
