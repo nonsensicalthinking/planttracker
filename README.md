@@ -1,6 +1,10 @@
 # Plant Tracker for Android
 Plant Tracker is a free Android Phone App for tracking your plant grows. Keeps track of waterings, feedings, custom events and clone lineage. Future implementations will include scheduled reminders, data point graphing and a desktop app for more plant analysis, looking at integrating automated sensor data collection.
 
+__App Screenshots__:
+
+<img src="https://github.com/nonsensicalthinking/planttracker/blob/master/screenshots/Screenshot_20180211-030341.png" alt="Drawing" width="400px"/>
+
 __Currently implemented features__:
 * Create plants
 * Clone plants
@@ -24,3 +28,5 @@ __Requirements__
 * Android OS 7.0 (Nougat) or higher
 
 The minimum system requirements may be lowered in the future.
+
+
