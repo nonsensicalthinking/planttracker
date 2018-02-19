@@ -70,14 +70,41 @@ public class CollectPlantData extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        record = (GenericRecord)intent.getSerializableExtra(
-                AndroidConstants.INTENTKEY_GENERIC_RECORD);
-        availableGroups = new TreeMap<>((Map<String, Long>)(intent.getSerializableExtra(
-                AndroidConstants.INTENTKEY_AVAILABLE_GROUPS)));
-        showNotes = (boolean)intent.getBooleanExtra(AndroidConstants.INTENTKEY_SHOW_NOTES,
-                false);
+
+        if (savedInstanceState != null) {
+            photoURI = Uri.parse(savedInstanceState.getString("photoUri"));
+            images = savedInstanceState.getStringArrayList("images");
+            selectedGroup = savedInstanceState.getLong("selectedGroup");
+
+            record = (GenericRecord) savedInstanceState.getSerializable("record");
+            showNotes = savedInstanceState.getBoolean("showNotes");
+            availableGroups = new TreeMap<>((Map<String, Long>)(savedInstanceState.getSerializable(
+                    "availableGroups")));
+        }
+        else    {
+            record = (GenericRecord) intent.getSerializableExtra(
+                    AndroidConstants.INTENTKEY_GENERIC_RECORD);
+            availableGroups = new TreeMap<>((Map<String, Long>)(intent.getSerializableExtra(
+                    AndroidConstants.INTENTKEY_AVAILABLE_GROUPS)));
+            showNotes = (boolean) intent.getBooleanExtra(AndroidConstants.INTENTKEY_SHOW_NOTES,
+                    false);
+        }
 
         bindUi();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle bundle)   {
+        super.onSaveInstanceState(bundle);
+
+        bundle.putString("photoUri", photoURI.toString());
+        bundle.putStringArrayList("images", images);
+        bundle.putLong("selectedGroup", selectedGroup);
+        bundle.putBoolean("applyToGroup", applyToGroup);
+
+        bundle.putSerializable("record", record);
+        bundle.putSerializable("availableGroups", availableGroups);
+        bundle.putBoolean("showNotes", showNotes);
     }
 
     private void bindUi()   {
@@ -471,7 +498,6 @@ public class CollectPlantData extends AppCompatActivity {
 
     private void makeLocalCopyOfAttachedImage(Uri selected) {
         try {
-//            Uri selected = returnedIntent.getClipData().getItemAt(x).getUri();
             File f = new File(selected.getPath());
             String filePath =
                     getExternalFilesDir(AndroidConstants.PATH_TRACKER_IMAGES) +
@@ -487,7 +513,6 @@ public class CollectPlantData extends AppCompatActivity {
     }
 
     private void dispatchTakePictureIntent() {
-        //TODO ask for permission to use camera, otherwise we just get an exception thrown about not having permissions!
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {

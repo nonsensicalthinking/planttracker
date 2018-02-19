@@ -10,9 +10,6 @@ package com.nonsense.planttracker.android.activities;
 // Moon phase icon by Haikinator https://www.iconfinder.com/Haikinator
 // https://www.iconfinder.com/icons/248569/cloud_clouds_cloudy_crescent_forecast_moon_night_phase_phases_waning_weather_icon
 
-
-
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -88,7 +85,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private LinearLayout individualPlantView;
     private Toolbar toolbar;
 
-    private ListDisplay currentListView;
+    private ListDisplay currentListView = ListDisplay.Plants;
 
     // All plants view
     private ListView plantListView;
@@ -134,6 +131,7 @@ public class PlantTrackerUi extends AppCompatActivity
     /*
      *** View Population ***
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,8 +162,31 @@ public class PlantTrackerUi extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        parentPlantViewStack = new Stack<>();
-        tracker = new PlantTracker(getExternalFilesDir("").getPath());
+        if (savedInstanceState != null) {
+            currentPlant = (Plant)savedInstanceState.getSerializable("currentPlant");
+            groupIdViewFilter = savedInstanceState.getLong("groupIdViewFilter");
+            parentPlantViewStack = (Stack<Plant>)savedInstanceState.getSerializable(
+                    "parentPlantViewStack");
+
+            currentDisplayArray = (ArrayList<Plant>) savedInstanceState.getSerializable(
+                    "currentDisplayArray");
+
+            tracker = (PlantTracker)savedInstanceState.getSerializable("tracker");
+            boolean individualPlantView = savedInstanceState.getBoolean("individualPlantView",
+                    false);
+
+            if (individualPlantView)    {
+                bindIndividualPlantView();
+                switcherToNext();
+            }
+        }
+        else    {
+            parentPlantViewStack = new Stack<>();
+        }
+
+        if (tracker == null)   {
+            tracker = new PlantTracker(getExternalFilesDir("").getPath());
+        }
 
         tracker.setPlantTrackerListener(this);
 
@@ -174,37 +195,25 @@ public class PlantTrackerUi extends AppCompatActivity
 
         refreshDrawerGroups();
 
-        fillViewWithPlants();
-
-
-
-
-
-
-//        linkFilesTest();
+        refreshListView();
+//        fillViewWithPlants();
     }
 
-//    private void linkFilesTest()    {
-//        try {
-//            String original = getExternalFilesDir("plants") + "/plant1test.json";
-//            String symLinkLocation = getExternalFilesDir("linkTest") + "/plant1test.json";
-//
-//            Os.symlink(original, symLinkLocation);
-//
-//            BufferedReader br = new BufferedReader(new FileReader(symLinkLocation));
-//
-//            String input = "";
-//            while((input = br.readLine()) != null) {
-//                Log.d("LinkFileTest", input);
-//            }
-//
-//            br.close();
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
 
+        bundle.putSerializable("currentPlant", currentPlant);
+        bundle.putLong("groupIdViewFilter", groupIdViewFilter);
+
+        bundle.putSerializable("parentPlantViewStack", parentPlantViewStack);
+        bundle.putSerializable("currentDisplayArray", currentDisplayArray);
+        bundle.putSerializable("tracker", tracker);
+
+        if (switcher.getCurrentView() == individualPlantView) {
+            bundle.putBoolean("individualPlantView", true);
+        }
+    }
 
     private void bindIndividualPlantView() {
         daysSinceGrowStartTextView = (TextView)findViewById(R.id.daysSinceGrowStartTextView);
@@ -707,6 +716,12 @@ public class PlantTrackerUi extends AppCompatActivity
         individualPlantMenu.setGroupVisible(0, false);
         individualPlantMenu.setGroupVisible(1, false);
 
+        // activate some stuff if we're looking at the individual plant view
+        if (switcher.getCurrentView() == individualPlantView)   {
+            individualPlantMenu.setGroupVisible(0, true);
+            individualPlantMenu.setGroupVisible(1, true);
+        }
+
         return true;
     }
 
@@ -1097,14 +1112,13 @@ public class PlantTrackerUi extends AppCompatActivity
     // switch to individual plant
     private void switcherToNext() {
         switcher.showNext();
-        individualPlantMenu.setGroupVisible(0, true);
-        individualPlantMenu.setGroupVisible(1, true);
     }
 
     public void refreshListView() {
         if (switcher.getCurrentView() == individualPlantView) {
             fillIndividualPlantView();
-        } else {
+        }
+        else {
             switch (currentListView) {
                 case Plants:
                     fillViewWithPlants();
