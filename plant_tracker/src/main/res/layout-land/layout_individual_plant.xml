@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/individualPlantLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_weight="0"
+        android:background="@color/colorPrimaryDark"
+        android:foreground="@color/colorPrimaryDark" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/imageLinearLayout"
+            android:layout_width="300dip"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark"
+            android:elevation="5dp">
+
+            <ImageView
+                android:id="@+id/lastCaptureImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_weight="1"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/ic_growing_plant" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <LinearLayout
+                    android:id="@+id/parentPlantLinearLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignStart="@+id/linearLayout"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView47"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingEnd="5dp"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="@integer/text_shading_pad"
+                        android:text="Parent Plant"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/yellow"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/parentPlantIdTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_weight="1"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="@integer/text_shading_pad"
+                        android:text="White Dwarf (#3) G2"
+                        android:textColor="@color/testcolor"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignStart="@+id/linearLayout"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView45"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingEnd="5dp"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="@integer/text_shading_pad"
+                        android:text="Plant Source"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/yellow"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/fromSeedTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="@integer/text_shading_pad"
+                        android:text="Clone"
+                        android:textColor="@color/yellow"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView34"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingEnd="5dp"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="@integer/text_shading_pad"
+                        android:text="@string/grow_week"
+                        android:textColor="@color/yellow"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/weeksSinceGrowStartTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingEnd="10dp"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="@integer/text_shading_pad"
+                        android:text="6"
+                        android:textColor="@color/yellow"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/textView36"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingEnd="5dp"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="@integer/text_shading_pad"
+                        android:text="@string/grow_day"
+                        android:textColor="@color/yellow"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/daysSinceGrowStartTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="@integer/text_shading_pad"
+                        android:text="41"
+                        android:textColor="@color/yellow"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView38"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="@integer/text_shading_pad"
+                        android:text="@string/grow_phase"
+                        android:textColor="@color/yellow"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/stateNameTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="@integer/text_shading_pad"
+                        android:text="Flowering"
+                        android:textColor="@color/testcolor"
+                        android:textIsSelectable="false"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView40"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:lineSpacingExtra="24sp"
+                        android:paddingRight="5dp"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="@integer/text_shading_pad"
+                        android:text="@string/phase_week"
+                        android:textColor="@color/yellow"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/weeksSinceStateStartTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingRight="10dp"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="@integer/text_shading_pad"
+                        android:text="2"
+                        android:textColor="@color/yellow"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/textView42"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingRight="5dp"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="@integer/text_shading_pad"
+                        android:text="@string/phase_day"
+                        android:textColor="@color/yellow"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/daysSinceStateStartTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:shadowColor="@color/black"
+                        android:shadowRadius="@integer/text_shading_pad"
+                        android:text="13"
+                        android:textColor="@color/yellow"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/raised_gradient"
+                android:elevation="5dp"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingEnd="5dp"
+                android:paddingStart="5dp">
+
+                <Spinner
+                    android:id="@+id/addEventSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/white"
+                    android:fadeScrollbars="false" />
+
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/recordableEventListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="9dp"
+                android:padding="5dp"
+                android:scrollbars="vertical"
+                android:stackFromBottom="true">
+
+            </ListView>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
