@@ -70,9 +70,11 @@ public class CollectPlantData extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-
         if (savedInstanceState != null) {
-            photoURI = Uri.parse(savedInstanceState.getString("photoUri"));
+            String savedUri = savedInstanceState.getString("photoUri", null);
+            if (savedUri != null)   {
+                photoURI = Uri.parse(savedUri);
+            }
             images = savedInstanceState.getStringArrayList("images");
             selectedGroup = savedInstanceState.getLong("selectedGroup");
 
@@ -97,7 +99,10 @@ public class CollectPlantData extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle bundle)   {
         super.onSaveInstanceState(bundle);
 
-        bundle.putString("photoUri", photoURI.toString());
+        if (photoURI != null)   {
+            bundle.putString("photoUri", photoURI.toString());
+        }
+
         bundle.putStringArrayList("images", images);
         bundle.putLong("selectedGroup", selectedGroup);
         bundle.putBoolean("applyToGroup", applyToGroup);

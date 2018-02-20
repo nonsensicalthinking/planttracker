@@ -210,7 +210,7 @@ public class PlantTrackerUi extends AppCompatActivity
         bundle.putSerializable("currentDisplayArray", currentDisplayArray);
         bundle.putSerializable("tracker", tracker);
 
-        if (switcher.getCurrentView() == individualPlantView) {
+        if (switcher != null && switcher.getCurrentView() == individualPlantView) {
             bundle.putBoolean("individualPlantView", true);
         }
     }
