@@ -38,4 +38,6 @@ __Requirements__
 
 The minimum system requirements may be lowered in the future, ideally I would like to see OS 5 supported.
 
+If you have questions, suggestions or run into bugs you would like to see fixed, you can</br> 
+reach me here [watch.my.grow at gmail dot com].
 
