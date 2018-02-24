@@ -66,6 +66,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         View v = convertView;
 
         if (v == null) {
+            Log.d("IPV", "Record tile first run");
             LayoutInflater vi = LayoutInflater.from(getContext());
             v = vi.inflate(viewResourceId, null);
 
@@ -84,6 +85,8 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             v.setTag(viewHolder);
         }
         else    {
+            Log.d("IPV", "Record tile reuse");
+
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
@@ -165,6 +168,8 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
                 viewHolder.dataPointIconImageView.setVisibility(View.GONE);
             }
         }
+
+        Log.d("IPV", "Finished filling tile");
 
         return v;
     }

@@ -15,6 +15,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -67,12 +71,15 @@ import com.nonsense.planttracker.tracker.interf.IDialogHandler;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 
 import java.io.File;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Stack;
 import java.util.TreeMap;
+
+import static com.nonsense.planttracker.android.Utility.decodeSampledBitmapFromResource;
 
 public class PlantTrackerUi extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, IPlantTrackerListener {
@@ -464,6 +471,8 @@ public class PlantTrackerUi extends AppCompatActivity
 
     private void fillIndividualPlantView() {
 
+        Log.d("IPV", "Beginning IPV Fill");
+
         hideFloatingActionButton();
 
         toolbar.setTitle(currentPlant.getPlantName());
@@ -474,23 +483,33 @@ public class PlantTrackerUi extends AppCompatActivity
                 Runnable loadThumb = new Runnable() {
                     @Override
                     public void run() {
-                        mPlantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
+                        Bitmap bitmap = decodeSampledBitmapFromResource(new File(currentPlant.getThumbnail()),
+                                600,400);
+
+                        mPlantImage.setImageBitmap(bitmap);
+//                        mPlantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
                         mPlantImage.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 launchImageSeriesViewer(currentPlant.getAllImagesForPlant());
                             }
                         });
+
+                        Log.d("IPV", "End of loadThumb thread");
                     }
                 };
 
+                Log.d("IPV", "Starting loading thumbnail thread");
                 loadThumb.run();
+                Log.d("IPV", "Continuing ui thread after launching thumbnail thread");
             }
         }
         else    {
             mPlantImage.setOnClickListener(null);
             mPlantImage.setImageResource(R.drawable.ic_growing_plant);
         }
+
+        Log.d("IPV", "Loading fields with text...");
 
         daysSinceGrowStartTextView.setText(String.valueOf(Utility.calcDaysFromTime(
                 currentPlant.getPlantStartDate(), Calendar.getInstance())));
@@ -511,12 +530,7 @@ public class PlantTrackerUi extends AppCompatActivity
 
         fromSeedTextView.setText((currentPlant.isFromSeed() ? R.string.seed : R.string.clone));
 
-        for(String key : tracker.getGenericRecordTypes())   {
-            GenericRecord gr = tracker.getGenericRecordTemplate(key);
-            Log.d("RECTYPES", "Time: " + gr.time.getTime().toString());
-            gr.id = gr.time.getTimeInMillis();
-
-        }
+        Log.d("IPV", "Listing record templates in drop down");
 
         ArrayList<String> eventOptions = new ArrayList<>();
         eventOptions.add(ADD_NEW_RECORD);
@@ -565,6 +579,9 @@ public class PlantTrackerUi extends AppCompatActivity
             }
         });
 
+        Log.d("IPV", "Finished record spinner filling");
+
+
         String stateName = currentPlant.getCurrentStateName();
         if (stateName != null && !stateName.equals("")) {
             stateNameTextView.setText(currentPlant.getCurrentStateName());
@@ -596,13 +613,17 @@ public class PlantTrackerUi extends AppCompatActivity
             parentPlantLinearLayout.setVisibility(View.GONE);
         }
 
+        Log.d("IPV", "Finished state info text stuff");
+
         Runnable loadRecords = new Runnable() {
             @Override
             public void run() {
+                Log.d("IPV", "Creating the PlantRecordableTileArrayAdapter...");
                 PlantRecordableTileArrayAdapter plantRecordableAdapter =
                         new PlantRecordableTileArrayAdapter(getBaseContext(),
                                 R.layout.tile_plant_recordable, currentPlant.getAllGenericRecords(),
                                 tracker.getAllRecordTemplates(), currentPlant);
+                Log.d("IPV", "Creating the PlantRecordableTileArrayAdapter...finished");
 
                 recordableEventListView.setAdapter(plantRecordableAdapter);
                 recordableEventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -642,7 +663,9 @@ public class PlantTrackerUi extends AppCompatActivity
             }
         };
 
+        Log.d("IPV", "Running loading records thread...");
         loadRecords.run();
+        Log.d("IPV", "UI thread next step");
     }
 
     private void launchCollectPlantDataIntent(GenericRecord record, boolean showNotes) {

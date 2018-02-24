@@ -332,11 +332,7 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
             String filePath = plantFolderPath + SETTINGS_FOLDER + SETTINGS_FILE;
             BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
             Gson g = new Gson();
-            String json = g.toJson(settings);
-
-            System.out.println("settings json: " + json);
-
-            bw.write(json);
+            bw.write(g.toJson(settings));
             bw.close();
         } catch (Exception e) {
             e.printStackTrace();

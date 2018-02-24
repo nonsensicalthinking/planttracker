@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -133,9 +134,31 @@ public class ImportExportData extends AppCompatActivity {
             case AndroidConstants.ACTIVITY_IMPORT_CHOOSER:
                 if (resultCode == RESULT_OK)    {
                     try {
-                        packageUri = returnedIntent.getData();
-                        readPlantsFromArchive();
-                        fillImportPlantList();
+                        Dialog progressIndicator = com.nonsense.planttracker.android.Utility.displayOperationInProgressDialog(ImportExportData.this, "Loading package preview...");
+
+                        Runnable updateUi = new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d("IMPORTPREVIEW", "Updating UI Thread");
+                                fillImportPlantList();
+                                progressIndicator.hide();
+                            }
+                        };
+
+                        Runnable importPreview = new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d("IMPORTPREVIEW", "Reading archive");
+                                packageUri = returnedIntent.getData();
+                                readPlantsFromArchive();
+
+                                ImportExportData.this.runOnUiThread(updateUi);
+                            }
+                        };
+
+                        Log.d("IMPORTPREVIEW", "Starting to read import archive");
+                        importPreview.run();
+
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -160,9 +183,14 @@ public class ImportExportData extends AppCompatActivity {
     @SuppressWarnings("unchecked")
     private void readPlantsFromArchive()    {
         try {
+            Log.d("IMPORTPREVIEW", "Starting readPlantsFromArchive");
+
             ZipInputStream zis = new ZipInputStream(
                     getContentResolver().openInputStream(packageUri));
             Gson g = new Gson();
+
+            Log.d("IMPORTPREVIEW", "Extracting package.json...");
+
             String zipInput = Zipper.extractJsonFileContents(
                     getContentResolver().openInputStream(packageUri), "/package.json");
             ArrayList<Long> packageContents = (ArrayList<Long>)g.fromJson(zipInput,
@@ -177,6 +205,8 @@ public class ImportExportData extends AppCompatActivity {
             plantsInArchive = new ArrayList<>();
 
             for(Long l : packageContents)   {
+                Log.d("IMPORTPREVIEW", "Package item: " + Long.toString(l));
+
                 Plant p = new Plant();
                 String jsonPlantData = Zipper.extractJsonFileContents(
                         getContentResolver().openInputStream(packageUri),
@@ -355,6 +385,12 @@ public class ImportExportData extends AppCompatActivity {
 
     private void importTemplates(ArrayList<GenericRecord> templates) {
         for(GenericRecord r : templates)    {
+            if (r == null)  {
+                //FIXME 1templates can contain null references for some reason
+                //FIXME 2we need to prevent it when adding templates
+                continue;
+            }
+
             if (tracker.getGenericRecordTemplate(r.id) == null) {
                 tracker.addGenericRecordTemplate(r);
             }
@@ -398,13 +434,41 @@ public class ImportExportData extends AppCompatActivity {
         finish();
     }
 
+    final Runnable importPlants = new Runnable() {
+        @Override
+        public void run() {
+
+            ImportExportData.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    importSelectedPlantList();
+
+                    tracker.settingsChanged();
+
+                    ImportExportData.this.runOnUiThread(updateUI);
+                }
+            });
+        }
+    };
+
+    final Runnable updateUI = new Runnable() {
+        @Override
+        public void run() {
+            progressIndicator.hide();
+
+            setResult(RESULT_OK);
+            finish();
+        }
+    };
+
+    Dialog progressIndicator;
+
     private void endImportActivity()    {
-        importSelectedPlantList();
+        progressIndicator = com.nonsense.planttracker.android.Utility.
+                displayOperationInProgressDialog(ImportExportData.this,
+                        "Importing selected plants...");
 
-        tracker.settingsChanged();
-
-        setResult(RESULT_OK);
-        finish();
+        importPlants.run();
     }
 
     private void endExportActivity()  {

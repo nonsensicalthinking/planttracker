@@ -30,30 +30,34 @@ import java.util.zip.ZipOutputStream;
 public class Zipper {
     private static final int BUFFER_SIZE = 4096;
 
+    //FIXME we have a problem where iterating the zip entries is very slow, sometimes inexcess of 0.5 seconds
+    //FIXME we either need to front load json files or figure out a faster way.
     public static String extractJsonFileContents(InputStream archiveStream, String archivePath) {
 
         try {
+            Log.d("ZIPPER", "Extracting json file contents: " + archivePath);
             ZipInputStream zis = new ZipInputStream(archiveStream);
             StringBuilder json = new StringBuilder();
 
             ZipEntry ze = null;
             while((ze=zis.getNextEntry()) != null)  {
+                Log.d("ZIPPER", "Cycling entry: " + ze.getName());
                 if (ze.getName().equals(archivePath))   {
                     InputStreamReader isr = new InputStreamReader(zis);
                     BufferedReader br = new BufferedReader(isr);
 
+                    Log.d("ZIPPER", "Reading entry: " + ze.getName());
                     String line;
                     while((line=br.readLine()) != null)    {
                         json.append(line);
                     }
+                    Log.d("ZIPPER", "Finished reading entry: " + ze.getName());
 
                     br.close();
                     zis.close();
                     break;
                 }
             }
-
-            //TODO convert to string and return
 
             return json.toString();
         }
@@ -64,28 +68,35 @@ public class Zipper {
         return null;
     }
 
-    //TODO fix forward slash problem we have, archives currently put things in the root /file.json instead of just file.json.
+    //FIXME fix forward slash problem we have, archives currently put things in the root /file.json instead of just file.json.
     public static void extractFileToLocation(InputStream is, String file, String destination)  {
         try {
             String outPath = destination + "/" + file;
-            Log.d("ExtractToLocation", "Path: " + outPath);
+            Log.d("ZIPPER", "ExtractFileToLocation.Path: " + outPath);
 
+            byte[] buffer = new byte[BUFFER_SIZE];
             ZipInputStream zis = new ZipInputStream(is);
             FileOutputStream fos = new FileOutputStream(outPath);
-            byte[] buffer = new byte[BUFFER_SIZE];
+            BufferedOutputStream bos = new BufferedOutputStream(fos, buffer.length);
 
             ZipEntry ze = null;
             while((ze=zis.getNextEntry()) != null)  {
+                Log.d("ZIPPER", "Cycling entries: " + ze.getName());
                 if (ze.getName().endsWith(file))  {
+                    Log.d("ZIPPER", "Reading entry: " + ze.getName());
                     int bytesRead = 0;
                     byte buf[] = new byte[BUFFER_SIZE];
                     while((bytesRead=zis.read(buf, 0, BUFFER_SIZE)) != -1)   {
-                        fos.write(buf, 0, bytesRead);
+                        bos.write(buf, 0, bytesRead);
                     }
+
+                    Log.d("ZIPPER", "Finished reading entry: " + ze.getName());
+                    bos.flush();
+                    break;
                 }
             }
 
-            fos.close();
+            bos.close();
             zis.close();
         }
         catch(Exception e)  {
@@ -111,15 +122,17 @@ public class Zipper {
                     continue;
                 }
 
+                byte buf[] = new byte[BUFFER_SIZE];
                 FileOutputStream fos = new FileOutputStream(basePath + "/" + ze.getName());
+                BufferedOutputStream bos = new BufferedOutputStream(fos, buf.length);
 
                 int bytesRead = 0;
-                byte buf[] = new byte[BUFFER_SIZE];
                 while((bytesRead=zis.read(buf, 0, BUFFER_SIZE)) != -1)   {
-                    fos.write(buf, 0, bytesRead);
+                    bos.write(buf, 0, bytesRead);
                 }
 
-                fos.close();
+                bos.flush();
+                bos.close();
                 zis.closeEntry();
             }
 
@@ -189,9 +202,14 @@ public class Zipper {
 
             int readBytes = 0;
             byte buf[] = new byte[BUFFER_SIZE];
+
+            BufferedOutputStream bos = new BufferedOutputStream(zos, buf.length);
             while((readBytes = bis.read(buf, 0, BUFFER_SIZE)) != -1) {
-                zos.write(buf, 0, readBytes);
+                bos.write(buf, 0, readBytes);
             }
+
+            bos.flush();
+            bos.close();
 
             zos.closeEntry();
             bis.close();
