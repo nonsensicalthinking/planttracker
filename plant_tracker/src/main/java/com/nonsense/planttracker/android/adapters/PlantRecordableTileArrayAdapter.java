@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.android.activities.ImageSeriesViewer;
+import com.nonsense.planttracker.android.activities.PlantTrackerUi;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Plant;
 
@@ -101,14 +102,22 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
 
         if (p != null) {
             fillTile(p);
-//            Runnable rPopulateTile = new Runnable() {
-//                @Override
-//                public void run() {
-//                    fillTile(p);
-//                }
-//            };
-//
-//            Thread tPopulateTile = new Thread(rPopulateTile);
+            Runnable rPopulateTile = new Runnable() {
+                @Override
+                public void run() {
+
+                    Runnable rUpdateUi = new Runnable()  {
+                        @Override
+                        public void run() {
+                            fillTile(p);
+                        }
+                    };
+
+                    ((PlantTrackerUi)getContext()).runOnUiThread(rUpdateUi);
+                }
+            };
+
+            Thread tPopulateTile = new Thread(rPopulateTile);
         }
 
         Log.d("IPV", "Finished filling tile");
