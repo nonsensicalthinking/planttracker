@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -469,13 +470,20 @@ public class PlantTrackerUi extends AppCompatActivity
         if (currentPlant.getThumbnail() != null)    {
             String thumbnail = currentPlant.getThumbnail();
             if (thumbnail != null)  {
-                mPlantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
-                mPlantImage.setOnClickListener(new View.OnClickListener() {
+                Runnable loadThumb = new Runnable() {
                     @Override
-                    public void onClick(View view) {
-                        launchImageSeriesViewer(currentPlant.getAllImagesForPlant());
+                    public void run() {
+                        mPlantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
+                        mPlantImage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                launchImageSeriesViewer(currentPlant.getAllImagesForPlant());
+                            }
+                        });
                     }
-                });
+                };
+
+                loadThumb.run();
             }
         }
         else    {
