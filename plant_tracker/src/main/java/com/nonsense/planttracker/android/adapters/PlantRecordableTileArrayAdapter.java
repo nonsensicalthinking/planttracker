@@ -194,7 +194,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
 
             // summary text
             //TODO make this pop-in with async... this call to getSummary is expensive!
-            viewHolder.recordableSummaryTextView.setText("");//p.getSummary(summaryTemplate));
+            viewHolder.recordableSummaryTextView.setText(p.getSummary(summaryTemplate));
 
             // images
             if (p.images != null && p.images.size() > 0) {
