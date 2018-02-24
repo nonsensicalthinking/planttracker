@@ -23,6 +23,7 @@ import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Plant;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -47,31 +48,33 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
     private int viewResourceId;
     private Plant currentPlant;
     private TreeMap<String, GenericRecord> recordTemplates = null;
+    private PlantTrackerUi ptui;
 
-    public PlantRecordableTileArrayAdapter(Context context, int textViewResourceId, Plant plant) {
+    public PlantRecordableTileArrayAdapter(Context context, int textViewResourceId, Plant plant, PlantTrackerUi ptui) {
         super(context, textViewResourceId);
         viewResourceId = textViewResourceId;
         currentPlant = plant;
         inflater = LayoutInflater.from(getContext());
         sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
+        this.ptui = ptui;
     }
 
     public PlantRecordableTileArrayAdapter(Context context, int resource, List<GenericRecord> items,
                                            final TreeMap<String, GenericRecord> recordTemplates,
-                                           Plant plant) {
+                                           Plant plant, PlantTrackerUi ptui) {
         super(context, resource, items);
         viewResourceId = resource;
         currentPlant = plant;
         this.recordTemplates = recordTemplates;
         inflater = LayoutInflater.from(getContext());
         sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
+        this.ptui = ptui;
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-//        ViewHolder viewHolder;
-
+        Log.d("IPV", "Start of getView()");
         final GenericRecord p = getItem(position);
 
         if (convertView == null) {
@@ -102,39 +105,43 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         }
 
         if (p != null) {
-            fillTile(p);
-            Runnable rPopulateTile = new Runnable() {
-                @Override
-                public void run() {
-
-                    Runnable rUpdateUi = new Runnable()  {
-                        @Override
-                        public void run() {
-                            fillTile(p);
-                        }
-                    };
-
-                    ((PlantTrackerUi)getContext()).runOnUiThread(rUpdateUi);
-                }
-            };
-
-            Thread tPopulateTile = new Thread(rPopulateTile);
+            backgroundWork(p);
+//            Runnable rPopulateTile = new Runnable() {
+//                @Override
+//                public void run() {
+//                    backgroundWork(p);
+//                }
+//            };
+//
+//            Thread tPopulateTile = new Thread(rPopulateTile);
+//            tPopulateTile.start();
         }
 
-        Log.d("IPV", "Finished filling tile");
+        Log.d("IPV", "End of getView()");
 
         return convertView;
     }
 
-    protected void fillTile(GenericRecord p)   {
+    private void backgroundWork(GenericRecord p)   {
         StringBuilder sBuilder = new StringBuilder();
 
+        String phaseDisplay;
+        String displayName;
+        int color;
+        String summary;
+        boolean showCamera = (p.images != null && p.images.size() > 0);
+        boolean showDataPoints = (p.dataPoints != null && p.dataPoints.size() > 0);
+
+        String summaryTemplate;
+
         // Build phase string
+        sBuilder.append(new SimpleDateFormat("EEE, dd MMM yyyy").format(p.time.getTime()));
+        sBuilder.append(" ");
+
         int phaseCount = p.phaseCount;
         int stateWeekCount = p.weeksSincePhase;
         int growWeekCount = p.weeksSinceStart;
 
-        String phaseDisplay = "";
         if (p.phaseCount > 0)   {
             sBuilder.append("[P");
             sBuilder.append(phaseCount);
@@ -144,31 +151,25 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             sBuilder.append(growWeekCount);
             sBuilder.append("]");
 
-            phaseDisplay = sBuilder.toString();
+//            phaseDisplay = sBuilder.toString();
         }
         else    {
             sBuilder.append("[Wk ");
             sBuilder.append(growWeekCount);
             sBuilder.append("]");
-            phaseDisplay = sBuilder.toString();
+//            phaseDisplay = sBuilder.toString();
         }
 
-        // date/relative weeks
-        sBuilder.setLength(0);
-        sBuilder.append(new SimpleDateFormat("EEE, dd MMM yyyy").format(p.time.getTime()));
-        sBuilder.append(" ");
-        sBuilder.append(((phaseDisplay == null) ? "" : phaseDisplay));
-        viewHolder.dateTextView.setText(sBuilder.toString());
+        phaseDisplay = sBuilder.toString();
 
+
+        // prepare display name of record
         // TODO Get record id which should be a long representing the instant the template was
         // TODO created this is so we can change the display name of the template and still know
         // TODO which records are which ultimately we want to be able to make everything
         // TODO editable and apply across all records, store only data!
-        GenericRecord template = null;//recordTemplates.get(p.displayName);
+        GenericRecord template = recordTemplates.get(p.displayName);
 
-        String displayName;
-        String summaryTemplate;
-        int color;
 
         if (template == null)   {
             displayName = p.displayName;
@@ -181,24 +182,41 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             color = template.color;
         }
 
-        // display name
+        summary = p.getSummary(summaryTemplate);
+
+        // Tell the UI we're ready to update it
+        Runnable rUpdateUi = new Runnable()  {
+            @Override
+            public void run() {
+                fillTile(phaseDisplay, displayName, color, summary, showCamera, showDataPoints,
+                        p.images);
+            }
+        };
+
+        // linear call to run for now...
+        rUpdateUi.run();
+
+        //ptui.runOnUiThread(rUpdateUi);
+    }
+
+    protected void fillTile(String phaseDisplay, String displayName, int color, String summary,
+                            boolean showCamera, boolean showDataPoints, ArrayList<String> images)  {
+        viewHolder.dateTextView.setText(phaseDisplay);
+
         viewHolder.eventTypeTextView.setText(displayName);
         GradientDrawable gradientDrawable =
                 (GradientDrawable)viewHolder.eventTypeTextView.getBackground();
         gradientDrawable.setColor(color);
 
-        // summary text
-        //TODO make this pop-in with async... this call to getSummary is expensive!
-        viewHolder.recordableSummaryTextView.setText(p.getSummary(summaryTemplate));
+        viewHolder.recordableSummaryTextView.setText(summary);
 
-        // images
-        if (p.images != null && p.images.size() > 0) {
+        if (showCamera) {
             viewHolder.cameraIconImageView.setImageResource(R.drawable.ic_menu_camera);
             viewHolder.cameraIconImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getContext(), ImageSeriesViewer.class);
-                    intent.putExtra(AndroidConstants.INTENTKEY_FILE_LIST, p.images);
+                    intent.putExtra(AndroidConstants.INTENTKEY_FILE_LIST, images);
                     getContext().startActivity(intent);
                 }
             });
@@ -208,8 +226,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             viewHolder.cameraIconImageView.setVisibility(View.GONE);
         }
 
-        // datapoints
-        if (p.dataPoints != null && p.dataPoints.size() > 0) {
+        if (showDataPoints) {
             viewHolder.dataPointIconImageView.setImageResource(R.drawable.ic_menu_share);
             //TODO add click handler to launch graphing stuff
             viewHolder.dataPointIconImageView.setVisibility(View.VISIBLE);

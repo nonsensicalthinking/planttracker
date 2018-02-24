@@ -630,7 +630,7 @@ public class PlantTrackerUi extends AppCompatActivity
                 PlantRecordableTileArrayAdapter plantRecordableAdapter =
                         new PlantRecordableTileArrayAdapter(getBaseContext(),
                                 R.layout.tile_plant_recordable, currentPlant.getAllGenericRecords(),
-                                tracker.getAllRecordTemplates(), currentPlant);
+                                tracker.getAllRecordTemplates(), currentPlant, PlantTrackerUi.this);
                 Log.d("IPV", "Creating the PlantRecordableTileArrayAdapter...finished");
 
                 recordableEventListView.setAdapter(plantRecordableAdapter);
@@ -672,7 +672,8 @@ public class PlantTrackerUi extends AppCompatActivity
         };
 
         Log.d("IPV", "Running loading records thread...");
-        loadRecords.run();
+        Thread loadRecordsThread = new Thread(loadRecords);
+        loadRecordsThread.start();
         Log.d("IPV", "UI thread next step");
     }
 
