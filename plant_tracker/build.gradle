@@ -2,6 +2,10 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     defaultConfig {
         applicationId "com.nonsense.planttracker"
         minSdkVersion 24
@@ -23,6 +27,7 @@ android {
         }
     }
 
+
     productFlavors {
     }
 }
@@ -36,7 +41,12 @@ dependencies {
     compile 'com.android.support:appcompat-v7:27.0.2'
     compile 'com.android.support:design:27.0.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'ch.acra:acra-core:5.1.1'
 //    compile 'com.pes.materialcolorpicker:library:1.2.0'
     testCompile 'junit:junit:4.12'
     implementation 'com.android.support:gridlayout-v7:27.0.2'
+
+    def acraVersion = '5.1.1'
+    implementation "ch.acra:acra-mail:$acraVersion"
+    implementation "ch.acra:acra-dialog:$acraVersion"
 }
