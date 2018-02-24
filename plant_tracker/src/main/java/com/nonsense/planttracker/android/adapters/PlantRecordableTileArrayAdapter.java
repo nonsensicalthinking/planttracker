@@ -81,7 +81,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
 
             viewHolder.dataPointIconImageView = (ImageView)v.findViewById(R.id.dataPointsImageView);
 
-            convertView.setTag(viewHolder);
+            v.setTag(viewHolder);
         }
         else    {
             viewHolder = (ViewHolder) convertView.getTag();
