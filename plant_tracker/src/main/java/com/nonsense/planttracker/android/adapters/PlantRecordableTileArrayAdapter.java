@@ -40,9 +40,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         ImageView cameraIconImageView;
         ImageView dataPointIconImageView;
     }
-
-    private ViewHolder viewHolder;
-
+    
     private SimpleDateFormat sdf;
     private LayoutInflater inflater;
     private int viewResourceId;
@@ -50,7 +48,8 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
     private TreeMap<String, GenericRecord> recordTemplates = null;
     private PlantTrackerUi ptui;
 
-    public PlantRecordableTileArrayAdapter(Context context, int textViewResourceId, Plant plant, PlantTrackerUi ptui) {
+    public PlantRecordableTileArrayAdapter(Context context, int textViewResourceId, Plant plant,
+                                           PlantTrackerUi ptui) {
         super(context, textViewResourceId);
         viewResourceId = textViewResourceId;
         currentPlant = plant;
@@ -74,6 +73,8 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+        final ViewHolder viewHolder;
+
         Log.d("IPV", "Start of getView()");
         final GenericRecord p = getItem(position);
 
@@ -105,16 +106,15 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         }
 
         if (p != null) {
-            backgroundWork(p);
-//            Runnable rPopulateTile = new Runnable() {
-//                @Override
-//                public void run() {
-//                    backgroundWork(p);
-//                }
-//            };
-//
-//            Thread tPopulateTile = new Thread(rPopulateTile);
-//            tPopulateTile.start();
+            Runnable rPopulateTile = new Runnable() {
+                @Override
+                public void run() {
+                    backgroundWork(viewHolder, p);
+                }
+            };
+
+            Thread tPopulateTile = new Thread(rPopulateTile);
+            tPopulateTile.start();
         }
 
         Log.d("IPV", "End of getView()");
@@ -122,10 +122,10 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         return convertView;
     }
 
-    private void backgroundWork(GenericRecord p)   {
+    private void backgroundWork(final ViewHolder viewHolder, GenericRecord p)   {
         StringBuilder sBuilder = new StringBuilder();
 
-        String phaseDisplay = "";
+        String phaseDisplay;
         String displayName;
         int color;
         String summary;
@@ -135,32 +135,29 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         String summaryTemplate;
 
         // Build phase string
-//        sBuilder.append(new SimpleDateFormat("EEE, dd MMM yyyy").format(p.time.getTime()));
-//        sBuilder.append(" ");
-//
-//        int phaseCount = p.phaseCount;
-//        int stateWeekCount = p.weeksSincePhase;
-//        int growWeekCount = p.weeksSinceStart;
-//
-//        if (p.phaseCount > 0)   {
-//            sBuilder.append("[P");
-//            sBuilder.append(phaseCount);
-//            sBuilder.append("Wk");
-//            sBuilder.append(stateWeekCount);
-//            sBuilder.append("/");
-//            sBuilder.append(growWeekCount);
-//            sBuilder.append("]");
-//
-////            phaseDisplay = sBuilder.toString();
-//        }
-//        else    {
-//            sBuilder.append("[Wk ");
-//            sBuilder.append(growWeekCount);
-//            sBuilder.append("]");
-////            phaseDisplay = sBuilder.toString();
-//        }
-//
-//        phaseDisplay = sBuilder.toString();
+        sBuilder.append(new SimpleDateFormat("EEE, dd MMM yyyy").format(p.time.getTime()));
+        sBuilder.append(" ");
+
+        int phaseCount = p.phaseCount;
+        int stateWeekCount = p.weeksSincePhase;
+        int growWeekCount = p.weeksSinceStart;
+
+        if (p.phaseCount > 0)   {
+            sBuilder.append("[P");
+            sBuilder.append(phaseCount);
+            sBuilder.append("Wk");
+            sBuilder.append(stateWeekCount);
+            sBuilder.append("/");
+            sBuilder.append(growWeekCount);
+            sBuilder.append("]");
+        }
+        else    {
+            sBuilder.append("[Wk ");
+            sBuilder.append(growWeekCount);
+            sBuilder.append("]");
+        }
+
+        phaseDisplay = sBuilder.toString();
 
 
         // prepare display name of record
@@ -182,26 +179,23 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             color = template.color;
         }
 
-        summary = "";
-        //summary = p.getSummary(summaryTemplate);
+        summary = p.getSummary(summaryTemplate);
 
         // Tell the UI we're ready to update it
         Runnable rUpdateUi = new Runnable()  {
             @Override
             public void run() {
-                fillTile(phaseDisplay, displayName, color, summary, showCamera, showDataPoints,
-                        p.images);
+                fillTile(viewHolder, phaseDisplay, displayName, color, summary, showCamera,
+                        showDataPoints, p.images);
             }
         };
 
-        // linear call to run for now...
-        rUpdateUi.run();
-
-        //ptui.runOnUiThread(rUpdateUi);
+        ptui.runOnUiThread(rUpdateUi);
     }
 
-    protected void fillTile(String phaseDisplay, String displayName, int color, String summary,
-                            boolean showCamera, boolean showDataPoints, ArrayList<String> images)  {
+    private void fillTile(final ViewHolder viewHolder, String phaseDisplay, String displayName,
+                            int color, String summary, boolean showCamera, boolean showDataPoints,
+                            ArrayList<String> images)  {
         viewHolder.dateTextView.setText(phaseDisplay);
 
         viewHolder.eventTypeTextView.setText(displayName);
