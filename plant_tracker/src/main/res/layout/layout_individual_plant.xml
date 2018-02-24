@@ -273,6 +273,8 @@
         android:elevation="9dp"
         android:padding="5dp"
         android:scrollbars="vertical"
-        android:stackFromBottom="true" />
+        android:stackFromBottom="true"
+        android:scrollingCache="false"
+        android:animationCache="false"/>
 
 </LinearLayout>

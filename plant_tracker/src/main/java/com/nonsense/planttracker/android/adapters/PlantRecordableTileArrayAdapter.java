@@ -29,18 +29,16 @@ import java.util.TreeMap;
 
 public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord> {
 
-    static class ViewHolder {
+    private static class ViewHolder {
         TextView dateTextView;
         TextView eventTypeTextView;
         TextView recordableSummaryTextView;
         ImageView cameraIconImageView;
         ImageView dataPointIconImageView;
-
-        SimpleDateFormat sdf;
     }
 
-    private ViewHolder viewHolder;
-
+    private SimpleDateFormat sdf;
+    private LayoutInflater inflater;
     private int viewResourceId;
     private Plant currentPlant;
     private TreeMap<String, GenericRecord> recordTemplates = null;
@@ -49,6 +47,8 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         super(context, textViewResourceId);
         viewResourceId = textViewResourceId;
         currentPlant = plant;
+        inflater = LayoutInflater.from(getContext());
+        sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
     }
 
     public PlantRecordableTileArrayAdapter(Context context, int resource, List<GenericRecord> items,
@@ -58,40 +58,45 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         viewResourceId = resource;
         currentPlant = plant;
         this.recordTemplates = recordTemplates;
+        inflater = LayoutInflater.from(getContext());
+        sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        View v = convertView;
+        ViewHolder viewHolder;
 
-        if (v == null) {
+        if (convertView == null) {
             Log.d("IPV", "Record tile first run");
-            LayoutInflater vi = LayoutInflater.from(getContext());
-            v = vi.inflate(viewResourceId, null);
+            convertView = inflater.inflate(R.layout.tile_plant_recordable, null);
 
             viewHolder = new ViewHolder();
-            viewHolder.dateTextView = (TextView)v.findViewById(R.id.dateTextView);
-            viewHolder.sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
+            viewHolder.dateTextView = (TextView)convertView.findViewById(R.id.dateTextView);
 
-            viewHolder.eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
-            viewHolder.recordableSummaryTextView = (TextView)v.findViewById(
+            viewHolder.eventTypeTextView = (TextView)convertView.findViewById(
+                    R.id.observEventTypeTextView);
+
+            viewHolder.recordableSummaryTextView = (TextView)convertView.findViewById(
                     R.id.recordableSummaryTextView);
 
-            viewHolder.cameraIconImageView = (ImageView)v.findViewById(R.id.cameraIconImageView);
+            viewHolder.cameraIconImageView = (ImageView)convertView.findViewById(
+                    R.id.cameraIconImageView);
 
-            viewHolder.dataPointIconImageView = (ImageView)v.findViewById(R.id.dataPointsImageView);
+            viewHolder.dataPointIconImageView = (ImageView)convertView.findViewById(
+                    R.id.dataPointsImageView);
 
-            v.setTag(viewHolder);
+            convertView.setTag(viewHolder);
         }
         else    {
             Log.d("IPV", "Record tile reuse");
-
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
         final GenericRecord p = getItem(position);
         if (p != null) {
+            StringBuilder sBuilder = new StringBuilder();
+
             // Build phase string
             int phaseCount = p.phaseCount;
             int stateWeekCount = p.weeksSincePhase;
@@ -99,16 +104,29 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
 
             String phaseDisplay = "";
             if (p.phaseCount > 0)   {
-                phaseDisplay = "[P" + phaseCount + "Wk." + stateWeekCount + "/" +
-                        growWeekCount + "]";
+                sBuilder.append("[P");
+                sBuilder.append(phaseCount);
+                sBuilder.append("Wk");
+                sBuilder.append(stateWeekCount);
+                sBuilder.append("/");
+                sBuilder.append(growWeekCount);
+                sBuilder.append("]");
+
+                phaseDisplay = sBuilder.toString();
             }
             else    {
-                phaseDisplay = "[Wk. " +  growWeekCount + "]";
+                sBuilder.append("[Wk ");
+                sBuilder.append(growWeekCount);
+                sBuilder.append("]");
+                phaseDisplay = sBuilder.toString();
             }
 
             // date/relative weeks
-            viewHolder.dateTextView.setText(viewHolder.sdf.format(p.time.getTime()) + " " +
-                    ((phaseDisplay == null) ? "" : phaseDisplay));
+            sBuilder.setLength(0);
+            sBuilder.append(sdf.format(p.time.getTime()));
+            sBuilder.append(" ");
+            sBuilder.append(((phaseDisplay == null) ? "" : phaseDisplay));
+            viewHolder.dateTextView.setText(sBuilder.toString());
 
             // TODO Get record id which should be a long representing the instant the template was
             // TODO created this is so we can change the display name of the template and still know
@@ -132,13 +150,13 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             }
 
             // display name
-            //TextView eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
             viewHolder.eventTypeTextView.setText(displayName);
             GradientDrawable gradientDrawable =
                     (GradientDrawable)viewHolder.eventTypeTextView.getBackground();
             gradientDrawable.setColor(color);
 
             // summary text
+            //TODO make this pop-in with async... this call to getSummary is expensive!
             viewHolder.recordableSummaryTextView.setText(p.getSummary(summaryTemplate));
 
             // images
@@ -171,7 +189,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
 
         Log.d("IPV", "Finished filling tile");
 
-        return v;
+        return convertView;
     }
 
 

@@ -484,7 +484,7 @@ public class PlantTrackerUi extends AppCompatActivity
                     @Override
                     public void run() {
                         Bitmap bitmap = decodeSampledBitmapFromResource(new File(currentPlant.getThumbnail()),
-                                600,400);
+                                300,200);
 
                         mPlantImage.setImageBitmap(bitmap);
 //                        mPlantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
