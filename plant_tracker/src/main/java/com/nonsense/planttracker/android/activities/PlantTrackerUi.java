@@ -20,6 +20,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.SubMenu;
 import android.view.View;
@@ -469,24 +470,24 @@ public class PlantTrackerUi extends AppCompatActivity
 
         if (currentPlant.getThumbnail() != null)    {
             String thumbnail = currentPlant.getThumbnail();
-//            if (thumbnail != null)  {
-//                Runnable loadThumb = new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mPlantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
-//                        mPlantImage.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                launchImageSeriesViewer(currentPlant.getAllImagesForPlant());
-//                            }
-//                        });
-//                    }
-//                };
-//
-//                loadThumb.run();
-//            }
-//        }
-//        else    {
+            if (thumbnail != null)  {
+                Runnable loadThumb = new Runnable() {
+                    @Override
+                    public void run() {
+                        mPlantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
+                        mPlantImage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                launchImageSeriesViewer(currentPlant.getAllImagesForPlant());
+                            }
+                        });
+                    }
+                };
+
+                loadThumb.run();
+            }
+        }
+        else    {
             mPlantImage.setOnClickListener(null);
             mPlantImage.setImageResource(R.drawable.ic_growing_plant);
         }

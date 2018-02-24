@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,18 @@ import java.util.TreeMap;
 
 public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord> {
 
+    static class ViewHolder {
+        TextView dateTextView;
+        TextView eventTypeTextView;
+        TextView recordableSummaryTextView;
+        ImageView cameraIconImageView;
+        ImageView dataPointIconImageView;
+
+        SimpleDateFormat sdf;
+    }
+
+    private ViewHolder viewHolder;
+
     private int viewResourceId;
     private Plant currentPlant;
     private TreeMap<String, GenericRecord> recordTemplates = null;
@@ -47,14 +60,31 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         this.recordTemplates = recordTemplates;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View v = convertView;
 
         if (v == null) {
-            LayoutInflater vi;
-            vi = LayoutInflater.from(getContext());
+            LayoutInflater vi = LayoutInflater.from(getContext());
             v = vi.inflate(viewResourceId, null);
+
+            viewHolder = new ViewHolder();
+            viewHolder.dateTextView = (TextView)v.findViewById(R.id.dateTextView);
+            viewHolder.sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
+
+            viewHolder.eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
+            viewHolder.recordableSummaryTextView = (TextView)v.findViewById(
+                    R.id.recordableSummaryTextView);
+
+            viewHolder.cameraIconImageView = (ImageView)v.findViewById(R.id.cameraIconImageView);
+
+            viewHolder.dataPointIconImageView = (ImageView)v.findViewById(R.id.dataPointsImageView);
+
+            convertView.setTag(viewHolder);
+        }
+        else    {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
         final GenericRecord p = getItem(position);
@@ -74,9 +104,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             }
 
             // date/relative weeks
-            TextView dateTextView = (TextView)v.findViewById(R.id.dateTextView);
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
-            dateTextView.setText(sdf.format(p.time.getTime()) + " " +
+            viewHolder.dateTextView.setText(viewHolder.sdf.format(p.time.getTime()) + " " +
                     ((phaseDisplay == null) ? "" : phaseDisplay));
 
             // TODO Get record id which should be a long representing the instant the template was
@@ -101,22 +129,19 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             }
 
             // display name
-            TextView eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
-            eventTypeTextView.setText(displayName);
-            GradientDrawable gradientDrawable = (GradientDrawable)eventTypeTextView.getBackground();
+            //TextView eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
+            viewHolder.eventTypeTextView.setText(displayName);
+            GradientDrawable gradientDrawable =
+                    (GradientDrawable)viewHolder.eventTypeTextView.getBackground();
             gradientDrawable.setColor(color);
 
             // summary text
-            TextView recordableSummaryTextView = (TextView)v.findViewById(
-                    R.id.recordableSummaryTextView);
-
-            recordableSummaryTextView.setText(p.getSummary(summaryTemplate));
+            viewHolder.recordableSummaryTextView.setText(p.getSummary(summaryTemplate));
 
             // images
-            ImageView cameraIconImageView = (ImageView)v.findViewById(R.id.cameraIconImageView);
             if (p.images != null && p.images.size() > 0) {
-                cameraIconImageView.setImageResource(R.drawable.ic_menu_camera);
-                cameraIconImageView.setOnClickListener(new View.OnClickListener() {
+                viewHolder.cameraIconImageView.setImageResource(R.drawable.ic_menu_camera);
+                viewHolder.cameraIconImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(getContext(), ImageSeriesViewer.class);
@@ -124,21 +149,20 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
                         getContext().startActivity(intent);
                     }
                 });
-                cameraIconImageView.setVisibility(View.VISIBLE);
+                viewHolder.cameraIconImageView.setVisibility(View.VISIBLE);
             }
             else    {
-                cameraIconImageView.setVisibility(View.GONE);
+                viewHolder.cameraIconImageView.setVisibility(View.GONE);
             }
 
 			// datapoints
-            ImageView dataPointIconImageView = (ImageView)v.findViewById(R.id.dataPointsImageView);
             if (p.dataPoints != null && p.dataPoints.size() > 0) {
-                dataPointIconImageView.setImageResource(R.drawable.ic_menu_share);
+                viewHolder.dataPointIconImageView.setImageResource(R.drawable.ic_menu_share);
                 //TODO add click handler to launch graphing stuff
-                dataPointIconImageView.setVisibility(View.VISIBLE);
+                viewHolder.dataPointIconImageView.setVisibility(View.VISIBLE);
             }
             else    {
-                dataPointIconImageView.setVisibility(View.GONE);
+                viewHolder.dataPointIconImageView.setVisibility(View.GONE);
             }
         }
 
