@@ -87,6 +87,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             viewHolder.recordableSummaryTextView = (TextView)convertView.findViewById(
                     R.id.recordableSummaryTextView);
 
+            //TODO Use bitflags to determine whether a record needs a view item, try to reduce the number of items needed to load view
             viewHolder.cameraIconImageView = (ImageView)convertView.findViewById(
                     R.id.cameraIconImageView);
 
