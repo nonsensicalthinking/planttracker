@@ -469,6 +469,43 @@ public class PlantTrackerUi extends AppCompatActivity
         });
     }
 
+//    private class AsyncPlantView extends AsyncTask<Void, Void, Bitmap>   {
+//
+//        @Override
+//        protected Object doInBackground(Params...o) {
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Object o)  {
+//            fillTile(record);
+//        }
+//
+//    }
+
+    private class AsPv extends AsyncTask<Void, Void, Bitmap>    {
+        @Override
+        protected Bitmap doInBackground(Void... voids) {
+            Bitmap bitmap = decodeSampledBitmapFromResource(new File(currentPlant.getThumbnail()),
+                    300,200);
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            mPlantImage.setImageBitmap(bitmap);
+            mPlantImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    launchImageSeriesViewer(currentPlant.getAllImagesForPlant());
+                }
+            });
+
+            Log.d("IPV", "End of loadThumb thread");
+            super.onPostExecute(bitmap);
+        }
+    }
+
     private void fillIndividualPlantView() {
 
         Log.d("IPV", "Beginning IPV Fill");
@@ -480,28 +517,7 @@ public class PlantTrackerUi extends AppCompatActivity
         if (currentPlant.getThumbnail() != null)    {
             String thumbnail = currentPlant.getThumbnail();
             if (thumbnail != null)  {
-                Runnable loadThumb = new Runnable() {
-                    @Override
-                    public void run() {
-                        Bitmap bitmap = decodeSampledBitmapFromResource(new File(currentPlant.getThumbnail()),
-                                300,200);
-
-                        mPlantImage.setImageBitmap(bitmap);
-//                        mPlantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
-                        mPlantImage.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                launchImageSeriesViewer(currentPlant.getAllImagesForPlant());
-                            }
-                        });
-
-                        Log.d("IPV", "End of loadThumb thread");
-                    }
-                };
-
-                Log.d("IPV", "Starting loading thumbnail thread");
-                loadThumb.run();
-                Log.d("IPV", "Continuing ui thread after launching thumbnail thread");
+                new AsPv().executeOnExecutor(AsPv.THREAD_POOL_EXECUTOR, null);
             }
         }
         else    {
