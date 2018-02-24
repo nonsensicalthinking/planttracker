@@ -125,7 +125,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
     private void backgroundWork(GenericRecord p)   {
         StringBuilder sBuilder = new StringBuilder();
 
-        String phaseDisplay;
+        String phaseDisplay = "";
         String displayName;
         int color;
         String summary;
@@ -135,32 +135,32 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         String summaryTemplate;
 
         // Build phase string
-        sBuilder.append(new SimpleDateFormat("EEE, dd MMM yyyy").format(p.time.getTime()));
-        sBuilder.append(" ");
-
-        int phaseCount = p.phaseCount;
-        int stateWeekCount = p.weeksSincePhase;
-        int growWeekCount = p.weeksSinceStart;
-
-        if (p.phaseCount > 0)   {
-            sBuilder.append("[P");
-            sBuilder.append(phaseCount);
-            sBuilder.append("Wk");
-            sBuilder.append(stateWeekCount);
-            sBuilder.append("/");
-            sBuilder.append(growWeekCount);
-            sBuilder.append("]");
-
-//            phaseDisplay = sBuilder.toString();
-        }
-        else    {
-            sBuilder.append("[Wk ");
-            sBuilder.append(growWeekCount);
-            sBuilder.append("]");
-//            phaseDisplay = sBuilder.toString();
-        }
-
-        phaseDisplay = sBuilder.toString();
+//        sBuilder.append(new SimpleDateFormat("EEE, dd MMM yyyy").format(p.time.getTime()));
+//        sBuilder.append(" ");
+//
+//        int phaseCount = p.phaseCount;
+//        int stateWeekCount = p.weeksSincePhase;
+//        int growWeekCount = p.weeksSinceStart;
+//
+//        if (p.phaseCount > 0)   {
+//            sBuilder.append("[P");
+//            sBuilder.append(phaseCount);
+//            sBuilder.append("Wk");
+//            sBuilder.append(stateWeekCount);
+//            sBuilder.append("/");
+//            sBuilder.append(growWeekCount);
+//            sBuilder.append("]");
+//
+////            phaseDisplay = sBuilder.toString();
+//        }
+//        else    {
+//            sBuilder.append("[Wk ");
+//            sBuilder.append(growWeekCount);
+//            sBuilder.append("]");
+////            phaseDisplay = sBuilder.toString();
+//        }
+//
+//        phaseDisplay = sBuilder.toString();
 
 
         // prepare display name of record
@@ -182,7 +182,8 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             color = template.color;
         }
 
-        summary = p.getSummary(summaryTemplate);
+        summary = "";
+        //summary = p.getSummary(summaryTemplate);
 
         // Tell the UI we're ready to update it
         Runnable rUpdateUi = new Runnable()  {
