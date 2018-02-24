@@ -2,8 +2,10 @@ package com.nonsense.planttracker.android.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +39,8 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         ImageView dataPointIconImageView;
     }
 
+    private ViewHolder viewHolder;
+
     private SimpleDateFormat sdf;
     private LayoutInflater inflater;
     private int viewResourceId;
@@ -65,10 +69,12 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        ViewHolder viewHolder;
+//        ViewHolder viewHolder;
+
+        final GenericRecord p = getItem(position);
 
         if (convertView == null) {
-            Log.d("IPV", "Record tile first run");
+            Log.d("IPV", "Record tile first run position:" + position);
             convertView = inflater.inflate(R.layout.tile_plant_recordable, null);
 
             viewHolder = new ViewHolder();
@@ -89,12 +95,43 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             convertView.setTag(viewHolder);
         }
         else    {
-            Log.d("IPV", "Record tile reuse");
+            Log.d("IPV", "Record tile reuse position: " + position);
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        final GenericRecord p = getItem(position);
         if (p != null) {
+            new AsyncTile(viewHolder, p, getContext()).executeOnExecutor(AsyncTile.THREAD_POOL_EXECUTOR, null);
+        }
+
+        Log.d("IPV", "Finished filling tile");
+
+        return convertView;
+    }
+
+    private static class AsyncTile extends AsyncTask {
+        private ViewHolder viewHolder;
+        private GenericRecord record;
+        private Context context;
+
+        public AsyncTile(ViewHolder h, GenericRecord r, Context c)  {
+            viewHolder = h;
+            record = r;
+            context = c;
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o)  {
+            fillTile(record);
+        }
+
+
+
+        protected void fillTile(GenericRecord p)   {
             StringBuilder sBuilder = new StringBuilder();
 
             // Build phase string
@@ -123,7 +160,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
 
             // date/relative weeks
             sBuilder.setLength(0);
-            sBuilder.append(sdf.format(p.time.getTime()));
+            sBuilder.append(new SimpleDateFormat("EEE, dd MMM yyyy").format(p.time.getTime()));
             sBuilder.append(" ");
             sBuilder.append(((phaseDisplay == null) ? "" : phaseDisplay));
             viewHolder.dateTextView.setText(sBuilder.toString());
@@ -132,7 +169,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             // TODO created this is so we can change the display name of the template and still know
             // TODO which records are which ultimately we want to be able to make everything
             // TODO editable and apply across all records, store only data!
-            GenericRecord template = recordTemplates.get(p.displayName);
+            GenericRecord template = null;//recordTemplates.get(p.displayName);
 
             String displayName;
             String summaryTemplate;
@@ -157,7 +194,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
 
             // summary text
             //TODO make this pop-in with async... this call to getSummary is expensive!
-            viewHolder.recordableSummaryTextView.setText(p.getSummary(summaryTemplate));
+            viewHolder.recordableSummaryTextView.setText("");//p.getSummary(summaryTemplate));
 
             // images
             if (p.images != null && p.images.size() > 0) {
@@ -165,9 +202,9 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
                 viewHolder.cameraIconImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(getContext(), ImageSeriesViewer.class);
+                        Intent intent = new Intent(context, ImageSeriesViewer.class);
                         intent.putExtra(AndroidConstants.INTENTKEY_FILE_LIST, p.images);
-                        getContext().startActivity(intent);
+                        context.startActivity(intent);
                     }
                 });
                 viewHolder.cameraIconImageView.setVisibility(View.VISIBLE);
@@ -176,7 +213,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
                 viewHolder.cameraIconImageView.setVisibility(View.GONE);
             }
 
-			// datapoints
+            // datapoints
             if (p.dataPoints != null && p.dataPoints.size() > 0) {
                 viewHolder.dataPointIconImageView.setImageResource(R.drawable.ic_menu_share);
                 //TODO add click handler to launch graphing stuff
@@ -187,9 +224,6 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             }
         }
 
-        Log.d("IPV", "Finished filling tile");
-
-        return convertView;
     }
 
 
