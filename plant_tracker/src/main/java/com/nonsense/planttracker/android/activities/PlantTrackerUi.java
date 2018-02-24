@@ -469,24 +469,24 @@ public class PlantTrackerUi extends AppCompatActivity
 
         if (currentPlant.getThumbnail() != null)    {
             String thumbnail = currentPlant.getThumbnail();
-            if (thumbnail != null)  {
-                Runnable loadThumb = new Runnable() {
-                    @Override
-                    public void run() {
-                        mPlantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
-                        mPlantImage.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                launchImageSeriesViewer(currentPlant.getAllImagesForPlant());
-                            }
-                        });
-                    }
-                };
-
-                loadThumb.run();
-            }
-        }
-        else    {
+//            if (thumbnail != null)  {
+//                Runnable loadThumb = new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mPlantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
+//                        mPlantImage.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View view) {
+//                                launchImageSeriesViewer(currentPlant.getAllImagesForPlant());
+//                            }
+//                        });
+//                    }
+//                };
+//
+//                loadThumb.run();
+//            }
+//        }
+//        else    {
             mPlantImage.setOnClickListener(null);
             mPlantImage.setImageResource(R.drawable.ic_growing_plant);
         }
@@ -595,53 +595,53 @@ public class PlantTrackerUi extends AppCompatActivity
             parentPlantLinearLayout.setVisibility(View.GONE);
         }
 
-//        Runnable loadRecords = new Runnable() {
-//            @Override
-//            public void run() {
-//                PlantRecordableTileArrayAdapter plantRecordableAdapter =
-//                        new PlantRecordableTileArrayAdapter(getBaseContext(),
-//                                R.layout.tile_plant_recordable, currentPlant.getAllGenericRecords(),
-//                                tracker.getAllRecordTemplates(), currentPlant);
-//
-//                recordableEventListView.setAdapter(plantRecordableAdapter);
-//                recordableEventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                    @Override
-//                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                        presentRecordableEventSummaryDialog(i);
-//                    }
-//                });
-//
-//                recordableEventListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//                    @Override
-//                    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-//                        AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
-//                        builder.setTitle(R.string.app_name);
-//                        builder.setMessage("Are you sure you want to delete this event?");
-//                        builder.setIcon(R.drawable.ic_growing_plant);
-//                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int id) {
-//                                currentPlant.removeGenericRecord(position);
-//                                fillIndividualPlantView();
-//                                dialog.dismiss();
-//                            }
-//                        });
-//
-//                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int id) {
-//                                dialog.dismiss();
-//                            }
-//                        });
-//
-//                        AlertDialog alert = builder.create();
-//                        alert.show();
-//
-//                        return true;
-//                    }
-//                });
-//            }
-//        };
-//
-//        loadRecords.run();
+        Runnable loadRecords = new Runnable() {
+            @Override
+            public void run() {
+                PlantRecordableTileArrayAdapter plantRecordableAdapter =
+                        new PlantRecordableTileArrayAdapter(getBaseContext(),
+                                R.layout.tile_plant_recordable, currentPlant.getAllGenericRecords(),
+                                tracker.getAllRecordTemplates(), currentPlant);
+
+                recordableEventListView.setAdapter(plantRecordableAdapter);
+                recordableEventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        presentRecordableEventSummaryDialog(i);
+                    }
+                });
+
+                recordableEventListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
+                        builder.setTitle(R.string.app_name);
+                        builder.setMessage("Are you sure you want to delete this event?");
+                        builder.setIcon(R.drawable.ic_growing_plant);
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                currentPlant.removeGenericRecord(position);
+                                fillIndividualPlantView();
+                                dialog.dismiss();
+                            }
+                        });
+
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
+
+                        return true;
+                    }
+                });
+            }
+        };
+
+        loadRecords.run();
     }
 
     private void launchCollectPlantDataIntent(GenericRecord record, boolean showNotes) {
