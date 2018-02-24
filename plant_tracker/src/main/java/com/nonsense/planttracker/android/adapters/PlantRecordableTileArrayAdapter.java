@@ -100,7 +100,15 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         }
 
         if (p != null) {
-            new AsyncTile(viewHolder, p, getContext()).executeOnExecutor(AsyncTile.THREAD_POOL_EXECUTOR, null);
+            fillTile(p);
+//            Runnable rPopulateTile = new Runnable() {
+//                @Override
+//                public void run() {
+//                    fillTile(p);
+//                }
+//            };
+//
+//            Thread tPopulateTile = new Thread(rPopulateTile);
         }
 
         Log.d("IPV", "Finished filling tile");
@@ -108,123 +116,96 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         return convertView;
     }
 
-    private static class AsyncTile extends AsyncTask {
-        private ViewHolder viewHolder;
-        private GenericRecord record;
-        private Context context;
+    protected void fillTile(GenericRecord p)   {
+        StringBuilder sBuilder = new StringBuilder();
 
-        public AsyncTile(ViewHolder h, GenericRecord r, Context c)  {
-            viewHolder = h;
-            record = r;
-            context = c;
+        // Build phase string
+        int phaseCount = p.phaseCount;
+        int stateWeekCount = p.weeksSincePhase;
+        int growWeekCount = p.weeksSinceStart;
+
+        String phaseDisplay = "";
+        if (p.phaseCount > 0)   {
+            sBuilder.append("[P");
+            sBuilder.append(phaseCount);
+            sBuilder.append("Wk");
+            sBuilder.append(stateWeekCount);
+            sBuilder.append("/");
+            sBuilder.append(growWeekCount);
+            sBuilder.append("]");
+
+            phaseDisplay = sBuilder.toString();
+        }
+        else    {
+            sBuilder.append("[Wk ");
+            sBuilder.append(growWeekCount);
+            sBuilder.append("]");
+            phaseDisplay = sBuilder.toString();
         }
 
-        @Override
-        protected Object doInBackground(Object[] objects) {
-            return null;
+        // date/relative weeks
+        sBuilder.setLength(0);
+        sBuilder.append(new SimpleDateFormat("EEE, dd MMM yyyy").format(p.time.getTime()));
+        sBuilder.append(" ");
+        sBuilder.append(((phaseDisplay == null) ? "" : phaseDisplay));
+        viewHolder.dateTextView.setText(sBuilder.toString());
+
+        // TODO Get record id which should be a long representing the instant the template was
+        // TODO created this is so we can change the display name of the template and still know
+        // TODO which records are which ultimately we want to be able to make everything
+        // TODO editable and apply across all records, store only data!
+        GenericRecord template = null;//recordTemplates.get(p.displayName);
+
+        String displayName;
+        String summaryTemplate;
+        int color;
+
+        if (template == null)   {
+            displayName = p.displayName;
+            summaryTemplate = p.summaryTemplate;
+            color = p.color;
+        }
+        else    {
+            displayName = template.displayName;
+            summaryTemplate = template.summaryTemplate;
+            color = template.color;
         }
 
-        @Override
-        protected void onPostExecute(Object o)  {
-            fillTile(record);
+        // display name
+        viewHolder.eventTypeTextView.setText(displayName);
+        GradientDrawable gradientDrawable =
+                (GradientDrawable)viewHolder.eventTypeTextView.getBackground();
+        gradientDrawable.setColor(color);
+
+        // summary text
+        //TODO make this pop-in with async... this call to getSummary is expensive!
+        viewHolder.recordableSummaryTextView.setText(p.getSummary(summaryTemplate));
+
+        // images
+        if (p.images != null && p.images.size() > 0) {
+            viewHolder.cameraIconImageView.setImageResource(R.drawable.ic_menu_camera);
+            viewHolder.cameraIconImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), ImageSeriesViewer.class);
+                    intent.putExtra(AndroidConstants.INTENTKEY_FILE_LIST, p.images);
+                    getContext().startActivity(intent);
+                }
+            });
+            viewHolder.cameraIconImageView.setVisibility(View.VISIBLE);
+        }
+        else    {
+            viewHolder.cameraIconImageView.setVisibility(View.GONE);
         }
 
-
-
-        protected void fillTile(GenericRecord p)   {
-            StringBuilder sBuilder = new StringBuilder();
-
-            // Build phase string
-            int phaseCount = p.phaseCount;
-            int stateWeekCount = p.weeksSincePhase;
-            int growWeekCount = p.weeksSinceStart;
-
-            String phaseDisplay = "";
-            if (p.phaseCount > 0)   {
-                sBuilder.append("[P");
-                sBuilder.append(phaseCount);
-                sBuilder.append("Wk");
-                sBuilder.append(stateWeekCount);
-                sBuilder.append("/");
-                sBuilder.append(growWeekCount);
-                sBuilder.append("]");
-
-                phaseDisplay = sBuilder.toString();
-            }
-            else    {
-                sBuilder.append("[Wk ");
-                sBuilder.append(growWeekCount);
-                sBuilder.append("]");
-                phaseDisplay = sBuilder.toString();
-            }
-
-            // date/relative weeks
-            sBuilder.setLength(0);
-            sBuilder.append(new SimpleDateFormat("EEE, dd MMM yyyy").format(p.time.getTime()));
-            sBuilder.append(" ");
-            sBuilder.append(((phaseDisplay == null) ? "" : phaseDisplay));
-            viewHolder.dateTextView.setText(sBuilder.toString());
-
-            // TODO Get record id which should be a long representing the instant the template was
-            // TODO created this is so we can change the display name of the template and still know
-            // TODO which records are which ultimately we want to be able to make everything
-            // TODO editable and apply across all records, store only data!
-            GenericRecord template = null;//recordTemplates.get(p.displayName);
-
-            String displayName;
-            String summaryTemplate;
-            int color;
-
-            if (template == null)   {
-                displayName = p.displayName;
-                summaryTemplate = p.summaryTemplate;
-                color = p.color;
-            }
-            else    {
-                displayName = template.displayName;
-                summaryTemplate = template.summaryTemplate;
-                color = template.color;
-            }
-
-            // display name
-            viewHolder.eventTypeTextView.setText(displayName);
-            GradientDrawable gradientDrawable =
-                    (GradientDrawable)viewHolder.eventTypeTextView.getBackground();
-            gradientDrawable.setColor(color);
-
-            // summary text
-            //TODO make this pop-in with async... this call to getSummary is expensive!
-            viewHolder.recordableSummaryTextView.setText(p.getSummary(summaryTemplate));
-
-            // images
-            if (p.images != null && p.images.size() > 0) {
-                viewHolder.cameraIconImageView.setImageResource(R.drawable.ic_menu_camera);
-                viewHolder.cameraIconImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(context, ImageSeriesViewer.class);
-                        intent.putExtra(AndroidConstants.INTENTKEY_FILE_LIST, p.images);
-                        context.startActivity(intent);
-                    }
-                });
-                viewHolder.cameraIconImageView.setVisibility(View.VISIBLE);
-            }
-            else    {
-                viewHolder.cameraIconImageView.setVisibility(View.GONE);
-            }
-
-            // datapoints
-            if (p.dataPoints != null && p.dataPoints.size() > 0) {
-                viewHolder.dataPointIconImageView.setImageResource(R.drawable.ic_menu_share);
-                //TODO add click handler to launch graphing stuff
-                viewHolder.dataPointIconImageView.setVisibility(View.VISIBLE);
-            }
-            else    {
-                viewHolder.dataPointIconImageView.setVisibility(View.GONE);
-            }
+        // datapoints
+        if (p.dataPoints != null && p.dataPoints.size() > 0) {
+            viewHolder.dataPointIconImageView.setImageResource(R.drawable.ic_menu_share);
+            //TODO add click handler to launch graphing stuff
+            viewHolder.dataPointIconImageView.setVisibility(View.VISIBLE);
         }
-
+        else    {
+            viewHolder.dataPointIconImageView.setVisibility(View.GONE);
+        }
     }
-
-
 }
