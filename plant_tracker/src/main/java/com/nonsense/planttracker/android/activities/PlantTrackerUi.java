@@ -470,20 +470,20 @@ public class PlantTrackerUi extends AppCompatActivity
         if (currentPlant.getThumbnail() != null)    {
             String thumbnail = currentPlant.getThumbnail();
             if (thumbnail != null)  {
-//                Runnable loadThumb = new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mPlantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
-//                        mPlantImage.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                launchImageSeriesViewer(currentPlant.getAllImagesForPlant());
-//                            }
-//                        });
-//                    }
-//                };
-//
-//                loadThumb.run();
+                Runnable loadThumb = new Runnable() {
+                    @Override
+                    public void run() {
+                        mPlantImage.setImageURI(Uri.fromFile(new File(currentPlant.getThumbnail())));
+                        mPlantImage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                launchImageSeriesViewer(currentPlant.getAllImagesForPlant());
+                            }
+                        });
+                    }
+                };
+
+                loadThumb.run();
             }
         }
         else    {
