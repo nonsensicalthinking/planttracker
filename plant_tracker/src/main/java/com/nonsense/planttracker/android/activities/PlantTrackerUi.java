@@ -24,6 +24,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -108,7 +109,6 @@ public class PlantTrackerUi extends AppCompatActivity
     private TextView stateNameTextView;
     private TextView fromSeedTextView;
     private RecyclerView recordableEventListView;
-    private LinearLayout parentPlantLinearLayout;
     private Spinner addEventSpinner;
     private Menu individualPlantMenu;
     private SubMenu addToGroup;
@@ -229,11 +229,12 @@ public class PlantTrackerUi extends AppCompatActivity
         weeksSinceGrowStartTextView = (TextView)findViewById(R.id.weeksSinceGrowStartTextView);
         fromSeedTextView = (TextView) findViewById(R.id.fromSeedTextView);
         recordableEventListView = (RecyclerView) findViewById(R.id.recordableEventListView);
+        recordableEventListView .addItemDecoration(new DividerItemDecoration(
+                PlantTrackerUi.this, DividerItemDecoration.VERTICAL));
 
         final LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setStackFromEnd(true);
         recordableEventListView.setLayoutManager(llm);
-        parentPlantLinearLayout = (LinearLayout)findViewById(R.id.parentPlantLinearLayout);
         addEventSpinner = (Spinner)findViewById(R.id.addEventSpinner);
 
         stateNameTextView = (TextView) findViewById(R.id.stateNameTextView);
@@ -612,17 +613,20 @@ public class PlantTrackerUi extends AppCompatActivity
             }
         });
 
+        TextView parentPlantLabelTextView = (TextView)findViewById(R.id.parentPlantLabelTextView);
         if (!currentPlant.isFromSeed() && currentPlant.getParentPlantId() > 0) {
             if (parentPlant != null) {
                 parentPlantTextView.setText(parentPlant.getPlantName());
             } else {
                 // couldn't find the parent plant
                 parentPlantTextView.setText(R.string.record_not_found);
+                parentPlantTextView.setVisibility(View.VISIBLE);
+                parentPlantLabelTextView.setVisibility(View.VISIBLE);
             }
-
-            parentPlantLinearLayout.setVisibility(View.VISIBLE);
         } else {
-            parentPlantLinearLayout.setVisibility(View.GONE);
+            parentPlantTextView.setText("");
+            parentPlantTextView.setVisibility(View.INVISIBLE);
+            parentPlantLabelTextView.setVisibility(View.INVISIBLE);
         }
 
         Log.d("IPV", "Finished state info text stuff");

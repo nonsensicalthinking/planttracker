@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/individualPlantLayout"
@@ -10,270 +10,230 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/colorPrimaryDark"
-        android:foreground="@color/colorPrimaryDark" />
+        android:layout_height="55dp"
+        android:id="@+id/space2" />
 
-    <RelativeLayout
-        android:id="@+id/imageLinearLayout"
+    <ImageView
+        android:id="@+id/lastCaptureImageView"
         android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/space2"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/ic_growing_plant" />
+
+    <TextView
+        android:id="@+id/parentPlantLabelTextView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
-        android:elevation="5dp">
-
-        <ImageView
-            android:id="@+id/lastCaptureImageView"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_growing_plant" />
-
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:orientation="vertical"
-            android:padding="5dp">
-
-            <LinearLayout
-                android:id="@+id/parentPlantLinearLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView47"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="5dp"
-                    android:shadowColor="@color/black"
-                    android:shadowRadius="@integer/text_shading_pad"
-                    android:text="Parent Plant"
-                    android:textAlignment="textStart"
-                    android:textColor="@color/yellow"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/parentPlantIdTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:shadowColor="@color/black"
-                    android:shadowRadius="@integer/text_shading_pad"
-                    android:text="White Dwarf (#3) G2"
-                    android:textColor="@color/testcolor"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView45"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingEnd="5dp"
-                    android:shadowColor="@color/black"
-                    android:shadowRadius="@integer/text_shading_pad"
-                    android:text="Plant Source"
-                    android:textAlignment="textStart"
-                    android:textColor="@color/yellow"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/fromSeedTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:shadowColor="@color/black"
-                    android:shadowRadius="@integer/text_shading_pad"
-                    android:text="Clone"
-                    android:textColor="@color/yellow"
-                    android:textSize="18sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView34"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:shadowColor="@color/black"
-                    android:shadowRadius="@integer/text_shading_pad"
-                    android:paddingEnd="5dp"
-                    android:text="@string/grow_week"
-                    android:textColor="@color/yellow"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/weeksSinceGrowStartTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:shadowColor="@color/black"
-                    android:shadowRadius="@integer/text_shading_pad"
-                    android:paddingEnd="10dp"
-                    android:text="6"
-                    android:textColor="@color/yellow"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/textView36"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingEnd="5dp"
-                    android:shadowColor="@color/black"
-                    android:shadowRadius="@integer/text_shading_pad"
-                    android:text="@string/grow_day"
-                    android:textColor="@color/yellow"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/daysSinceGrowStartTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:shadowColor="@color/black"
-                    android:shadowRadius="@integer/text_shading_pad"
-                    android:text="41"
-                    android:textColor="@color/yellow"
-                    android:textSize="18sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView38"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:shadowColor="@color/black"
-                    android:shadowRadius="@integer/text_shading_pad"
-                    android:text="@string/grow_phase"
-                    android:textColor="@color/yellow"
-                    android:textSize="18sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/stateNameTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:shadowColor="@color/black"
-                    android:shadowRadius="@integer/text_shading_pad"
-                    android:text="Flowering"
-                    android:textColor="@color/testcolor"
-                    android:textIsSelectable="false"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView40"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:lineSpacingExtra="24sp"
-                    android:paddingRight="5dp"
-                    android:shadowColor="@color/black"
-                    android:shadowRadius="@integer/text_shading_pad"
-                    android:text="@string/phase_week"
-                    android:textColor="@color/yellow"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/weeksSinceStateStartTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingRight="10dp"
-                    android:shadowColor="@color/black"
-                    android:shadowRadius="@integer/text_shading_pad"
-                    android:text="2"
-                    android:textColor="@color/yellow"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/textView42"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingRight="5dp"
-                    android:shadowColor="@color/black"
-                    android:shadowRadius="@integer/text_shading_pad"
-                    android:text="@string/phase_day"
-                    android:textColor="@color/yellow"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/daysSinceStateStartTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:shadowColor="@color/black"
-                    android:shadowRadius="@integer/text_shading_pad"
-                    android:text="13"
-                    android:textColor="@color/yellow"
-                    android:textSize="18sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/raised_gradient"
-        android:elevation="5dp"
-        android:orientation="horizontal"
-        android:paddingBottom="5dp"
+        android:layout_below="@+id/space2"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
         android:paddingEnd="5dp"
-        android:paddingStart="5dp">
+        android:shadowColor="@color/black"
+        android:shadowRadius="@integer/text_shading_pad"
+        android:text="Parent Plant"
+        android:textAlignment="textStart"
+        android:textColor="@color/yellow"
+        android:textSize="18sp" />
 
-        <Spinner
-            android:id="@+id/addEventSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:fadeScrollbars="false" />
+    <TextView
+        android:id="@+id/parentPlantIdTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/space2"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/parentPlantLabelTextView"
+        android:shadowColor="@color/black"
+        android:shadowRadius="@integer/text_shading_pad"
+        android:text="White Dwarf (#3) G2"
+        android:textColor="@color/testcolor"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
-    </LinearLayout>
+    <TextView
+        android:id="@+id/textView45"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/textView47"
+        android:layout_below="@+id/parentPlantLabelTextView"
+        android:layout_marginStart="5dp"
+        android:paddingEnd="5dp"
+        android:shadowColor="@color/black"
+        android:shadowRadius="@integer/text_shading_pad"
+        android:text="Plant Source"
+        android:textAlignment="textStart"
+        android:textColor="@color/yellow"
+        android:textSize="18sp" />
+
+
+    <TextView
+        android:id="@+id/fromSeedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/parentPlantLabelTextView"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/textView45"
+        android:shadowColor="@color/black"
+        android:shadowRadius="@integer/text_shading_pad"
+        android:text="Clone"
+        android:textColor="@color/yellow"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textView34"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView45"
+        android:layout_marginStart="5dp"
+        android:shadowColor="@color/black"
+        android:shadowRadius="@integer/text_shading_pad"
+        android:paddingEnd="5dp"
+        android:text="@string/grow_week"
+        android:textColor="@color/yellow"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/weeksSinceGrowStartTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView45"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/textView34"
+        android:shadowColor="@color/black"
+        android:shadowRadius="@integer/text_shading_pad"
+        android:paddingEnd="10dp"
+        android:text="6"
+        android:textColor="@color/yellow"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textView36"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView34"
+        android:layout_marginStart="5dp"
+        android:paddingEnd="5dp"
+        android:shadowColor="@color/black"
+        android:shadowRadius="@integer/text_shading_pad"
+        android:text="@string/grow_day"
+        android:textColor="@color/yellow"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/daysSinceGrowStartTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView34"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/textView36"
+        android:shadowColor="@color/black"
+        android:shadowRadius="@integer/text_shading_pad"
+        android:text="41"
+        android:textColor="@color/yellow"
+        android:textSize="18sp" />
+
+
+    <TextView
+        android:id="@+id/textView38"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView36"
+        android:layout_marginStart="5dp"
+        android:shadowColor="@color/black"
+        android:shadowRadius="@integer/text_shading_pad"
+        android:text="@string/grow_phase"
+        android:textColor="@color/yellow"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/stateNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView36"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/textView38"
+        android:shadowColor="@color/black"
+        android:shadowRadius="@integer/text_shading_pad"
+        android:text="Flowering"
+        android:textColor="@color/testcolor"
+        android:textIsSelectable="false"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:id="@+id/textView40"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView38"
+        android:layout_marginStart="5dp"
+        android:lineSpacingExtra="24sp"
+        android:paddingRight="5dp"
+        android:shadowColor="@color/black"
+        android:shadowRadius="@integer/text_shading_pad"
+        android:text="@string/phase_week"
+        android:textColor="@color/yellow"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/weeksSinceStateStartTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView38"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/textView40"
+        android:paddingRight="10dp"
+        android:shadowColor="@color/black"
+        android:shadowRadius="@integer/text_shading_pad"
+        android:text="2"
+        android:textColor="@color/yellow"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textView42"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView40"
+        android:layout_marginStart="5dp"
+        android:paddingRight="5dp"
+        android:shadowColor="@color/black"
+        android:shadowRadius="@integer/text_shading_pad"
+        android:text="@string/phase_day"
+        android:textColor="@color/yellow"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/daysSinceStateStartTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView40"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/textView42"
+        android:shadowColor="@color/black"
+        android:shadowRadius="@integer/text_shading_pad"
+        android:text="13"
+        android:textColor="@color/yellow"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/addEventSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lastCaptureImageView"
+        android:backgroundTint="@color/white"
+        android:fadeScrollbars="false" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recordableEventListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="9dp"
+        android:layout_below="@id/addEventSpinner"
+        android:animationCache="false"
+        android:background="@color/white"
         android:padding="5dp"
         android:scrollbars="vertical"
-        android:scrollingCache="true"
-        android:animationCache="true"/>
+        android:scrollingCache="false" />
 
-</LinearLayout>
+</RelativeLayout>

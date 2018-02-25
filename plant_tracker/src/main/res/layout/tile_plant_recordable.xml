@@ -39,12 +39,12 @@
     <TextView
         android:id="@+id/recordableSummaryTextView"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:layout_alignStart="@+id/observEventTypeTextView"
         android:layout_below="@+id/observEventTypeTextView"
         android:layout_marginTop="12dp"
         android:layout_toStartOf="@id/dataPointsImageView"
-        android:paddingEnd="16dp"
+        android:paddingEnd="10dp"
         android:paddingStart="10dp"
         android:text="@string/loremipsum"
         android:textColor="@android:color/background_dark" />
