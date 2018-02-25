@@ -314,7 +314,7 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
             PlantData plantData = g.fromJson(sb.toString(), plantType);
 
             for(GenericRecord rec : plantData.genericRecords)   {
-                rec.template = settings.getGenericRecordTemplate(rec.id);
+                rec.template = settings.getGenericRecordTemplate(rec.displayName);
 
                 StringBuilder sBuilder = new StringBuilder();
                 // Build phase string
