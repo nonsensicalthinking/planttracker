@@ -24,6 +24,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.SubMenu;
@@ -106,7 +107,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private TextView daysSinceStateStartTextView;
     private TextView stateNameTextView;
     private TextView fromSeedTextView;
-    private ListView recordableEventListView;
+    private RecyclerView recordableEventListView;
     private LinearLayout parentPlantLinearLayout;
     private Spinner addEventSpinner;
     private Menu individualPlantMenu;
@@ -227,7 +228,11 @@ public class PlantTrackerUi extends AppCompatActivity
         daysSinceGrowStartTextView = (TextView)findViewById(R.id.daysSinceGrowStartTextView);
         weeksSinceGrowStartTextView = (TextView)findViewById(R.id.weeksSinceGrowStartTextView);
         fromSeedTextView = (TextView) findViewById(R.id.fromSeedTextView);
-        recordableEventListView = (ListView)findViewById(R.id.recordableEventListView);
+        recordableEventListView = (RecyclerView) findViewById(R.id.recordableEventListView);
+
+        final LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setStackFromEnd(true);
+        recordableEventListView.setLayoutManager(llm);
         parentPlantLinearLayout = (LinearLayout)findViewById(R.id.parentPlantLinearLayout);
         addEventSpinner = (Spinner)findViewById(R.id.addEventSpinner);
 
@@ -627,47 +632,50 @@ public class PlantTrackerUi extends AppCompatActivity
 //            public void run() {
                 Log.d("IPV", "Creating the PlantRecordableTileArrayAdapter...");
                 PlantRecordableTileArrayAdapter plantRecordableAdapter =
-                        new PlantRecordableTileArrayAdapter(getBaseContext(),
-                                R.layout.tile_plant_recordable, currentPlant.getAllGenericRecords(),
-                                tracker.getAllRecordTemplates(), currentPlant,
-                                PlantTrackerUi.this);
+                        new PlantRecordableTileArrayAdapter(PlantTrackerUi.this,
+                                currentPlant.getAllGenericRecords());
+
+//                        new PlantRecordableTileArrayAdapter(getBaseContext(),
+//                                R.layout.tile_plant_recordable, currentPlant.getAllGenericRecords(),
+//                                tracker.getAllRecordTemplates(), currentPlant,
+//                                PlantTrackerUi.this);
                 Log.d("IPV", "Creating the PlantRecordableTileArrayAdapter...finished");
 
                 recordableEventListView.setAdapter(plantRecordableAdapter);
-                recordableEventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        presentRecordableEventSummaryDialog(i);
-                    }
-                });
-
-                recordableEventListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
-                        builder.setTitle(R.string.app_name);
-                        builder.setMessage("Are you sure you want to delete this event?");
-                        builder.setIcon(R.drawable.ic_growing_plant);
-                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                currentPlant.removeGenericRecord(position);
-                                fillIndividualPlantView();
-                                dialog.dismiss();
-                            }
-                        });
-
-                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
-
-                        AlertDialog alert = builder.create();
-                        alert.show();
-
-                        return true;
-                    }
-                });
+//                recordableEventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                        presentRecordableEventSummaryDialog(i);
+//                    }
+//                });
+//
+//                recordableEventListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//                    @Override
+//                    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
+//                        builder.setTitle(R.string.app_name);
+//                        builder.setMessage("Are you sure you want to delete this event?");
+//                        builder.setIcon(R.drawable.ic_growing_plant);
+//                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int id) {
+//                                currentPlant.removeGenericRecord(position);
+//                                fillIndividualPlantView();
+//                                dialog.dismiss();
+//                            }
+//                        });
+//
+//                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int id) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//
+//                        AlertDialog alert = builder.create();
+//                        alert.show();
+//
+//                        return true;
+//                    }
+//                });
 //            }
 //        };
 

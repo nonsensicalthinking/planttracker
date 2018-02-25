@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,95 +32,154 @@ import java.util.TreeMap;
  * Created by Derek Brooks on 7/1/2017.
  */
 
-public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord> {
+public class PlantRecordableTileArrayAdapter extends RecyclerView.Adapter<PlantRecordableTileArrayAdapter.RecordViewHolder> {
 
-    private static class ViewHolder {
+    class RecordViewHolder extends RecyclerView.ViewHolder    {
         TextView dateTextView;
         TextView eventTypeTextView;
         TextView recordableSummaryTextView;
         ImageView cameraIconImageView;
         ImageView dataPointIconImageView;
+
+        public RecordViewHolder(View v) {
+            super(v);
+
+            dateTextView = (TextView)v.findViewById(R.id.dateTextView);
+            eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
+            recordableSummaryTextView = (TextView)v.findViewById( R.id.recordableSummaryTextView);
+            cameraIconImageView = (ImageView)v.findViewById(R.id.cameraIconImageView);
+            dataPointIconImageView = (ImageView)v.findViewById(R.id.dataPointsImageView);
+        }
     }
 
-    private LayoutInflater inflater;
-    private int viewResourceId;
-    private Plant currentPlant;
-    private TreeMap<String, GenericRecord> recordTemplates = null;
-    private PlantTrackerUi ptui;
+    private ArrayList<GenericRecord> list;
+    private Context context;
 
-    public PlantRecordableTileArrayAdapter(Context context, int textViewResourceId, Plant plant,
-                                           PlantTrackerUi ptui) {
-        super(context, textViewResourceId);
-        viewResourceId = textViewResourceId;
-        currentPlant = plant;
-        inflater = LayoutInflater.from(getContext());
-        this.ptui = ptui;
+    public PlantRecordableTileArrayAdapter(Context c, ArrayList<GenericRecord> l)   {
+        list = l;
+        context = c;
     }
 
-    public PlantRecordableTileArrayAdapter(Context context, int resource, List<GenericRecord> items,
-                                           final TreeMap<String, GenericRecord> recordTemplates,
-                                           Plant plant, PlantTrackerUi ptui) {
-        super(context, resource, items);
-        viewResourceId = resource;
-        currentPlant = plant;
-        this.recordTemplates = recordTemplates;
-        inflater = LayoutInflater.from(getContext());
-        this.ptui = ptui;
-    }
-
-    @NonNull
     @Override
-    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        final ViewHolder viewHolder;
+    public RecordViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.tile_plant_recordable,
+                null);
+        return new RecordViewHolder(view);
+    }
 
-        Log.d("IPV", "Start of getView()");
-        final GenericRecord p = getItem(position);
+    @Override
+    public void onBindViewHolder(RecordViewHolder holder, int position) {
+        GenericRecord r = list.get(position);
 
-        if (convertView == null) {
-            Log.d("IPV", "Record tile first run position:" + position);
-            convertView = inflater.inflate(R.layout.tile_plant_recordable, null);
-
-            viewHolder = new ViewHolder();
-            viewHolder.dateTextView = (TextView)convertView.findViewById(R.id.dateTextView);
-
-            viewHolder.eventTypeTextView = (TextView)convertView.findViewById(
-                    R.id.observEventTypeTextView);
-
-            viewHolder.recordableSummaryTextView = (TextView)convertView.findViewById(
-                    R.id.recordableSummaryTextView);
-
-            //TODO Use bitflags to determine whether a record needs a view item, try to reduce the number of items needed to load view
-            viewHolder.cameraIconImageView = (ImageView)convertView.findViewById(
-                    R.id.cameraIconImageView);
-
-            viewHolder.dataPointIconImageView = (ImageView)convertView.findViewById(
-                    R.id.dataPointsImageView);
-
-            convertView.setTag(viewHolder);
-        }
-        else    {
-            Log.d("IPV", "Record tile reuse position: " + position);
-            viewHolder = (ViewHolder) convertView.getTag();
-        }
-
-        if (p != null) {
+        if (r != null) {
             Runnable rPopulateTile = new Runnable() {
                 @Override
                 public void run() {
-                    backgroundWork(viewHolder, p);
+                    backgroundWork(holder, r);
                 }
             };
 
-            Thread tPopulateTile = new Thread(rPopulateTile);
-            tPopulateTile.start();
+            rPopulateTile.run();
+//            Thread tPopulateTile = new Thread(rPopulateTile);
+//            tPopulateTile.start();
         }
-
-        Log.d("IPV", "End of getView()");
-
-        return convertView;
     }
 
-    private void backgroundWork(final ViewHolder viewHolder, GenericRecord p)   {
+    @Override
+    public int getItemCount() {
+        return ((list!=null) ? list.size() : 0);
+    }
+
+
+
+//    private static class ViewHolder {
+//        TextView dateTextView;
+//        TextView eventTypeTextView;
+//        TextView recordableSummaryTextView;
+//        ImageView cameraIconImageView;
+//        ImageView dataPointIconImageView;
+//    }
+//
+//
+//    private LayoutInflater inflater;
+//    private int viewResourceId;
+//    private Plant currentPlant;
+//    private TreeMap<String, GenericRecord> recordTemplates = null;
+//    private PlantTrackerUi ptui;
+//
+//    public PlantRecordableTileArrayAdapter(Context context, int textViewResourceId, Plant plant,
+//                                           PlantTrackerUi ptui) {
+//        super(context, textViewResourceId);
+//        viewResourceId = textViewResourceId;
+//        currentPlant = plant;
+//        inflater = LayoutInflater.from(getContext());
+//        this.ptui = ptui;
+//    }
+//
+//    public PlantRecordableTileArrayAdapter(Context context, int resource, List<GenericRecord> items,
+//                                           final TreeMap<String, GenericRecord> recordTemplates,
+//                                           Plant plant, PlantTrackerUi ptui) {
+//        super(context, resource, items);
+//        viewResourceId = resource;
+//        currentPlant = plant;
+//        this.recordTemplates = recordTemplates;
+//        inflater = LayoutInflater.from(getContext());
+//        this.ptui = ptui;
+//    }
+//
+//    @NonNull
+//    @Override
+//    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+//        final ViewHolder viewHolder;
+//
+//        Log.d("IPV", "Start of getView()");
+//        final GenericRecord p = getItem(position);
+//
+//        if (convertView == null) {
+//            Log.d("IPV", "Record tile first run position:" + position);
+//            convertView = inflater.inflate(R.layout.tile_plant_recordable, null);
+//
+//            viewHolder = new ViewHolder();
+//            viewHolder.dateTextView = (TextView)convertView.findViewById(R.id.dateTextView);
+//
+//            viewHolder.eventTypeTextView = (TextView)convertView.findViewById(
+//                    R.id.observEventTypeTextView);
+//
+//            viewHolder.recordableSummaryTextView = (TextView)convertView.findViewById(
+//                    R.id.recordableSummaryTextView);
+//
+//            //TODO Use bitflags to determine whether a record needs a view item, try to reduce the number of items needed to load view
+//            viewHolder.cameraIconImageView = (ImageView)convertView.findViewById(
+//                    R.id.cameraIconImageView);
+//
+//            viewHolder.dataPointIconImageView = (ImageView)convertView.findViewById(
+//                    R.id.dataPointsImageView);
+//
+//            convertView.setTag(viewHolder);
+//        }
+//        else    {
+//            Log.d("IPV", "Record tile reuse position: " + position);
+//            viewHolder = (ViewHolder) convertView.getTag();
+//        }
+//
+//        if (p != null) {
+//            Runnable rPopulateTile = new Runnable() {
+//                @Override
+//                public void run() {
+//                    backgroundWork(viewHolder, p);
+//                }
+//            };
+//
+//            Thread tPopulateTile = new Thread(rPopulateTile);
+//            tPopulateTile.start();
+//        }
+//
+//        Log.d("IPV", "End of getView()");
+//
+//        return convertView;
+//    }
+//
+    private void backgroundWork(final RecordViewHolder viewHolder, GenericRecord p)   {
         GenericRecord template = p.template;
         String displayName;
         int color;
@@ -142,10 +202,11 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             }
         };
 
-        ptui.runOnUiThread(rUpdateUi);
+        rUpdateUi.run();
+//        ((PlantTrackerUi)context).runOnUiThread(rUpdateUi);
     }
 
-    private void fillTile(final ViewHolder viewHolder, String phaseDisplay, String displayName,
+    private void fillTile(final RecordViewHolder viewHolder, String phaseDisplay, String displayName,
                             int color, String summary, boolean showCamera, boolean showDataPoints,
                             ArrayList<String> images)  {
         viewHolder.dateTextView.setText(phaseDisplay);
@@ -162,9 +223,9 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             viewHolder.cameraIconImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getContext(), ImageSeriesViewer.class);
+                    Intent intent = new Intent(context, ImageSeriesViewer.class);
                     intent.putExtra(AndroidConstants.INTENTKEY_FILE_LIST, images);
-                    getContext().startActivity(intent);
+                    context.startActivity(intent);
                 }
             });
             viewHolder.cameraIconImageView.setVisibility(View.VISIBLE);

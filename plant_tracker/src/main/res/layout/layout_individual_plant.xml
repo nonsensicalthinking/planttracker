@@ -266,15 +266,14 @@
 
     </LinearLayout>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/recordableEventListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="9dp"
         android:padding="5dp"
         android:scrollbars="vertical"
-        android:stackFromBottom="true"
-        android:scrollingCache="false"
-        android:animationCache="false"/>
+        android:scrollingCache="true"
+        android:animationCache="true"/>
 
 </LinearLayout>
