@@ -1,6 +1,8 @@
 package com.nonsense.planttracker.android.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -14,7 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
@@ -35,6 +40,7 @@ import java.util.TreeMap;
 public class PlantRecordableTileArrayAdapter extends RecyclerView.Adapter<PlantRecordableTileArrayAdapter.RecordViewHolder> {
 
     class RecordViewHolder extends RecyclerView.ViewHolder    {
+        RelativeLayout layout;
         TextView dateTextView;
         TextView eventTypeTextView;
         TextView recordableSummaryTextView;
@@ -44,6 +50,7 @@ public class PlantRecordableTileArrayAdapter extends RecyclerView.Adapter<PlantR
         public RecordViewHolder(View v) {
             super(v);
 
+            layout = (RelativeLayout)v.findViewById(R.id.recordableRelativeLayout);
             dateTextView = (TextView)v.findViewById(R.id.dateTextView);
             eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
             recordableSummaryTextView = (TextView)v.findViewById( R.id.recordableSummaryTextView);
@@ -52,27 +59,59 @@ public class PlantRecordableTileArrayAdapter extends RecyclerView.Adapter<PlantR
         }
     }
 
+    private Plant plant;
     private ArrayList<GenericRecord> list;
     private Context context;
 
-    public PlantRecordableTileArrayAdapter(Context c, ArrayList<GenericRecord> l)   {
+    public PlantRecordableTileArrayAdapter(Context c, ArrayList<GenericRecord> l, Plant p)   {
         list = l;
         context = c;
+        plant = p;
     }
 
     @Override
     public RecordViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.tile_plant_recordable,
                 null);
+
         return new RecordViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final RecordViewHolder viewHolder, int position) {
-        GenericRecord record = list.get(position);
+        final int pos = position;
+        GenericRecord record = list.get(pos);
         GenericRecord template = record.template;
         String displayName;
         int color;
+
+        viewHolder.layout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder((PlantTrackerUi)context);
+                builder.setTitle(R.string.app_name);
+                builder.setMessage("Are you sure you want to delete this event?");
+                builder.setIcon(R.drawable.ic_growing_plant);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        plant.removeGenericRecord(pos);
+                        ((PlantTrackerUi)context).fillIndividualPlantView();
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alert = builder.create();
+                alert.show();
+
+                return true;
+            }
+        });
 
         if (template == null)   {
             displayName = record.displayName;
