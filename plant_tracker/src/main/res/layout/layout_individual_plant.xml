@@ -5,20 +5,19 @@
     android:id="@+id/individualPlantLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:weightSum="1">
+    android:orientation="vertical">
 
     <Space
         android:id="@+id/space2"
         android:layout_width="match_parent"
-        android:layout_height="55dp" />
+        android:layout_height="56dp"
+        android:background="@color/colorAlpha"/>
 
     <ImageView
         android:id="@+id/lastCaptureImageView"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/space2"
+        android:layout_below="@id/space2"
         android:scaleType="centerCrop"
         app:srcCompat="@drawable/ic_growing_plant" />
 
@@ -26,7 +25,7 @@
         android:id="@+id/parentPlantLabelTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/space2"
+        android:layout_below="@id/space2"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
         android:paddingEnd="5dp"
@@ -41,7 +40,7 @@
         android:id="@+id/parentPlantIdTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/space2"
+        android:layout_below="@id/space2"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
         android:layout_toEndOf="@id/parentPlantLabelTextView"
@@ -238,7 +237,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recordableEventListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/spinnerLayout"
         android:animationCache="false"
         android:background="@color/white"

@@ -10,6 +10,7 @@ package com.nonsense.planttracker.android.activities;
 // Moon phase icon by Haikinator https://www.iconfinder.com/Haikinator
 // https://www.iconfinder.com/icons/248569/cloud_clouds_cloudy_crescent_forecast_moon_night_phase_phases_waning_weather_icon
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -260,7 +261,7 @@ public class PlantTrackerUi extends AppCompatActivity
 
     private void fillViewWithPlants() {
         toolbar.setTitle(R.string.app_name);
-        toolbar.setElevation(10);
+//        toolbar.setElevation(10);
 
         setEmptyViewCaption("No Plants Found");
 
@@ -473,6 +474,9 @@ public class PlantTrackerUi extends AppCompatActivity
         Log.d("IPV", "Beginning IPV Fill");
 
         hideFloatingActionButton();
+
+        // display the options menu
+        invalidateOptionsMenu();
 
         toolbar.setTitle(currentPlant.getPlantName());
 
