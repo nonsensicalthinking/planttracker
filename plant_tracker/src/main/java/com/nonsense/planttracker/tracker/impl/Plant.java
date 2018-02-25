@@ -110,6 +110,8 @@ public class Plant implements Serializable  {
     }
 
     public void finalizeRecord(GenericRecord record)    {
+
+
         plantData.genericRecords.add(record);
 
         sortEvents();

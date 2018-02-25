@@ -41,7 +41,6 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         ImageView dataPointIconImageView;
     }
 
-    private SimpleDateFormat sdf;
     private LayoutInflater inflater;
     private int viewResourceId;
     private Plant currentPlant;
@@ -54,7 +53,6 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         viewResourceId = textViewResourceId;
         currentPlant = plant;
         inflater = LayoutInflater.from(getContext());
-        sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
         this.ptui = ptui;
     }
 
@@ -66,7 +64,6 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         currentPlant = plant;
         this.recordTemplates = recordTemplates;
         inflater = LayoutInflater.from(getContext());
-        sdf = new SimpleDateFormat("EEE, dd MMM yyyy");
         this.ptui = ptui;
     }
 
@@ -123,70 +120,25 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
     }
 
     private void backgroundWork(final ViewHolder viewHolder, GenericRecord p)   {
-        StringBuilder sBuilder = new StringBuilder();
-
-        String phaseDisplay;
+        GenericRecord template = p.template;
         String displayName;
         int color;
-        String summary;
-        boolean showCamera = (p.images != null && p.images.size() > 0);
-        boolean showDataPoints = (p.dataPoints != null && p.dataPoints.size() > 0);
-
-        String summaryTemplate;
-
-        // Build phase string
-        sBuilder.append(new SimpleDateFormat("EEE, dd MMM yyyy").format(p.time.getTime()));
-        sBuilder.append(" ");
-
-        int phaseCount = p.phaseCount;
-        int stateWeekCount = p.weeksSincePhase;
-        int growWeekCount = p.weeksSinceStart;
-
-        if (p.phaseCount > 0)   {
-            sBuilder.append("[P");
-            sBuilder.append(phaseCount);
-            sBuilder.append("Wk");
-            sBuilder.append(stateWeekCount);
-            sBuilder.append("/");
-            sBuilder.append(growWeekCount);
-            sBuilder.append("]");
-        }
-        else    {
-            sBuilder.append("[Wk ");
-            sBuilder.append(growWeekCount);
-            sBuilder.append("]");
-        }
-
-        phaseDisplay = sBuilder.toString();
-
-
-        // prepare display name of record
-        // TODO Get record id which should be a long representing the instant the template was
-        // TODO created this is so we can change the display name of the template and still know
-        // TODO which records are which ultimately we want to be able to make everything
-        // TODO editable and apply across all records, store only data!
-        GenericRecord template = recordTemplates.get(p.displayName);
-
 
         if (template == null)   {
             displayName = p.displayName;
-            summaryTemplate = p.summaryTemplate;
             color = p.color;
         }
         else    {
             displayName = template.displayName;
-            summaryTemplate = template.summaryTemplate;
             color = template.color;
         }
-
-        summary = p.getSummary(summaryTemplate);
 
         // Tell the UI we're ready to update it
         Runnable rUpdateUi = new Runnable()  {
             @Override
             public void run() {
-                fillTile(viewHolder, phaseDisplay, displayName, color, summary, showCamera,
-                        showDataPoints, p.images);
+                fillTile(viewHolder, p.phaseDisplay, displayName, color,
+                        p.getSummary(p.summaryTemplate), p.hasImages, p.hasDataPoints, p.images);
             }
         };
 

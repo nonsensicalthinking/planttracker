@@ -19,6 +19,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -311,6 +312,41 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
             }
 
             PlantData plantData = g.fromJson(sb.toString(), plantType);
+
+            for(GenericRecord rec : plantData.genericRecords)   {
+                rec.template = settings.getGenericRecordTemplate(rec.id);
+
+                StringBuilder sBuilder = new StringBuilder();
+                // Build phase string
+                sBuilder.append(new SimpleDateFormat("EEE, dd MMM yyyy").
+                        format(rec.time.getTime()));
+                sBuilder.append(" ");
+
+                int phaseCount = rec.phaseCount;
+                int stateWeekCount = rec.weeksSincePhase;
+                int growWeekCount = rec.weeksSinceStart;
+
+                if (rec.phaseCount > 0)   {
+                    sBuilder.append("[P");
+                    sBuilder.append(phaseCount);
+                    sBuilder.append("Wk");
+                    sBuilder.append(stateWeekCount);
+                    sBuilder.append("/");
+                    sBuilder.append(growWeekCount);
+                    sBuilder.append("]");
+                }
+                else    {
+                    sBuilder.append("[Wk ");
+                    sBuilder.append(growWeekCount);
+                    sBuilder.append("]");
+                }
+
+                rec.phaseDisplay = sBuilder.toString();
+
+                rec.hasImages = (rec.images != null && rec.images.size() > 0);
+                rec.hasDataPoints = (rec.dataPoints != null && rec.dataPoints.size() > 0);
+            }
+
             p.setPlantData(plantData);
 
             return p;
