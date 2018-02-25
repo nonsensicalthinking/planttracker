@@ -40,7 +40,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
         ImageView cameraIconImageView;
         ImageView dataPointIconImageView;
     }
-    
+
     private SimpleDateFormat sdf;
     private LayoutInflater inflater;
     private int viewResourceId;
@@ -218,7 +218,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             viewHolder.cameraIconImageView.setVisibility(View.VISIBLE);
         }
         else    {
-            viewHolder.cameraIconImageView.setVisibility(View.GONE);
+            viewHolder.cameraIconImageView.setVisibility(View.INVISIBLE);
         }
 
         if (showDataPoints) {
@@ -227,7 +227,7 @@ public class PlantRecordableTileArrayAdapter extends ArrayAdapter<GenericRecord>
             viewHolder.dataPointIconImageView.setVisibility(View.VISIBLE);
         }
         else    {
-            viewHolder.dataPointIconImageView.setVisibility(View.GONE);
+            viewHolder.dataPointIconImageView.setVisibility(View.INVISIBLE);
         }
     }
 }

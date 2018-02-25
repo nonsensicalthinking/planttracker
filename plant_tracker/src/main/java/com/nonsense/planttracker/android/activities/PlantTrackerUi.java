@@ -205,7 +205,6 @@ public class PlantTrackerUi extends AppCompatActivity
         refreshDrawerGroups();
 
         refreshListView();
-//        fillViewWithPlants();
     }
 
     @Override
@@ -623,14 +622,15 @@ public class PlantTrackerUi extends AppCompatActivity
 
         Log.d("IPV", "Finished state info text stuff");
 
-        Runnable loadRecords = new Runnable() {
-            @Override
-            public void run() {
+//        Runnable loadRecords = new Runnable() {
+//            @Override
+//            public void run() {
                 Log.d("IPV", "Creating the PlantRecordableTileArrayAdapter...");
                 PlantRecordableTileArrayAdapter plantRecordableAdapter =
                         new PlantRecordableTileArrayAdapter(getBaseContext(),
                                 R.layout.tile_plant_recordable, currentPlant.getAllGenericRecords(),
-                                tracker.getAllRecordTemplates(), currentPlant, PlantTrackerUi.this);
+                                tracker.getAllRecordTemplates(), currentPlant,
+                                PlantTrackerUi.this);
                 Log.d("IPV", "Creating the PlantRecordableTileArrayAdapter...finished");
 
                 recordableEventListView.setAdapter(plantRecordableAdapter);
@@ -668,13 +668,13 @@ public class PlantTrackerUi extends AppCompatActivity
                         return true;
                     }
                 });
-            }
-        };
+//            }
+//        };
 
-        Log.d("IPV", "Running loading records thread...");
-        Thread loadRecordsThread = new Thread(loadRecords);
-        loadRecordsThread.start();
-        Log.d("IPV", "UI thread next step");
+//        Log.d("IPV", "Running loading records thread...");
+//        Thread loadRecordsThread = new Thread(loadRecords);
+//        loadRecordsThread.start();
+//        Log.d("IPV", "UI thread next step");
     }
 
     private void launchCollectPlantDataIntent(GenericRecord record, boolean showNotes) {

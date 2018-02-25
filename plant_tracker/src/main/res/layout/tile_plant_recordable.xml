@@ -1,77 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="3dp"
-    android:paddingEnd="3dp"
-    android:paddingStart="3dp"
-    android:paddingTop="3dp"
+    android:paddingBottom="5dp"
+    android:paddingTop="5dp"
     android:theme="@style/Theme.Design">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/observEventTypeTextView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingBottom="10dp"
-        android:paddingTop="5dp">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="12dp"
+        android:background="@drawable/rounded_corner"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+        android:shadowColor="@color/black"
+        android:shadowRadius="100"
+        android:text="@string/record_template"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/observEventTypeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="4dp"
-            android:background="@drawable/rounded_corner"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp"
-            android:shadowColor="@color/black"
-            android:shadowRadius="100"
-            android:text="@string/record_template"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/dateTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:textColor="@color/colorPrimary" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_alignBottom="@+id/observEventTypeTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="13dp"
+        android:gravity="end"
+        android:textColor="@color/colorPrimary" />
 
-        <TextView
-            android:id="@+id/recordableSummaryTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp"
-            android:text="@string/loremipsum"
-            android:textColor="@android:color/background_dark" />
+    <TextView
+        android:id="@+id/recordableSummaryTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/observEventTypeTextView"
+        android:layout_below="@+id/observEventTypeTextView"
+        android:layout_toStartOf="@id/dataPointsImageView"
+        android:layout_marginTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="10dp"
+        android:text="@string/loremipsum"
+        android:textColor="@android:color/background_dark" />
 
-        <ImageView
-            android:id="@+id/dataPointsImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:alpha="0.13" />
+    <ImageView
+        android:id="@+id/cameraIconImageView"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/recordableSummaryTextView"
+        android:layout_gravity="end"
+        android:layout_marginEnd="5dp"
+        android:layout_toStartOf="@+id/dateTextView"
+        android:alpha="0.13" />
 
-        <ImageView
-            android:id="@+id/cameraIconImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:alpha="0.13" />
-    </LinearLayout>
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/dataPointsImageView"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignTop="@+id/cameraIconImageView"
+        android:layout_gravity="end"
+        android:layout_marginEnd="8dp"
+        android:layout_toStartOf="@+id/cameraIconImageView"
+        android:alpha="0.13" />
+
+
+</RelativeLayout>
