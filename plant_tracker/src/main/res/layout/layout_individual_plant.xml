@@ -221,7 +221,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/lastCaptureImageView"
-        android:background="@color/colorPrimaryDark"
+        android:background="@drawable/raised_gradient"
         android:orientation="horizontal">
 
         <Spinner
@@ -229,7 +229,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/white"
-            android:fadeScrollbars="false" />
+            android:elevation="10dp"
+            android:fadeScrollbars="false"
+            android:scrollIndicators="top|bottom" />
 
     </LinearLayout>
 
@@ -242,6 +244,6 @@
         android:background="@color/white"
         android:padding="5dp"
         android:scrollbars="vertical"
-        android:scrollingCache="false" />
+        android:scrollingCache="true" />
 
 </RelativeLayout>
