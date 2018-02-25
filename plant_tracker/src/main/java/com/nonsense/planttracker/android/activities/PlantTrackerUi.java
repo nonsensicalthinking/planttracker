@@ -520,6 +520,7 @@ public class PlantTrackerUi extends AppCompatActivity
         else    {
             mPlantImage.setOnClickListener(null);
             mPlantImage.setImageResource(R.drawable.ic_growing_plant);
+            mPlantImage.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
         Log.d("IPV", "Loading fields with text...");

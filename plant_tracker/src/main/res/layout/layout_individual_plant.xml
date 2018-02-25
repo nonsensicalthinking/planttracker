@@ -9,9 +9,9 @@
     android:weightSum="1">
 
     <Space
+        android:id="@+id/space2"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:id="@+id/space2" />
+        android:layout_height="55dp" />
 
     <ImageView
         android:id="@+id/lastCaptureImageView"
@@ -67,7 +67,6 @@
         android:textColor="@color/yellow"
         android:textSize="18sp" />
 
-
     <TextView
         android:id="@+id/fromSeedTextView"
         android:layout_width="wrap_content"
@@ -87,9 +86,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView45"
         android:layout_marginStart="5dp"
+        android:paddingEnd="5dp"
         android:shadowColor="@color/black"
         android:shadowRadius="@integer/text_shading_pad"
-        android:paddingEnd="5dp"
         android:text="@string/grow_week"
         android:textColor="@color/yellow"
         android:textSize="18sp" />
@@ -101,9 +100,9 @@
         android:layout_below="@+id/textView45"
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@id/textView34"
+        android:paddingEnd="10dp"
         android:shadowColor="@color/black"
         android:shadowRadius="@integer/text_shading_pad"
-        android:paddingEnd="10dp"
         android:text="6"
         android:textColor="@color/yellow"
         android:textSize="18sp" />
@@ -217,19 +216,28 @@
         android:textColor="@color/yellow"
         android:textSize="18sp" />
 
-    <Spinner
-        android:id="@+id/addEventSpinner"
+    <LinearLayout
+        android:id="@+id/spinnerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/lastCaptureImageView"
-        android:backgroundTint="@color/white"
-        android:fadeScrollbars="false" />
+        android:background="@color/colorPrimaryDark"
+        android:orientation="horizontal">
+
+        <Spinner
+            android:id="@+id/addEventSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:fadeScrollbars="false" />
+
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recordableEventListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/addEventSpinner"
+        android:layout_height="match_parent"
+        android:layout_below="@id/spinnerLayout"
         android:animationCache="false"
         android:background="@color/white"
         android:padding="5dp"

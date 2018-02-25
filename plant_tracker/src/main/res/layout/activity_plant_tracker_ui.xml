@@ -8,7 +8,6 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-
     <include
         layout="@layout/layout_plant_tracker_header"
         android:layout_width="match_parent"
@@ -38,7 +37,7 @@
                 android:id="@+id/listPlantsView"
                 layout="@layout/layout_list_all_plants"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></include>
+                android:layout_height="match_parent"/>
 
         </LinearLayout>
 
@@ -52,7 +51,7 @@
                 android:id="@+id/individualPlantViewLayout"
                 layout="@layout/layout_individual_plant"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></include>
+                android:layout_height="match_parent"/>
 
         </LinearLayout>
     </ViewSwitcher>
