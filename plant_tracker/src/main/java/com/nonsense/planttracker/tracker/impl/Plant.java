@@ -3,6 +3,7 @@ package com.nonsense.planttracker.tracker.impl;
 import com.nonsense.planttracker.tracker.interf.IPlantUpdateListener;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -111,6 +112,8 @@ public class Plant implements Serializable  {
 
     public void finalizeRecord(GenericRecord record)    {
 
+        record.hasImages = (record.images != null  && record.images.size() > 0);
+        record.hasDataPoints = (record.dataPoints != null && record.dataPoints.size() > 0);
 
         plantData.genericRecords.add(record);
 

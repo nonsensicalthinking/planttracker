@@ -483,8 +483,6 @@ public class PlantTrackerUi extends AppCompatActivity
         if (currentPlant.getThumbnail() != null)    {
             String thumbnail = currentPlant.getThumbnail();
             if (thumbnail != null)  {
-                //new AsPv().executeOnExecutor(AsPv.THREAD_POOL_EXECUTOR, null);
-
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
@@ -618,9 +616,10 @@ public class PlantTrackerUi extends AppCompatActivity
             } else {
                 // couldn't find the parent plant
                 parentPlantTextView.setText(R.string.record_not_found);
-                parentPlantTextView.setVisibility(View.VISIBLE);
-                parentPlantLabelTextView.setVisibility(View.VISIBLE);
             }
+
+            parentPlantTextView.setVisibility(View.VISIBLE);
+            parentPlantLabelTextView.setVisibility(View.VISIBLE);
         } else {
             parentPlantTextView.setText("");
             parentPlantTextView.setVisibility(View.INVISIBLE);
@@ -1439,6 +1438,8 @@ public class PlantTrackerUi extends AppCompatActivity
 
                     record.images = (ArrayList<String>)returnedIntent.
                             getSerializableExtra(AndroidConstants.INTENTKEY_SELECTED_FILES);
+
+                    record.template = tracker.getGenericRecordTemplate(record.displayName);
 
                     PlantAction action = new PlantAction(record);
                     if (applyToGroup && selectedGroup > 0) {
