@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -490,12 +491,18 @@ public class CollectPlantData extends AppCompatActivity {
                 break;
 
             case AndroidConstants.ACTIVITY_PLANT_CAM:
-                if (resultCode == -1)   {
+                if (resultCode == RESULT_OK)   {
                     File f = new File(photoURI.getPath());
                     String path = getExternalFilesDir(AndroidConstants.PATH_TRACKER_IMAGES) + "/" +
                             f.getName();
                     images.add(path);
                     dispatchTakePictureIntent();
+                }
+                else    {
+                    File f = new File(photoURI.getPath());
+                    if (!f.delete())    {
+                        Log.e("FILE I/O", "Unable to delete unused temp image file");
+                    }
                 }
                 break;
         }

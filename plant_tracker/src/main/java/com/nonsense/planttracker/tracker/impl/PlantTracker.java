@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -311,13 +312,15 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
                 sb.append(br.readLine());
             }
 
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy",
+                    Locale.getDefault());
+
             PlantData plantData = g.fromJson(sb.toString(), plantType);
 
             for(GenericRecord rec : plantData.genericRecords)   {
                 StringBuilder sBuilder = new StringBuilder();
                 // Build phase string
-                sBuilder.append(new SimpleDateFormat("EEE, dd MMM yyyy").
-                        format(rec.time.getTime()));
+                sBuilder.append(sdf.format(rec.time.getTime()));
                 sBuilder.append(" ");
 
                 int phaseCount = rec.phaseCount;
