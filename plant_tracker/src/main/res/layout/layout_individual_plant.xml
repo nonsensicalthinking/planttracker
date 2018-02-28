@@ -55,7 +55,7 @@
         android:id="@+id/textView45"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/textView47"
+        android:layout_alignStart="@+id/parentPlantLabelTextView"
         android:layout_below="@+id/parentPlantLabelTextView"
         android:layout_marginStart="5dp"
         android:paddingEnd="5dp"
