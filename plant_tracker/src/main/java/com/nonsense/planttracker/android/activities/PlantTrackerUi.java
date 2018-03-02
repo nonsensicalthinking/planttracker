@@ -10,14 +10,12 @@ package com.nonsense.planttracker.android.activities;
 // Moon phase icon by Haikinator https://www.iconfinder.com/Haikinator
 // https://www.iconfinder.com/icons/248569/cloud_clouds_cloudy_crescent_forecast_moon_night_phase_phases_waning_weather_icon
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -25,6 +23,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -43,7 +42,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -60,7 +58,7 @@ import com.nonsense.planttracker.android.adapters.PlantStateTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Group;
 import com.nonsense.planttracker.android.adapters.PlantRecordableTileArrayAdapter;
-import com.nonsense.planttracker.android.adapters.PlantTileArrayAdapter;
+import com.nonsense.planttracker.android.adapters.PlantTileRecyclerViewAdapter;
 import com.nonsense.planttracker.tracker.impl.Plant;
 import com.nonsense.planttracker.tracker.impl.actions.PlantAction;
 import com.nonsense.planttracker.tracker.impl.PlantTracker;
@@ -94,7 +92,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private ListDisplay currentListView = ListDisplay.Plants;
 
     // All plants view
-    private ListView plantListView;
+    private RecyclerView plantListView;
 
     // Individual plant view
     private TextView daysSinceGrowStartTextView;
@@ -118,6 +116,10 @@ public class PlantTrackerUi extends AppCompatActivity
     private PlantTracker tracker;
     private Plant currentPlant;
     private long groupIdViewFilter;
+
+    //TODO implement cache: https://developer.android.com/topic/performance/graphics/cache-bitmap.html
+    //private LruCache<String, Bitmap> imageCache;
+
 
     private enum PlantDisplay {
         All,
@@ -151,8 +153,12 @@ public class PlantTrackerUi extends AppCompatActivity
         individualPlantView = (LinearLayout) findViewById(R.id.individualPlantView);
 
         // all plants view
-        plantListView = (ListView) findViewById(R.id.plantListView);
-        plantListView.setEmptyView(findViewById(R.id.emptyPlantListView));
+        plantListView = (RecyclerView) findViewById(R.id.plantListView);
+        final LinearLayoutManager llm = new LinearLayoutManager(this);
+        plantListView.setLayoutManager(llm);
+
+        //FIXME
+        //plantListView.setEmptyView(findViewById(R.id.emptyPlantListView));
 
         bindIndividualPlantView();
 
@@ -305,50 +311,55 @@ public class PlantTrackerUi extends AppCompatActivity
                 break;
         }
 
-        PlantTileArrayAdapter adapter = new PlantTileArrayAdapter(getBaseContext(),
-                R.layout.tile_plant_list, currentDisplayArray);
+        PlantTileRecyclerViewAdapter adapter = new PlantTileRecyclerViewAdapter(
+                PlantTrackerUi.this, currentDisplayArray,
+                new PlantTileRecyclerViewAdapter.IClickAction<Plant>() {
+
+                    @Override
+                    public void clickAction(Plant p) {
+                        currentPlant = p;
+                        toolbar.setSubtitle("");
+                        fillIndividualPlantView();
+                        switcherToNext();
+                    }
+                },
+                new PlantTileRecyclerViewAdapter.ILongClickAction<Plant>() {
+                    @Override
+                    public void longClickAction(Plant p) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(
+                                PlantTrackerUi.this);
+                        builder.setTitle(R.string.app_name);
+                        builder.setMessage("Are you sure you want to delete this plant?");
+                        builder.setIcon(R.drawable.ic_growing_plant);
+                        builder.setPositiveButton("Yes",
+                                new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                tracker.removePlant(p);
+                                fillViewWithPlants();
+                                dialog.dismiss();
+                            }
+                        });
+
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
+                });
 
         plantListView.setAdapter(adapter);
-        plantListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
-                builder.setTitle(R.string.app_name);
-                builder.setMessage("Are you sure you want to delete this plant?");
-                builder.setIcon(R.drawable.ic_growing_plant);
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        tracker.removePlant(currentDisplayArray.get(position));
-                        fillViewWithPlants();
-                        dialog.dismiss();
-                    }
-                });
-
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-
-                AlertDialog alert = builder.create();
-                alert.show();
-
-                return true;
-            }
-        });
-        plantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                currentPlant = currentDisplayArray.get(position);
-                toolbar.setSubtitle("");
-                fillIndividualPlantView();
-                switcherToNext();
-            }
-        });
     }
 
     private void fillViewWithGroups() {
-        toolbar.setSubtitle("Group Management");
+        Toast.makeText(PlantTrackerUi.this, "Group management temporarily disabled.",
+                Toast.LENGTH_SHORT).show();
+
+//        TODO Uncomment this block when groups are redone.
+/*        toolbar.setSubtitle("Group Management");
 
         showFloatingActionButton();
 
@@ -367,44 +378,46 @@ public class PlantTrackerUi extends AppCompatActivity
                 R.layout.tile_group_list, groups);
 
         setEmptyViewCaption("No Groups Found");
+*/
 
-        plantListView.setAdapter(adapter);
-
-        plantListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
-                builder.setTitle(R.string.app_name);
-                builder.setMessage("Are you sure you want to delete this group?");
-                builder.setIcon(R.drawable.ic_bundle_of_hay);
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        tracker.removeGroup(groups.get(position).getGroupId());
-                        fillViewWithGroups();
-                        dialog.dismiss();
-                    }
-                });
-
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-
-                AlertDialog alert = builder.create();
-                alert.show();
-
-                return true;
-            }
-        });
-
-        plantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // TODO display group information view with all current group members and
-                // TODO a way to add more
-            }
-        });
+        //TODO Re-implement groups list view
+//        plantListView.setAdapter(adapter);
+//
+//        plantListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
+//                builder.setTitle(R.string.app_name);
+//                builder.setMessage("Are you sure you want to delete this group?");
+//                builder.setIcon(R.drawable.ic_bundle_of_hay);
+//                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        tracker.removeGroup(groups.get(position).getGroupId());
+//                        fillViewWithGroups();
+//                        dialog.dismiss();
+//                    }
+//                });
+//
+//                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        dialog.dismiss();
+//                    }
+//                });
+//
+//                AlertDialog alert = builder.create();
+//                alert.show();
+//
+//                return true;
+//            }
+//        });
+//
+//        plantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+//                // TODO display group information view with all current group members and
+//                // TODO a way to add more
+//            }
+//        });
     }
 
     private void fillViewWithPlantPhases() {
@@ -429,44 +442,45 @@ public class PlantTrackerUi extends AppCompatActivity
 
         setEmptyViewCaption("No Plant Phases Found");
 
-        plantListView.setAdapter(adapter);
-
-        plantListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
-                builder.setTitle(R.string.app_name);
-                builder.setMessage("Are you sure you want to delete this custom event?");
-                builder.setIcon(R.drawable.ic_growing_plant);
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        tracker.removePlantState(plantStates.get(position));
-
-                        fillViewWithPlantPhases();
-                        dialog.dismiss();
-                    }
-                });
-
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-
-                AlertDialog alert = builder.create();
-                alert.show();
-
-                return true;
-            }
-        });
-
-        plantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // TODO display custom event information view and
-                // TODO a way to add more
-            }
-        });
+        // FIXME
+//        plantListView.setAdapter(adapter);
+//
+//        plantListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
+//                builder.setTitle(R.string.app_name);
+//                builder.setMessage("Are you sure you want to delete this custom event?");
+//                builder.setIcon(R.drawable.ic_growing_plant);
+//                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        tracker.removePlantState(plantStates.get(position));
+//
+//                        fillViewWithPlantPhases();
+//                        dialog.dismiss();
+//                    }
+//                });
+//
+//                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        dialog.dismiss();
+//                    }
+//                });
+//
+//                AlertDialog alert = builder.create();
+//                alert.show();
+//
+//                return true;
+//            }
+//        });
+//
+//        plantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+//                // TODO display custom event information view and
+//                // TODO a way to add more
+//            }
+//        });
     }
 
     public void fillIndividualPlantView() {
@@ -486,8 +500,8 @@ public class PlantTrackerUi extends AppCompatActivity
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        Bitmap bitmap = decodeSampledBitmapFromResource(new File(currentPlant.getThumbnail()),
-                                600,400);
+                        Bitmap bitmap = decodeSampledBitmapFromResource(
+                                new File(currentPlant.getThumbnail()), 600,400);
 
                         Runnable updateUi = new Runnable() {
                             @Override

@@ -37,7 +37,8 @@ import java.util.TreeMap;
  * Created by Derek Brooks on 7/1/2017.
  */
 
-public class PlantRecordableTileArrayAdapter extends RecyclerView.Adapter<PlantRecordableTileArrayAdapter.RecordViewHolder> {
+public class PlantRecordableTileArrayAdapter extends
+        RecyclerView.Adapter<PlantRecordableTileArrayAdapter.RecordViewHolder> {
 
     class RecordViewHolder extends RecyclerView.ViewHolder    {
         RelativeLayout layout;
