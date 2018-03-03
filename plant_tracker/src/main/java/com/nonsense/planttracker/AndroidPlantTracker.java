@@ -14,7 +14,7 @@ import org.acra.annotation.*;
 @AcraMailSender(mailTo = "watch.my.grow@gmail.com")
 @AcraDialog(resText = R.string.dialog_text,
         resCommentPrompt = R.string.dialog_comment)
-public class PlantTracker extends Application {
+public class AndroidPlantTracker extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);

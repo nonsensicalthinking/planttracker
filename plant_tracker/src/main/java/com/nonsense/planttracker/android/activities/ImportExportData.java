@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
+import com.nonsense.planttracker.android.AndroidUtility;
 import com.nonsense.planttracker.android.Zipper;
 import com.nonsense.planttracker.android.adapters.PlantExportTileAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
@@ -134,7 +135,7 @@ public class ImportExportData extends AppCompatActivity {
             case AndroidConstants.ACTIVITY_IMPORT_CHOOSER:
                 if (resultCode == RESULT_OK)    {
                     try {
-                        Dialog progressIndicator = com.nonsense.planttracker.android.Utility.displayOperationInProgressDialog(ImportExportData.this, "Loading package preview...");
+                        Dialog progressIndicator = AndroidUtility.displayOperationInProgressDialog(ImportExportData.this, "Loading package preview...");
 
                         Runnable updateUi = new Runnable() {
                             @Override
@@ -226,7 +227,7 @@ public class ImportExportData extends AppCompatActivity {
     }
 
     public void performBackup()    {
-        Dialog d = com.nonsense.planttracker.android.Utility.
+        Dialog d = AndroidUtility.
                 displayOperationInProgressDialog(ImportExportData.this, "Export");
 
         ArrayList<String> files = new ArrayList<>();
@@ -464,7 +465,7 @@ public class ImportExportData extends AppCompatActivity {
     Dialog progressIndicator;
 
     private void endImportActivity()    {
-        progressIndicator = com.nonsense.planttracker.android.Utility.
+        progressIndicator = AndroidUtility.
                 displayOperationInProgressDialog(ImportExportData.this,
                         "Importing selected plants...");
 

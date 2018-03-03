@@ -573,6 +573,19 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         return activeGroupMembers;
     }
 
+    public TreeMap<String, Long> getAvailableGroupsForPlant(Plant p)   {
+        TreeMap<String, Long> availableGroups = new TreeMap<>();
+
+        for (Long key : p.getGroups()) {
+            Group g = getGroup(key);
+            if (g != null)  {
+                availableGroups.put(g.getGroupName(), g.getGroupId());
+            }
+        }
+
+        return availableGroups;
+    }
+
     public void renameGroup(long groupId, String name) {
         Group g = getGroup(groupId);
         g.setGroupName(name);

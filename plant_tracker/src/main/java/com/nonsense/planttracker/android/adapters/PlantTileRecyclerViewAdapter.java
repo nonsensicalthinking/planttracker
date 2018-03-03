@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +13,11 @@ import android.widget.TextView;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.activities.PlantTrackerUi;
+import com.nonsense.planttracker.android.interf.IAction;
+import com.nonsense.planttracker.android.interf.IImageCache;
 import com.nonsense.planttracker.tracker.impl.Plant;
 
-import java.io.File;
 import java.util.List;
-
-import static com.nonsense.planttracker.android.Utility.decodeSampledBitmapFromResource;
 
 /**
  * Created by Derek Brooks on 7/1/2017.
@@ -28,12 +26,12 @@ import static com.nonsense.planttracker.android.Utility.decodeSampledBitmapFromR
 public class PlantTileRecyclerViewAdapter extends
         RecyclerView.Adapter<PlantTileRecyclerViewAdapter.ViewHolder> {
 
-    private final ILongClickAction<Plant> longClickAction;
-    private final IClickAction<Plant> clickAction;
+    private final IAction<Plant> longClickAction;
+    private final IAction<Plant> clickAction;
 
     private Context context;
     private List<Plant> list;
-    private PlantTrackerUi.IImageCache imageCache;
+    private IImageCache imageCache;
 
     class ViewHolder extends RecyclerView.ViewHolder{
         public ImageView plantPreview;
@@ -51,20 +49,9 @@ public class PlantTileRecyclerViewAdapter extends
         }
     }
 
-    public interface IClickAction<T>   {
-        public void clickAction(T o);
-    }
-
-    public interface ILongClickAction<T> {
-        public void longClickAction(T o);
-    }
-
-
-
     public PlantTileRecyclerViewAdapter(Context context, List<Plant> items,
-                                        IClickAction<Plant> clickAction,
-                                        ILongClickAction<Plant> longClickAction,
-                                        PlantTrackerUi.IImageCache imageCache) {
+                                        IAction<Plant> clickAction, IAction<Plant> longClickAction,
+                                        IImageCache imageCache) {
         this.context = context;
         this.list = items;
         this.clickAction = clickAction;
@@ -93,7 +80,6 @@ public class PlantTileRecyclerViewAdapter extends
                 public void run() {
                     if (p.getThumbnail() != null && p.getThumbnail() != "") {
                         Bitmap bitmap = imageCache.getImage(p.getThumbnail());
-                        //decodeSampledBitmapFromResource(new File(p.getThumbnail()), 400, 300);
 
                         Runnable updateUi = new Runnable() {
                             @Override
@@ -115,14 +101,14 @@ public class PlantTileRecyclerViewAdapter extends
             viewHolder.plantPreview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    clickAction.clickAction(p);
+                    clickAction.exec(p);
                 }
             });
 
             viewHolder.plantPreview.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    longClickAction.longClickAction(p);
+                    longClickAction.exec(p);
                     return true;
                 }
             });

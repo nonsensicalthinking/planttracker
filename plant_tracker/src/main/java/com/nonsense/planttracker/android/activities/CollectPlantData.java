@@ -37,7 +37,7 @@ import android.widget.Toast;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
-import com.nonsense.planttracker.android.Utility;
+import com.nonsense.planttracker.android.AndroidUtility;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 
 import java.io.File;
@@ -516,7 +516,7 @@ public class CollectPlantData extends AppCompatActivity {
                             "/" + f.getName() + ".jpg";
 
             InputStream is = getContentResolver().openInputStream(selected);
-            Utility.copyUriToLocation(is, filePath);
+            AndroidUtility.copyUriToLocation(is, filePath);
             images.add(filePath);
         }
         catch (Exception e) {
