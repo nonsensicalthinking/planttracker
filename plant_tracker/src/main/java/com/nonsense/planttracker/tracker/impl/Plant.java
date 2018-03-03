@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -23,6 +24,7 @@ public class Plant implements Serializable  {
 
     // TODO store grouping auto-complete as part of settings
 
+    private transient int currentPhaseCount;
     private transient ArrayList<IPlantUpdateListener> updateListeners;
 
     public Plant()  {
@@ -234,6 +236,8 @@ public class Plant implements Serializable  {
 
             // TODO update other plant summary fields
         }
+
+        currentPhaseCount = phaseCount;
     }
 
     private void notifyUpdateListeners()    {
@@ -323,5 +327,71 @@ public class Plant implements Serializable  {
         }
 
         return files;
+    }
+
+    public void buildRecordStampForRecord(GenericRecord rec)  {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy",
+                Locale.getDefault());
+        StringBuilder sBuilder = new StringBuilder();
+
+        // Build phase string
+        sBuilder.append(sdf.format(rec.time.getTime()));
+        sBuilder.append(" ");
+
+        int phaseCount = rec.phaseCount;
+        int stateWeekCount = rec.weeksSincePhase;
+        int growWeekCount = rec.weeksSinceStart;
+
+        if (rec.phaseCount > 0)   {
+            sBuilder.append("[P");
+            sBuilder.append(phaseCount);
+            sBuilder.append("Wk");
+            sBuilder.append(stateWeekCount);
+            sBuilder.append("/");
+            sBuilder.append(growWeekCount);
+            sBuilder.append("]");
+        }
+        else    {
+            sBuilder.append("[Wk ");
+            sBuilder.append(growWeekCount);
+            sBuilder.append("]");
+        }
+
+        rec.phaseDisplay = sBuilder.toString();
+    }
+
+    public void generateRecordStampData(GenericRecord rec) {
+        boolean lookAtNextPhaseChange = true;
+        boolean foundNextPhaseChange = false;
+        Calendar phaseTime;
+        int phaseCount = 0;
+
+        for(int x=plantData.genericRecords.size()-1; x >= 0; x--) {
+            GenericRecord r = plantData.genericRecords.get(x);
+
+            // find the next earliest phase
+            if (lookAtNextPhaseChange)  {
+                if (r.time.compareTo(rec.time) == -1 && r.getDataPoint("Phase Name") != null) {
+                    rec.weeksSincePhase = Utility.calcWeeksFromTime(r.time, rec.time);
+                    lookAtNextPhaseChange = false;
+                    foundNextPhaseChange = true;
+                }
+            }
+
+            // count phases to the beginning to see what the phase we were looking for is numbered
+            if (foundNextPhaseChange)   {
+                if (r.getDataPoint("Phase Name") != null) {
+                    phaseCount++;
+                }
+            }
+        }
+
+        rec.phaseCount = phaseCount;
+        rec.weeksSinceStart = Utility.calcWeeksFromTime(plantData.startDate, rec.time);
+    }
+
+
+    public int getCurrentPhaseCount()   {
+        return currentPhaseCount;
     }
 }

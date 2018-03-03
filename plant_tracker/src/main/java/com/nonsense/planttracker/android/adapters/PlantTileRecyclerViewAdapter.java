@@ -17,7 +17,9 @@ import com.nonsense.planttracker.android.interf.IAction;
 import com.nonsense.planttracker.android.interf.IImageCache;
 import com.nonsense.planttracker.tracker.impl.Plant;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Derek Brooks on 7/1/2017.
@@ -32,6 +34,8 @@ public class PlantTileRecyclerViewAdapter extends
     private Context context;
     private List<Plant> list;
     private IImageCache imageCache;
+
+    private Calendar loadTime;
 
     class ViewHolder extends RecyclerView.ViewHolder{
         public ImageView plantPreview;
@@ -57,6 +61,7 @@ public class PlantTileRecyclerViewAdapter extends
         this.clickAction = clickAction;
         this.longClickAction = longClickAction;
         this.imageCache = imageCache;
+        this.loadTime = Calendar.getInstance(Locale.getDefault());
     }
 
     @Override
@@ -121,7 +126,7 @@ public class PlantTileRecyclerViewAdapter extends
                 String flowerWeek = "";
 
                 viewHolder.plantSummaryTextView.setText("Started " + p.getDaysFromStart() +
-                        " days ago, Grow Wk. " + p.getWeeksFromStart());
+                        " days ago, Grow Wk. " + p.getWeeksFromStart(loadTime));
             }
 
             if (p.isArchived()) {

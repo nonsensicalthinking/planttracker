@@ -47,7 +47,11 @@ public class GenericRecord implements Serializable, Cloneable {
     }
 
     public Object getDataPoint(String key)    {
-        return dataPoints.get(key);
+        if (dataPoints.containsKey(key))    {
+            return dataPoints.get(key);
+        }
+
+        return null;
     }
 
     public String getSummary(String summaryTemplate)  {

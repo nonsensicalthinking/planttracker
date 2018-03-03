@@ -16,6 +16,8 @@ public class PlantAction {
     }
 
     public void runAction(Plant p) {
+        p.generateRecordStampData(record);
+        p.buildRecordStampForRecord(record);
         p.finalizeRecord(record);
     }
 }
