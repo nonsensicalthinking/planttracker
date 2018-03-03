@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingBottom="5dp"
-    android:paddingLeft="15dp"
-    android:paddingRight="15dp"
-    android:paddingTop="5dp"
-    android:weightSum="1">
+    android:layout_height="match_parent"
+    android:layout_margin="5dp" >
 
     <TabHost
         android:id="@+id/tabHost"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/applyToGroupLayout"
+        >
 
         <LinearLayout
-            android:layout_width="match_parent"
+             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
@@ -28,7 +27,7 @@
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:id="@+id/tab1"
@@ -98,7 +97,10 @@
                     android:visibility="gone" />
 
             </FrameLayout>
+
+
         </LinearLayout>
+
     </TabHost>
 
     <LinearLayout
@@ -106,7 +108,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:visibility="visible">
+        android:visibility="visible"
+        android:layout_above="@id/buttonLayout"
+        >
 
         <CheckBox
             android:id="@+id/applyToGroupCheckbox"
@@ -114,7 +118,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:paddingBottom="10dp"
-            android:paddingRight="10dp"
+            android:paddingEnd="10dp"
             android:text="Apply to group"
             android:textSize="18sp" />
 
@@ -123,15 +127,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="bottom"
-            android:layout_weight="1"
             android:padding="10dp"
             android:visibility="visible" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/buttonLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
+        android:gravity="end"
+        android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
         <Button
@@ -147,5 +152,4 @@
             android:text="OK"
             android:textAlignment="center" />
     </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

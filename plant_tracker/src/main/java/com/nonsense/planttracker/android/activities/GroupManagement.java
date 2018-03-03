@@ -84,7 +84,7 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
                 R.layout.tile_group_list, groups);
 
         setEmptyViewCaption("No Groups Found");
-        
+
         groupListView.setAdapter(adapter);
 
         groupListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
