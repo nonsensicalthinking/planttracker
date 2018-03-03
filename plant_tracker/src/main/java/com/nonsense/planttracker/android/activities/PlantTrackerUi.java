@@ -53,7 +53,6 @@ import android.widget.ViewSwitcher;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
-import com.nonsense.planttracker.android.adapters.GroupTileArrayAdapter;
 import com.nonsense.planttracker.android.adapters.PlantStateTileArrayAdapter;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Group;
@@ -71,7 +70,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
 
@@ -117,6 +115,7 @@ public class PlantTrackerUi extends AppCompatActivity
     private PlantTracker tracker;
     private Plant currentPlant;
     private long groupIdViewFilter;
+    private ArrayList<String> mUriPaths = new ArrayList<>();
 
     // cache: https://developer.android.com/topic/performance/graphics/cache-bitmap.html
     private LruCache<String, Bitmap> imageCache;
@@ -165,9 +164,8 @@ public class PlantTrackerUi extends AppCompatActivity
         bindIndividualPlantView();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close) {
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
 
             public void onDrawerOpened(View drawerView) {
                 drawerView.bringToFront();
@@ -189,9 +187,6 @@ public class PlantTrackerUi extends AppCompatActivity
             tracker = (PlantTracker)savedInstanceState.getSerializable("tracker");
             boolean individualPlantView = savedInstanceState.getBoolean("individualPlantView",
                     false);
-
-            imageCache = (LruCache<String, Bitmap>)savedInstanceState.getSerializable(
-                    "imageCache");
 
             if (individualPlantView)    {
                 bindIndividualPlantView();
@@ -364,69 +359,10 @@ public class PlantTrackerUi extends AppCompatActivity
     }
 
     private void fillViewWithGroups() {
-        Toast.makeText(PlantTrackerUi.this, "Group management temporarily disabled.",
-                Toast.LENGTH_SHORT).show();
+        Intent groupsIntent = new Intent(this, GroupManagement.class);
+        groupsIntent.putExtra(AndroidConstants.INTENTKEY_PLANT_TRACKER, tracker);
 
-//        TODO Uncomment this block when groups are redone.
-/*        toolbar.setSubtitle("Group Management");
-
-        showFloatingActionButton();
-
-        currentListView = ListDisplay.Groups;
-
-        setFloatingButtonTextAndAction(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presentAddGroupDialog();
-            }
-        });
-
-        final ArrayList<Group> groups = tracker.getAllGroups();
-
-        GroupTileArrayAdapter adapter = new GroupTileArrayAdapter(getBaseContext(),
-                R.layout.tile_group_list, groups);
-
-        setEmptyViewCaption("No Groups Found");
-*/
-
-        //TODO Re-implement groups list view
-//        plantListView.setAdapter(adapter);
-//
-//        plantListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(PlantTrackerUi.this);
-//                builder.setTitle(R.string.app_name);
-//                builder.setMessage("Are you sure you want to delete this group?");
-//                builder.setIcon(R.drawable.ic_bundle_of_hay);
-//                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        tracker.removeGroup(groups.get(position).getGroupId());
-//                        fillViewWithGroups();
-//                        dialog.dismiss();
-//                    }
-//                });
-//
-//                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        dialog.dismiss();
-//                    }
-//                });
-//
-//                AlertDialog alert = builder.create();
-//                alert.show();
-//
-//                return true;
-//            }
-//        });
-//
-//        plantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//                // TODO display group information view with all current group members and
-//                // TODO a way to add more
-//            }
-//        });
+        startActivityForResult(groupsIntent, AndroidConstants.ACTIVITY_MANAGE_GROUPS);
     }
 
     private void fillViewWithPlantPhases() {
@@ -801,6 +737,76 @@ public class PlantTrackerUi extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void presentAddGroupDialog() {
+        final Dialog dialog = new Dialog(PlantTrackerUi.this);
+        dialog.setContentView(R.layout.dialog_add_group);
+
+        final EditText groupNameEditText = (EditText) dialog.findViewById(R.id.groupNameEditText);
+        Button okButton = (Button) dialog.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (groupNameEditText.getText().toString().isEmpty()) {
+                    return;
+                }
+
+                tracker.addGroup(groupNameEditText.getText().toString());
+                tracker.savePlant(currentPlant);
+                refreshDrawerGroups();
+                dialog.dismiss();
+            }
+        });
+
+        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void presentRenameGroupDialog(long groupId) {
+        final Dialog dialog = new Dialog(PlantTrackerUi.this);
+        dialog.setContentView(R.layout.dialog_rename_group);
+
+        final EditText groupNameEditText = (EditText) dialog.findViewById(R.id.groupNameEditText);
+        final TextView groupNameTextView = (TextView) dialog.findViewById(R.id.groupNameTextView);
+        groupNameTextView.setText(tracker.getGroup(groupId).getGroupName());
+
+        final long localGroupId = groupId;
+
+        Button okButton = (Button) dialog.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (groupNameEditText.getText().toString().isEmpty()) {
+                    return;
+                }
+
+                tracker.renameGroup(localGroupId, groupNameEditText.getText().toString());
+                refreshDrawerGroups();
+                dialog.dismiss();
+            }
+        });
+
+        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        try {
+            dialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // Drawer nav
@@ -1372,78 +1378,6 @@ public class PlantTrackerUi extends AppCompatActivity
         dialog.show();
     }
 
-    private void presentAddGroupDialog() {
-        final Dialog dialog = new Dialog(PlantTrackerUi.this);
-        dialog.setContentView(R.layout.dialog_add_group);
-
-        final EditText groupNameEditText = (EditText) dialog.findViewById(R.id.groupNameEditText);
-        Button okButton = (Button) dialog.findViewById(R.id.okButton);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (groupNameEditText.getText().toString().isEmpty()) {
-                    return;
-                }
-
-                tracker.addGroup(groupNameEditText.getText().toString());
-                tracker.savePlant(currentPlant);
-                refreshDrawerGroups();
-                dialog.dismiss();
-            }
-        });
-
-        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-    }
-
-    private void presentRenameGroupDialog(long groupId) {
-        final Dialog dialog = new Dialog(PlantTrackerUi.this);
-        dialog.setContentView(R.layout.dialog_rename_group);
-
-        final EditText groupNameEditText = (EditText) dialog.findViewById(R.id.groupNameEditText);
-        final TextView groupNameTextView = (TextView) dialog.findViewById(R.id.groupNameTextView);
-        groupNameTextView.setText(tracker.getGroup(groupId).getGroupName());
-
-        final long localGroupId = groupId;
-
-        Button okButton = (Button) dialog.findViewById(R.id.okButton);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (groupNameEditText.getText().toString().isEmpty()) {
-                    return;
-                }
-
-                tracker.renameGroup(localGroupId, groupNameEditText.getText().toString());
-                refreshDrawerGroups();
-                dialog.dismiss();
-            }
-        });
-
-        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        try {
-            dialog.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private ArrayList<String> mUriPaths = new ArrayList<>();
-
     @SuppressWarnings("unchecked")
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
@@ -1488,6 +1422,16 @@ public class PlantTrackerUi extends AppCompatActivity
 
             case AndroidConstants.ACTIVITY_MANAGE_RECORD_TEMPLATES:
                 if (resultCode == Activity.RESULT_OK)   {
+                    PlantTracker passedTracker = (PlantTracker) returnedIntent.getSerializableExtra(
+                            AndroidConstants.INTENTKEY_PLANT_TRACKER);
+                    tracker.setPlantTrackerSettings(passedTracker.getPlantTrackerSettings());
+
+                    refreshListView();
+                }
+                break;
+
+            case AndroidConstants.ACTIVITY_MANAGE_GROUPS:
+                if (resultCode == RESULT_OK)    {
                     PlantTracker passedTracker = (PlantTracker) returnedIntent.getSerializableExtra(
                             AndroidConstants.INTENTKEY_PLANT_TRACKER);
                     tracker.setPlantTrackerSettings(passedTracker.getPlantTrackerSettings());

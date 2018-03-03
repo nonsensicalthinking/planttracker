@@ -15,6 +15,7 @@ public class AndroidConstants {
     public static final int ACTIVITY_IMPORT_SELECT = 8;
     public static final int ACTIVITY_EXPORT_SELECT = 9;
     public static final int ACTIVITY_IMPORT_CHOOSER = 10;
+    public static final int ACTIVITY_MANAGE_GROUPS = 11;
 
 
     public static final String INTENTKEY_GENERIC_RECORD = "genericRecord";
