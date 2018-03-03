@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Locale;
-import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * Created by Derek Brooks on 6/30/2017.
@@ -22,9 +20,6 @@ public class Plant implements Serializable  {
 
     private PlantData plantData;
 
-    // TODO store grouping auto-complete as part of settings
-
-    private transient int currentPhaseCount;
     private transient ArrayList<IPlantUpdateListener> updateListeners;
 
     public Plant()  {
@@ -87,26 +82,9 @@ public class Plant implements Serializable  {
         return sortEvents(rec);
     }
 
-    public GenericRecord getWaterPlantRecord()   {
-        GenericRecord record = new GenericRecord("Water");
-        record.setDataPoint("pH", new Double(6.5));
-        record.summaryTemplate = "pH of water {pH}";
-
-        return record;
-    }
-
-    public GenericRecord getFeedPlantRecord()   {
-        GenericRecord record = new GenericRecord("Feeding");
-        record.setDataPoint("pH", new Double(6.5));
-        record.setDataPoint("Food Strength", new Double(0.5));
-        record.summaryTemplate = "pH of food {pH} with strength of {Food Strength}";
-
-        return record;
-    }
-
     public GenericRecord getPhaseChangeRecord() {
         GenericRecord record = new GenericRecord("Changing Phase");
-        record.setDataPoint("Phase Name", new String());
+        record.setDataPoint("Phase Name", "");
         record.summaryTemplate = "Plant entered a new phase, {Phase Name}";
 
         return record;
@@ -140,30 +118,6 @@ public class Plant implements Serializable  {
 
     public long getWeeksFromStart(Calendar c)   {
         return Utility.calcWeeksFromTime(plantData.startDate, c);
-    }
-
-    public long getDaysFromStateStart() {
-        return getDaysFromStateStart(plantData.currentStateStartDate);
-    }
-
-    public long getDaysFromStateStart(Calendar c)   {
-        if (c != null)  {
-            return Utility.calcDaysFromTime(plantData.currentStateStartDate, c);
-        }
-
-        return -1;
-    }
-
-    public long getWeeksFromStateStart()    {
-        return getWeeksFromStateStart(plantData.currentStateStartDate);
-    }
-
-    public long getWeeksFromStateStart(Calendar c)    {
-        if (c != null)  {
-            return Utility.calcWeeksFromTime(plantData.currentStateStartDate, c);
-        }
-
-        return -1;
     }
 
     public Calendar getPlantStartDate() {
@@ -236,8 +190,6 @@ public class Plant implements Serializable  {
 
             // TODO update other plant summary fields
         }
-
-        currentPhaseCount = phaseCount;
     }
 
     private void notifyUpdateListeners()    {
@@ -363,7 +315,6 @@ public class Plant implements Serializable  {
     public void generateRecordStampData(GenericRecord rec) {
         boolean lookAtNextPhaseChange = true;
         boolean foundNextPhaseChange = false;
-        Calendar phaseTime;
         int phaseCount = 0;
 
         for(int x=plantData.genericRecords.size()-1; x >= 0; x--) {
@@ -388,10 +339,5 @@ public class Plant implements Serializable  {
 
         rec.phaseCount = phaseCount;
         rec.weeksSinceStart = Utility.calcWeeksFromTime(plantData.startDate, rec.time);
-    }
-
-
-    public int getCurrentPhaseCount()   {
-        return currentPhaseCount;
     }
 }

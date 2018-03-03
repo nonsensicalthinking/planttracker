@@ -9,6 +9,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -56,12 +59,48 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
         fillGroups();
     }
 
-    private void bindView() {
-        //TODO add button
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo)   {
+        super.onCreateContextMenu(menu, v, menuInfo);
 
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_group_context, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info =
+                (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        long selectedGroup = plantTracker.getAllGroups().get(info.position).getGroupId();
+
+        switch (item.getItemId()) {
+            case R.id.rename:
+                presentRenameGroupDialog(GroupManagement.this, plantTracker, selectedGroup,
+                        new ICallback() {
+                            @Override
+                            public void callback() {
+
+                            }
+                        });
+                return true;
+
+            case R.id.delete:
+                presentDeleteGroupDialog(selectedGroup);
+                return true;
+
+
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    private void bindView() {
         groupListView = findViewById(R.id.groupListView);
+
         Toolbar gmToolbar = findViewById(R.id.gmToolbar);
-        gmToolbar.setTitle("Manage Groups");
+        gmToolbar.setTitle(R.string.manage_groups);
     }
 
     private void fillGroups()   {
@@ -83,37 +122,11 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
         GroupTileArrayAdapter adapter = new GroupTileArrayAdapter(GroupManagement.this,
                 R.layout.tile_group_list, groups);
 
-        setEmptyViewCaption("No Groups Found");
+        setEmptyViewCaption();
+
+        registerForContextMenu(groupListView);
 
         groupListView.setAdapter(adapter);
-
-        groupListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position,
-                                           long id) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(GroupManagement.this);
-                builder.setTitle(R.string.app_name);
-                builder.setMessage("Are you sure you want to delete this group?");
-                builder.setIcon(R.drawable.ic_bundle_of_hay);
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        plantTracker.removeGroup(groups.get(position).getGroupId());
-                        dialog.dismiss();
-                    }
-                });
-
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-
-                AlertDialog alert = builder.create();
-                alert.show();
-
-                return true;
-            }
-        });
 
         groupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -195,8 +208,29 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
         }
     }
 
+    void presentDeleteGroupDialog(long groupId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(GroupManagement.this);
+        builder.setTitle(R.string.app_name);
+        builder.setMessage("Are you sure you want to delete this group?");
+        builder.setIcon(R.drawable.ic_bundle_of_hay);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                plantTracker.removeGroup(groupId);
+                dialog.dismiss();
+            }
+        });
 
-    private void setEmptyViewCaption(String caption) {
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();alert.show();
+
+    }
+
+    private void setEmptyViewCaption() {
 //        View emptyPlantListView = findViewById(R.id.emptyPlantListView);
 //        TextView itemNotFoundCaptionText = (TextView) emptyPlantListView.findViewById(
 //                R.id.itemNotFoundCaptionText);
@@ -206,11 +240,6 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
 //        }
 //
 //        emptyPlantListView.invalidate();
-    }
-
-    private void setFloatingButtonTextAndAction(View.OnClickListener listener) {
-        FloatingActionButton floatingButton = findViewById(R.id.floatingActionButton);
-        floatingButton.setOnClickListener(listener);
     }
 
     @Override

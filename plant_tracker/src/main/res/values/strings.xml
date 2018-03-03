@@ -87,5 +87,8 @@
         free =)
     </string>
     <string name="dialog_comment">Comments (optional) are included within the stacktrace</string>
+    <string name="manage_groups">Manage Groups</string>
+    <string name="rename_group">Rename Group</string>
+    <string name="delete_group">Delete Group</string>
 
 </resources>

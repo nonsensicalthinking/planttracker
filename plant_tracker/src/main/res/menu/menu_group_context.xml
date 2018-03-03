@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/rename"
+        android:icon="@drawable/ic_import"
+        android:title="@string/rename_group"
+        />
+    <item android:id="@+id/delete"
+        android:icon="@drawable/ic_export"
+        android:title="@string/delete_group" />
+</menu>
