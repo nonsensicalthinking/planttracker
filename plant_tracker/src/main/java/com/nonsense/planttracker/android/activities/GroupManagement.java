@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -59,23 +60,11 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
         //TODO add button
 
         groupListView = findViewById(R.id.groupListView);
+        Toolbar gmToolbar = findViewById(R.id.gmToolbar);
+        gmToolbar.setTitle("Manage Groups");
     }
 
     private void fillGroups()   {
-//        Toast.makeText(PlantTrackerUi.this, "Group management temporarily disabled.",
-//                Toast.LENGTH_SHORT).show();
-
-//        TODO Uncomment this block when groups are redone.
-/*        toolbar.setSubtitle("Group Management");
-
-        showFloatingActionButton();
-
-        currentListView = ListDisplay.Groups;
-
-
-
-*/
-
         FloatingActionButton floatingButton = findViewById(R.id.floatingActionButton);
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,15 +78,13 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
             }
         });
 
-
         final ArrayList<Group> groups = plantTracker.getAllGroups();
 
         GroupTileArrayAdapter adapter = new GroupTileArrayAdapter(GroupManagement.this,
                 R.layout.tile_group_list, groups);
 
         setEmptyViewCaption("No Groups Found");
-
-        //TODO Re-implement groups list view
+        
         groupListView.setAdapter(adapter);
 
         groupListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
