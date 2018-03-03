@@ -22,11 +22,11 @@
                 android:id="@+id/textView24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/textView19"
-                android:layout_alignParentTop="true"
-                android:layout_alignStart="@+id/textView19"
-                android:layout_marginTop="16dp"
+                android:layout_below="@+id/textView22"
+                android:layout_centerHorizontal="true"
+                android:autoLink="web"
                 android:text="https://github.com/nonsensicalthinking/planttracker"
+                android:textColorLink="@color/blue"
                 android:textSize="12sp" />
 
             <TextView
@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/textView24"
+
                 android:layout_marginLeft="26dp"
                 android:layout_marginStart="26dp"
                 android:layout_marginTop="12dp"
@@ -76,7 +76,6 @@
                 android:layout_alignStart="@+id/textView23"
                 android:layout_below="@+id/textView23"
                 android:layout_marginStart="17dp"
-                android:layout_marginTop="12dp"
                 app:srcCompat="@drawable/ic_growing_plant" />
 
             <TextView
@@ -85,9 +84,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="23dp"
-                android:layout_marginTop="14dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="33dp"
+                android:autoLink="web"
                 android:text="Icons made by Freepik from www.flaticon.com"
+                android:textColorLink="@color/blue"
                 android:textSize="12sp" />
 
             <ImageView
@@ -105,8 +106,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignStart="@+id/textView23"
                 android:layout_below="@+id/imageView2"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="13dp"
+                android:autoLink="web"
                 android:text="https://icons8.com/icon/5291/hay"
+                android:textColorLink="@color/blue"
                 android:textSize="12sp" />
 
             <ImageView
@@ -117,6 +120,15 @@
                 android:layout_below="@+id/textView13"
                 android:layout_marginTop="14dp"
                 app:srcCompat="@drawable/ic_bundle_of_hay" />
+
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignStart="@+id/textView23"
+                android:layout_marginTop="11dp"
+                android:text="Art Credits" />
 
         </RelativeLayout>
 

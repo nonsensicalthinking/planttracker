@@ -48,7 +48,7 @@
     <string name="camera_error">There was an error with the camera.</string>
     <string name="intro_message">Intro message here?.</string>
 
-    <string name="grow_week">Grow Wk.</string>
+    <string name="grow_week">Grow Wk</string>
     <string name="grow_day">Day</string>
     <string name="grow_phase">Phase</string>
     <string name="phase_week">Phase Wk</string>
