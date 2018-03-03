@@ -31,7 +31,7 @@
         android:paddingEnd="5dp"
         android:shadowColor="@color/black"
         android:shadowRadius="@integer/text_shading_pad"
-        android:text="Parent Plant"
+        android:text="@string/parent_plant"
         android:textAlignment="textStart"
         android:textColor="@color/yellow"
         android:textSize="18sp" />
@@ -46,7 +46,7 @@
         android:layout_toEndOf="@id/parentPlantLabelTextView"
         android:shadowColor="@color/black"
         android:shadowRadius="@integer/text_shading_pad"
-        android:text="White Dwarf (#3) G2"
+        android:text="@string/placeholder_parent_name"
         android:textColor="@color/testcolor"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -60,7 +60,7 @@
         android:paddingEnd="5dp"
         android:shadowColor="@color/black"
         android:shadowRadius="@integer/text_shading_pad"
-        android:text="Plant Source"
+        android:text="@string/plant_source"
         android:textAlignment="textStart"
         android:textColor="@color/yellow"
         android:textSize="18sp" />
@@ -74,7 +74,7 @@
         android:layout_toEndOf="@id/textView45"
         android:shadowColor="@color/black"
         android:shadowRadius="@integer/text_shading_pad"
-        android:text="Clone"
+        android:text="@string/plant_origin_clone"
         android:textColor="@color/yellow"
         android:textSize="18sp" />
 
@@ -101,7 +101,7 @@
         android:paddingEnd="10dp"
         android:shadowColor="@color/black"
         android:shadowRadius="@integer/text_shading_pad"
-        android:text="6"
+        android:text="@string/placeholder_days_since_start"
         android:textColor="@color/yellow"
         android:textSize="18sp" />
 
@@ -127,7 +127,7 @@
         android:layout_toEndOf="@id/textView36"
         android:shadowColor="@color/black"
         android:shadowRadius="@integer/text_shading_pad"
-        android:text="41"
+        android:text="@string/placeholder_days_since_start"
         android:textColor="@color/yellow"
         android:textSize="18sp" />
 
@@ -153,7 +153,7 @@
         android:layout_toEndOf="@id/textView38"
         android:shadowColor="@color/black"
         android:shadowRadius="@integer/text_shading_pad"
-        android:text="Flowering"
+        android:text="@string/placeholder_state_name"
         android:textColor="@color/testcolor"
         android:textIsSelectable="false"
         android:textSize="18sp"
@@ -184,7 +184,7 @@
         android:paddingRight="10dp"
         android:shadowColor="@color/black"
         android:shadowRadius="@integer/text_shading_pad"
-        android:text="2"
+        android:text="@string/placeholder_days_since_start"
         android:textColor="@color/yellow"
         android:textSize="18sp" />
 
@@ -210,7 +210,7 @@
         android:layout_toEndOf="@id/textView42"
         android:shadowColor="@color/black"
         android:shadowRadius="@integer/text_shading_pad"
-        android:text="13"
+        android:text="@string/placeholder_days_since_start"
         android:textColor="@color/yellow"
         android:textSize="18sp" />
 

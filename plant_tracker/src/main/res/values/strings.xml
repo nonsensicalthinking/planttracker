@@ -54,6 +54,16 @@
     <string name="phase_week">Phase Wk</string>
     <string name="phase_day">Day</string>
 
+    <string name="parent_plant">Parent Plant</string>
+    <string name="plant_source">Plant Source</string>
+
+    <string name="plant_origin_seed">Seed</string>
+    <string name="plant_origin_clone">Clone</string>
+
+    <string name="placeholder_parent_name">White Dwarf #3 G2</string>
+    <string name="placeholder_days_since_start">13</string>
+    <string name="placeholder_state_name">Flowering</string>
+
     <string name="add_new_record">-- Add new record --</string>
 
 
