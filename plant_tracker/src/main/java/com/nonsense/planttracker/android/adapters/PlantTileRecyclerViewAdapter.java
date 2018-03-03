@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ public class PlantTileRecyclerViewAdapter extends
 
     private Context context;
     private List<Plant> list;
+    private PlantTrackerUi.IImageCache imageCache;
 
     class ViewHolder extends RecyclerView.ViewHolder{
         public ImageView plantPreview;
@@ -61,11 +63,13 @@ public class PlantTileRecyclerViewAdapter extends
 
     public PlantTileRecyclerViewAdapter(Context context, List<Plant> items,
                                         IClickAction<Plant> clickAction,
-                                        ILongClickAction<Plant> longClickAction) {
+                                        ILongClickAction<Plant> longClickAction,
+                                        PlantTrackerUi.IImageCache imageCache) {
         this.context = context;
         this.list = items;
         this.clickAction = clickAction;
         this.longClickAction = longClickAction;
+        this.imageCache = imageCache;
     }
 
     @Override
@@ -88,8 +92,8 @@ public class PlantTileRecyclerViewAdapter extends
                 @Override
                 public void run() {
                     if (p.getThumbnail() != null && p.getThumbnail() != "") {
-                        Bitmap bitmap = decodeSampledBitmapFromResource(new File(p.getThumbnail()),
-                                400,300);
+                        Bitmap bitmap = imageCache.getImage(p.getThumbnail());
+                        //decodeSampledBitmapFromResource(new File(p.getThumbnail()), 400, 300);
 
                         Runnable updateUi = new Runnable() {
                             @Override

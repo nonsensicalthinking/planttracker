@@ -71,6 +71,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
 
@@ -117,8 +118,8 @@ public class PlantTrackerUi extends AppCompatActivity
     private Plant currentPlant;
     private long groupIdViewFilter;
 
-    //TODO implement cache: https://developer.android.com/topic/performance/graphics/cache-bitmap.html
-    //private LruCache<String, Bitmap> imageCache;
+    // cache: https://developer.android.com/topic/performance/graphics/cache-bitmap.html
+    private LruCache<String, Bitmap> imageCache;
 
 
     private enum PlantDisplay {
@@ -157,6 +158,7 @@ public class PlantTrackerUi extends AppCompatActivity
         final LinearLayoutManager llm = new LinearLayoutManager(this);
         plantListView.setLayoutManager(llm);
 
+
         //FIXME
         //plantListView.setEmptyView(findViewById(R.id.emptyPlantListView));
 
@@ -164,12 +166,14 @@ public class PlantTrackerUi extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+                this, drawer, toolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close) {
 
             public void onDrawerOpened(View drawerView) {
                 drawerView.bringToFront();
             }
         };
+
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -186,6 +190,9 @@ public class PlantTrackerUi extends AppCompatActivity
             boolean individualPlantView = savedInstanceState.getBoolean("individualPlantView",
                     false);
 
+            imageCache = (LruCache<String, Bitmap>)savedInstanceState.getSerializable(
+                    "imageCache");
+
             if (individualPlantView)    {
                 bindIndividualPlantView();
                 switcherToNext();
@@ -194,6 +201,8 @@ public class PlantTrackerUi extends AppCompatActivity
         else    {
             parentPlantViewStack = new Stack<>();
         }
+
+        createImageCache();
 
         if (tracker == null)   {
             tracker = new PlantTracker(getExternalFilesDir("").getPath());
@@ -349,7 +358,7 @@ public class PlantTrackerUi extends AppCompatActivity
                         AlertDialog alert = builder.create();
                         alert.show();
                     }
-                });
+                }, cache);
 
         plantListView.setAdapter(adapter);
     }
@@ -500,8 +509,7 @@ public class PlantTrackerUi extends AppCompatActivity
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        Bitmap bitmap = decodeSampledBitmapFromResource(
-                                new File(currentPlant.getThumbnail()), 600,400);
+                        Bitmap bitmap = cache.getImage(currentPlant.getThumbnail());
 
                         Runnable updateUi = new Runnable() {
                             @Override
@@ -510,7 +518,8 @@ public class PlantTrackerUi extends AppCompatActivity
                                 mPlantImage.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        launchImageSeriesViewer(currentPlant.getAllImagesForPlant());
+                                        launchImageSeriesViewer(
+                                                currentPlant.getAllImagesForPlant());
                                     }
                                 });
 
@@ -1528,5 +1537,48 @@ public class PlantTrackerUi extends AppCompatActivity
     public void groupsUpdated() {
         refreshDrawerGroups();
         refreshListView();
+    }
+
+    private void createImageCache() {
+        // Get max available VM memory, exceeding this amount will throw an
+        // OutOfMemory exception. Stored in kilobytes as LruCache takes an
+        // int in its constructor.
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+
+        // Use 1/8th of the available memory for this memory cache.
+        final int cacheSize = maxMemory / 8;
+
+        imageCache = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) {
+                // The cache size will be measured in kilobytes rather than
+                // number of items.
+                return bitmap.getByteCount() / 1024;
+            }
+        };
+    }
+
+    private IImageCache cache = new IImageCache() {
+        @Override
+        public Bitmap getImage(String path) {
+            Bitmap bmap = null;
+            if ((bmap=imageCache.get(path)) == null)   {
+                bmap = decodeSampledBitmapFromResource(new File(path), 1920,
+                        1080);
+
+                imageCache.put(path, bmap);
+
+                Log.d("IMAGECACHE", "Image not in cache.");
+            }
+            else    {
+                Log.d("IMAGECACHE", "Image cache hit.");
+            }
+
+            return bmap;
+        }
+    };
+
+    public interface IImageCache {
+        public Bitmap getImage(String path);
     }
 }
