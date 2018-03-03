@@ -343,7 +343,8 @@ public class PlantTrackerUi extends AppCompatActivity
 
         switch (id) {
             case R.id.action_rename:
-                AndroidUtility.presentRenameDialog(PlantTrackerUi.this, tracker, currentPlant, new ICallback() {
+                AndroidUtility.presentRenameDialog(PlantTrackerUi.this, tracker, currentPlant,
+                        new ICallback() {
                     @Override
                     public void callback() {
                         fillIndividualPlantView();

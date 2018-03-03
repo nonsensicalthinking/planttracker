@@ -57,7 +57,6 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/parentPlantLabelTextView"
         android:layout_below="@+id/parentPlantLabelTextView"
-        android:layout_marginStart="5dp"
         android:paddingEnd="5dp"
         android:shadowColor="@color/black"
         android:shadowRadius="@integer/text_shading_pad"
