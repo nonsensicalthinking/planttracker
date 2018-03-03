@@ -312,35 +312,37 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
                 sb.append(br.readLine());
             }
 
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy",
+                    Locale.getDefault());
+
             PlantData plantData = g.fromJson(sb.toString(), plantType);
 
             for(GenericRecord rec : plantData.genericRecords)   {
-//                StringBuilder sBuilder = new StringBuilder();
-//                // Build phase string
-//                sBuilder.append(sdf.format(rec.time.getTime()));
-//                sBuilder.append(" ");
-//
-//                int phaseCount = rec.phaseCount;
-//                int stateWeekCount = rec.weeksSincePhase;
-//                int growWeekCount = rec.weeksSinceStart;
-//
-//                if (rec.phaseCount > 0)   {
-//                    sBuilder.append("[P");
-//                    sBuilder.append(phaseCount);
-//                    sBuilder.append("Wk");
-//                    sBuilder.append(stateWeekCount);
-//                    sBuilder.append("/");
-//                    sBuilder.append(growWeekCount);
-//                    sBuilder.append("]");
-//                }
-//                else    {
-//                    sBuilder.append("[Wk ");
-//                    sBuilder.append(growWeekCount);
-//                    sBuilder.append("]");
-//                }
-//
-//                rec.phaseDisplay = sBuilder.toString();
-                buildPhaseStringForRecord(rec);
+                StringBuilder sBuilder = new StringBuilder();
+                // Build phase string
+                sBuilder.append(sdf.format(rec.time.getTime()));
+                sBuilder.append(" ");
+
+                int phaseCount = rec.phaseCount;
+                int stateWeekCount = rec.weeksSincePhase;
+                int growWeekCount = rec.weeksSinceStart;
+
+                if (rec.phaseCount > 0)   {
+                    sBuilder.append("[P");
+                    sBuilder.append(phaseCount);
+                    sBuilder.append("Wk");
+                    sBuilder.append(stateWeekCount);
+                    sBuilder.append("/");
+                    sBuilder.append(growWeekCount);
+                    sBuilder.append("]");
+                }
+                else    {
+                    sBuilder.append("[Wk ");
+                    sBuilder.append(growWeekCount);
+                    sBuilder.append("]");
+                }
+
+                rec.phaseDisplay = sBuilder.toString();
 
                 rec.hasImages = (rec.images != null && rec.images.size() > 0);
                 rec.hasDataPoints = (rec.dataPoints != null && rec.dataPoints.size() > 0);
@@ -355,38 +357,6 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
             // f.delete();
             return null;
         }
-    }
-
-    //TODO FIXME this is duplicated in the plant object!
-    public void buildPhaseStringForRecord(GenericRecord rec)  {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy",
-                Locale.getDefault());
-        StringBuilder sBuilder = new StringBuilder();
-
-        // Build phase string
-        sBuilder.append(sdf.format(rec.time.getTime()));
-        sBuilder.append(" ");
-
-        int phaseCount = rec.phaseCount;
-        int stateWeekCount = rec.weeksSincePhase;
-        int growWeekCount = rec.weeksSinceStart;
-
-        if (rec.phaseCount > 0)   {
-            sBuilder.append("[P");
-            sBuilder.append(phaseCount);
-            sBuilder.append("Wk");
-            sBuilder.append(stateWeekCount);
-            sBuilder.append("/");
-            sBuilder.append(growWeekCount);
-            sBuilder.append("]");
-        }
-        else    {
-            sBuilder.append("[Wk ");
-            sBuilder.append(growWeekCount);
-            sBuilder.append("]");
-        }
-
-        rec.phaseDisplay = sBuilder.toString();
     }
 
     public void savePlantTrackerSettings() {

@@ -250,8 +250,6 @@ public class PlantTrackerUi extends AppCompatActivity
 
                     record.template = tracker.getGenericRecordTemplate(record.displayName);
 
-                    tracker.buildPhaseStringForRecord(record);
-
                     PlantAction action = new PlantAction(record);
                     if (applyToGroup && selectedGroup > 0) {
                         tracker.performEventForPlantsInGroup(selectedGroup, action);
