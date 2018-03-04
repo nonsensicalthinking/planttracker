@@ -1338,8 +1338,8 @@ public class PlantTrackerUi extends AppCompatActivity
         public Bitmap getImage(String path) {
             Bitmap bmap;
             if ((bmap=imageCache.get(path)) == null)   {
-                bmap = decodeSampledBitmapFromResource(new File(path), 1920,
-                        1080);
+                bmap = decodeSampledBitmapFromResource(new File(path), 400,
+                        300);
 
                 imageCache.put(path, bmap);
 
