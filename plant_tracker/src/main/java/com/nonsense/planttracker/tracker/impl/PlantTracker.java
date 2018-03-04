@@ -636,6 +636,22 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     public final TreeMap<String, GenericRecord> getAllRecordTemplates() {
         return settings.getAllGenericRecordTemplates();
     }
+
+    public void deleteRecordFromAllPlants(GenericRecord rec) {
+        boolean saveRequired = false;
+
+        for(Plant p : plants)   {
+            if (p.getPlantData().genericRecords.contains(rec))  {
+                p.removeGenericRecord(rec);
+                saveRequired = true;
+            }
+        }
+
+        //TODO make this more efficient, we can save plant ids above and just save those plants!
+        if (saveRequired)   {
+            saveAllPlants();
+        }
+    }
 }
 
 

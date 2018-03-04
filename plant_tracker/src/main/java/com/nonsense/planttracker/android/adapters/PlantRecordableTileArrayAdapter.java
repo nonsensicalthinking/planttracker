@@ -1,25 +1,20 @@
 package com.nonsense.planttracker.android.adapters;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
@@ -28,10 +23,7 @@ import com.nonsense.planttracker.android.activities.PlantTrackerUi;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
 import com.nonsense.planttracker.tracker.impl.Plant;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeMap;
 
 /**
  * Created by Derek Brooks on 7/1/2017.
@@ -40,7 +32,7 @@ import java.util.TreeMap;
 public class PlantRecordableTileArrayAdapter extends
         RecyclerView.Adapter<PlantRecordableTileArrayAdapter.RecordViewHolder> {
 
-    class RecordViewHolder extends RecyclerView.ViewHolder    {
+    class RecordViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout layout;
         TextView dateTextView;
         TextView eventTypeTextView;
@@ -51,12 +43,12 @@ public class PlantRecordableTileArrayAdapter extends
         public RecordViewHolder(View v) {
             super(v);
 
-            layout = (RelativeLayout)v.findViewById(R.id.recordableRelativeLayout);
-            dateTextView = (TextView)v.findViewById(R.id.dateTextView);
-            eventTypeTextView = (TextView)v.findViewById(R.id.observEventTypeTextView);
-            recordableSummaryTextView = (TextView)v.findViewById( R.id.recordableSummaryTextView);
-            cameraIconImageView = (ImageView)v.findViewById(R.id.cameraIconImageView);
-            dataPointIconImageView = (ImageView)v.findViewById(R.id.dataPointsImageView);
+            layout = (RelativeLayout) v.findViewById(R.id.recordableRelativeLayout);
+            dateTextView = (TextView) v.findViewById(R.id.dateTextView);
+            eventTypeTextView = (TextView) v.findViewById(R.id.observEventTypeTextView);
+            recordableSummaryTextView = (TextView) v.findViewById(R.id.recordableSummaryTextView);
+            cameraIconImageView = (ImageView) v.findViewById(R.id.cameraIconImageView);
+            dataPointIconImageView = (ImageView) v.findViewById(R.id.dataPointsImageView);
         }
     }
 
@@ -64,10 +56,13 @@ public class PlantRecordableTileArrayAdapter extends
     private ArrayList<GenericRecord> list;
     private Context context;
 
+    private GenericRecord selectedRecord;
+
     public PlantRecordableTileArrayAdapter(Context c, ArrayList<GenericRecord> l, Plant p)   {
         list = l;
         context = c;
         plant = p;
+
     }
 
     @Override
@@ -81,7 +76,7 @@ public class PlantRecordableTileArrayAdapter extends
     @Override
     public void onBindViewHolder(final RecordViewHolder viewHolder, int position) {
         final int pos = position;
-        GenericRecord record = list.get(pos);
+        final GenericRecord record = list.get(pos);
         GenericRecord template = record.template;
         String displayName;
         int color;
@@ -89,26 +84,26 @@ public class PlantRecordableTileArrayAdapter extends
         viewHolder.layout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder((PlantTrackerUi)context);
-                builder.setTitle(R.string.app_name);
-                builder.setMessage("Are you sure you want to delete this event?");
-                builder.setIcon(R.drawable.ic_growing_plant);
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        plant.removeGenericRecord(pos);
-                        ((PlantTrackerUi)context).fillIndividualPlantView();
-                        dialog.dismiss();
+                selectedRecord = record;
+                PopupMenu popup = new PopupMenu(context, v);
+                MenuInflater inflater = popup.getMenuInflater();
+                inflater.inflate(R.menu.menu_plant_record_context, popup.getMenu());
+                popup.show();
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.delete_from_here:
+                                displayDeleteFromHereConfirm(selectedRecord);
+                                return true;
+                            case R.id.delete_from_all:
+                                displayDeleteFromAllConfirm(selectedRecord);
+                                return true;
+                            default:
+                                return false;
+                        }
                     }
                 });
-
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-
-                AlertDialog alert = builder.create();
-                alert.show();
 
                 return true;
             }
@@ -156,6 +151,52 @@ public class PlantRecordableTileArrayAdapter extends
         else    {
             viewHolder.dataPointIconImageView.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void displayDeleteFromHereConfirm(GenericRecord rec) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.app_name);
+        builder.setMessage("Are you sure you want to delete this record?");
+        builder.setIcon(R.drawable.ic_growing_plant);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                plant.removeGenericRecord(rec);
+                ((PlantTrackerUi)context).fillIndividualPlantView();
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void displayDeleteFromAllConfirm(GenericRecord rec)  {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.app_name);
+        builder.setMessage("Are you sure you want to delete this record from all plants?");
+        builder.setIcon(R.drawable.ic_growing_plant);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                ((PlantTrackerUi)context).deleteRecordFromAllPlants(rec);
+                ((PlantTrackerUi)context).fillIndividualPlantView();
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @Override

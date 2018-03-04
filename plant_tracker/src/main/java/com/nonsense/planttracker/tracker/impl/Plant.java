@@ -152,6 +152,13 @@ public class Plant implements Serializable  {
         return records;
     }
 
+    public void removeGenericRecord(GenericRecord rec)  {
+        plantData.genericRecords.remove(rec);
+
+        updateSummaryInformation();
+        notifyUpdateListeners();
+    }
+
     public void removeGenericRecord(int recordPosition)    {
         plantData.genericRecords.remove(recordPosition);
 

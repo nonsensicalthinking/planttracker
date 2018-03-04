@@ -69,7 +69,6 @@ import com.nonsense.planttracker.tracker.interf.IDialogHandler;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -1352,4 +1351,8 @@ public class PlantTrackerUi extends AppCompatActivity
             return bmap;
         }
     };
+
+    public void deleteRecordFromAllPlants(GenericRecord rec)    {
+        tracker.deleteRecordFromAllPlants(rec);
+    }
 }
