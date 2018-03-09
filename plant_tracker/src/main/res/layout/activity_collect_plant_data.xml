@@ -66,30 +66,49 @@
                         android:headerBackground="@drawable/side_nav_bar" />
                 </LinearLayout>
 
-                <LinearLayout
+                <RelativeLayout
                     android:id="@+id/tab4"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="vertical">
 
                     <Button
                         android:id="@+id/openCameraButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
                         android:text="Open Camera" />
 
                     <Button
                         android:id="@+id/attachImagesButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@+id/openCameraButton"
                         android:text="Attach..." />
 
-                    <ListView
-                        android:id="@+id/attachedImagesListView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                    <TextView
+                        android:id="@+id/attachImageCountLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/attachImagesButton"
+                        android:layout_marginEnd="5dp"
+                        android:text="Attached Images: "/>
 
-                </LinearLayout>
+                    <TextView
+                        android:id="@+id/attachImageCountTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/attachImagesButton"
+                        android:layout_toEndOf="@id/attachImageCountLabel"
+                        android:text="3"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/attachedImageRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/attachImageCountLabel"/>
+
+                </RelativeLayout>
 
                 <include
                     android:id="@+id/dialogChangeStateEventLayout"
@@ -109,8 +128,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:visibility="visible"
-        android:layout_above="@id/buttonLayout"
-        >
+        android:layout_above="@id/buttonLayout">
 
         <CheckBox
             android:id="@+id/applyToGroupCheckbox"

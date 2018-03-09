@@ -3,6 +3,7 @@ package com.nonsense.planttracker.android.activities;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
@@ -11,8 +12,11 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
@@ -39,7 +43,11 @@ import android.widget.Toast;
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.android.AndroidUtility;
+import com.nonsense.planttracker.android.adapters.ImageViewRecyclerViewAdapter;
+import com.nonsense.planttracker.android.adapters.PlantTileRecyclerViewAdapter;
+import com.nonsense.planttracker.android.interf.IAction;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
+import com.nonsense.planttracker.tracker.impl.Plant;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +61,8 @@ import java.util.TreeMap;
 
 public class CollectPlantData extends AppCompatActivity {
 
+    // TODO store currently selected tab and restore onCreate
+
     private GenericRecord record;
     private boolean applyToGroup;
     private long selectedGroup;
@@ -62,6 +72,10 @@ public class CollectPlantData extends AppCompatActivity {
 
     private Uri photoURI;
     private ArrayList<String> images = new ArrayList<>();
+
+    private RecyclerView attachedImageRecyclerView;
+    private ImageViewRecyclerViewAdapter adapter;
+    private TextView attachedImageCountTextView;
 
 
     @SuppressWarnings("unchecked")
@@ -278,6 +292,8 @@ public class CollectPlantData extends AppCompatActivity {
         timePicker.setHour(record.time.get(Calendar.HOUR_OF_DAY));
         timePicker.setMinute(record.time.get(Calendar.MINUTE));
 
+        bindAttachImageTab();
+
         final CheckBox applyToGroupCheckBox = (CheckBox)findViewById(R.id.applyToGroupCheckbox);
         applyToGroupCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
@@ -287,6 +303,24 @@ public class CollectPlantData extends AppCompatActivity {
             }
         });
 
+        final Button okButton = (Button)findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                endActivity();
+            }
+        });
+
+        final Button cancelButton = (Button)findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelActivity();
+            }
+        });
+    }
+
+    private void bindAttachImageTab()   {
         final Button cameraButton = (Button)findViewById(R.id.openCameraButton);
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -315,21 +349,14 @@ public class CollectPlantData extends AppCompatActivity {
             }
         });
 
-        final Button okButton = (Button)findViewById(R.id.okButton);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                endActivity();
-            }
-        });
+        LinearLayoutManager llm = new LinearLayoutManager(CollectPlantData.this);
+        attachedImageRecyclerView = findViewById(R.id.attachedImageRecyclerView);
+        adapter = getAttachedImageAdapater();
+        attachedImageRecyclerView.setLayoutManager(llm);
+        attachedImageRecyclerView.setAdapter(adapter);
 
-        final Button cancelButton = (Button)findViewById(R.id.cancelButton);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelActivity();
-            }
-        });
+        attachedImageCountTextView = findViewById(R.id.attachImageCountTextView);
+        attachedImageCountTextView.setText(String.valueOf(images.size()));
     }
 
     private LinearLayout bindStringInput(final String key, String value)   {
@@ -448,6 +475,18 @@ public class CollectPlantData extends AppCompatActivity {
         return layout;
     }
 
+    private ImageViewRecyclerViewAdapter getAttachedImageAdapater()   {
+        ImageViewRecyclerViewAdapter adapter = new ImageViewRecyclerViewAdapter(
+                CollectPlantData.this, images);
+
+        return adapter;
+    }
+
+    private void refreshImageAttachments()  {
+        adapter.notifyDataSetChanged();
+        attachedImageCountTextView.setText(String.valueOf(images.size()));
+    }
+
     private TextView createNewLabel()   {
         TextView label = new TextView(this);
 
@@ -488,6 +527,8 @@ public class CollectPlantData extends AppCompatActivity {
                             makeLocalCopyOfAttachedImage(returnedIntent.getData());
                         }
                     }
+
+                    refreshImageAttachments();
                 }
                 break;
 
@@ -498,6 +539,8 @@ public class CollectPlantData extends AppCompatActivity {
                             f.getName();
                     images.add(path);
                     dispatchTakePictureIntent();
+
+                    refreshImageAttachments();
                 }
                 else    {
                     File f = new File(photoURI.getPath());
