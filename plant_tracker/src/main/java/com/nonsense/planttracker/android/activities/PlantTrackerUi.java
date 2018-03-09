@@ -120,8 +120,6 @@ public class PlantTrackerUi extends AppCompatActivity
     private RecyclerView recordableEventListView;
     private Spinner addEventSpinner;
     private Menu individualPlantMenu;
-    private SubMenu addToGroup;
-    private SubMenu removeFromGroup;
     private ImageView mPlantImage;
 
     // Data
@@ -204,6 +202,8 @@ public class PlantTrackerUi extends AppCompatActivity
         }
 
         tracker.setPlantTrackerListener(this);
+
+        invalidateOptionsMenu();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -526,49 +526,73 @@ public class PlantTrackerUi extends AppCompatActivity
                 activeMenuItem.setVisible(false);
             }
 
-            // prepare add to group submenu
-            if (addToGroup == null) {
-                addToGroup = individualPlantMenu.findItem(R.id.action_groups).getSubMenu()
-                        .addSubMenu(9, 1, 1, "Add to ...");
-            }
 
-            addToGroup.clear();
+            // Prepare sub menus
+            buildAddToGroupSubMenu();
+            buildRemoveFromGroupSubMenu();
 
+//            buildRenameGroupMenu();
+//            buildDeleteGroupMenu();
+        }
+
+        return true;
+    }
+
+    private void buildAddToGroupSubMenu()   {
+        if (currentPlant != null) {
             ArrayList<Group> nonMembershipGroups = tracker.getGroupsPlantIsNotMemberOf(
                     currentPlant.getPlantId());
 
-            for (Group g : nonMembershipGroups) {
-                final Group currentGroup = g;
-                MenuItem m = addToGroup.add(g.getGroupName());
-                m.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        final long groupId = currentGroup.getGroupId();
-                        tracker.addMemberToGroup(currentPlant.getPlantId(), groupId);
-                        return true;
-                    }
-                });
-            }
+            SubMenu groupsSubMenu = individualPlantMenu.findItem(R.id.action_groups).
+                    getSubMenu();
 
-            if (nonMembershipGroups.size() == 0) {
-                individualPlantMenu.findItem(R.id.action_groups).getSubMenu()
-                        .setGroupVisible(9, false);
-            } else {
-                individualPlantMenu.findItem(R.id.action_groups).getSubMenu()
-                        .setGroupVisible(9, true);
+            if (nonMembershipGroups.size() == 0 || groupsSubMenu.findItem(2) != null) {
+                //groupsSubMenu.setGroupVisible(9, false);
+                Log.d("GROUPS", "Setting add to group submenu Invisible");
             }
+            else {
+                SubMenu addToGroup = groupsSubMenu.addSubMenu(9, 2, 1,
+                        "Add to ...");
+                groupsSubMenu.setGroupVisible(9, true);
+                Log.d("GROUPS", "Setting add to group submenu Visible");
+
+                addToGroup.clear();
+
+                for (Group g : nonMembershipGroups) {
+                    final Group currentGroup = g;
+                    MenuItem m = addToGroup.add(g.getGroupName());
+                    m.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            final long groupId = currentGroup.getGroupId();
+                            tracker.addMemberToGroup(currentPlant.getPlantId(), groupId);
+                            //addToGroup.removeItem(m.getItemId());
+                            return true;
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    private void buildRemoveFromGroupSubMenu()  {
+        ArrayList<Group> membershipGroups = tracker.getGroupsPlantIsMemberOf(
+                currentPlant.getPlantId());
+
+        SubMenu groupsSubMenu = individualPlantMenu.findItem(R.id.action_groups).getSubMenu();
+
+        if (membershipGroups.size() == 0 || groupsSubMenu.findItem(3) != null) {
+            //groupsSubMenu.setGroupVisible(10, false);
+            Log.d("GROUPS", "Setting remove from group submenu Invisible");
+        } else {
+            SubMenu removeFromGroup = groupsSubMenu.addSubMenu(10, 3, 2,
+                    "Remove from ...");
 
             // prepare remove from group submenu
-            if (removeFromGroup == null) {
-                removeFromGroup = individualPlantMenu.findItem(R.id.action_groups)
-                        .getSubMenu().addSubMenu(10, 2, 2,
-                                "Remove from ...");
-            }
+            groupsSubMenu.setGroupVisible(10, true);
+            Log.d("GROUPS", "Setting remove from group submenu Visible");
 
             removeFromGroup.clear();
-
-            ArrayList<Group> membershipGroups = tracker.getGroupsPlantIsMemberOf(
-                    currentPlant.getPlantId());
 
             for (Group mg : membershipGroups) {
                 final Group currentGroup = mg;
@@ -585,62 +609,7 @@ public class PlantTrackerUi extends AppCompatActivity
                     });
                 }
             }
-
-            if (membershipGroups.size() == 0) {
-                individualPlantMenu.findItem(R.id.action_groups).getSubMenu()
-                        .setGroupVisible(10, false);
-            } else {
-                individualPlantMenu.findItem(R.id.action_groups).getSubMenu()
-                        .setGroupVisible(10, true);
-            }
-
-            // prepare rename groups menu
-            MenuItem renameGroupMenuItem = individualPlantMenu.findItem(R.id.rename_group);
-            SubMenu renameGroupSubMenu = renameGroupMenuItem.getSubMenu();
-
-            renameGroupSubMenu.clear();
-
-            for (Group g : tracker.getAllGroups()) {
-                final long groupId = g.getGroupId();
-                MenuItem renameMenuItem = renameGroupSubMenu.add(g.getGroupName());
-                renameMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        GroupManagement.presentRenameGroupDialog(PlantTrackerUi.this, tracker, groupId,
-                                new ICallback() {
-
-                                    @Override
-                                    public void callback() {
-                                        refreshDrawerGroups();
-                                    }
-                                });
-                        refreshDrawerGroups();
-                        return true;
-                    }
-                });
-            }
-
-            // prepare delete groups menu
-            MenuItem deleteGroupItem = individualPlantMenu.findItem(R.id.delete_group);
-            final SubMenu deleteGroupSubMenu = deleteGroupItem.getSubMenu();
-
-            deleteGroupSubMenu.clear();
-
-            for (Group g : tracker.getAllGroups()) {
-                final long groupId = g.getGroupId();
-                MenuItem menuItem = deleteGroupSubMenu.add(g.getGroupName());
-                menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        tracker.removeGroup(groupId);
-                        refreshDrawerGroups();
-                        return true;
-                    }
-                });
-            }
         }
-
-        return true;
     }
 
 
@@ -652,7 +621,7 @@ public class PlantTrackerUi extends AppCompatActivity
         weeksSinceGrowStartTextView = findViewById(R.id.weeksSinceGrowStartTextView);
         fromSeedTextView = findViewById(R.id.fromSeedTextView);
         recordableEventListView = findViewById(R.id.recordableEventListView);
-        recordableEventListView .addItemDecoration(new DividerItemDecoration(
+        recordableEventListView.addItemDecoration(new DividerItemDecoration(
                 PlantTrackerUi.this, DividerItemDecoration.VERTICAL));
 
         final LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -792,10 +761,10 @@ public class PlantTrackerUi extends AppCompatActivity
 
         hideFloatingActionButton();
 
+        toolbar.setTitle(currentPlant.getPlantName());
+
         // display the options menu
         invalidateOptionsMenu();
-
-        toolbar.setTitle(currentPlant.getPlantName());
 
         if (currentPlant.getThumbnail() != null)    {
             String thumbnail = currentPlant.getThumbnail();
@@ -1339,11 +1308,6 @@ public class PlantTrackerUi extends AppCompatActivity
                         300);
 
                 imageCache.put(path, bmap);
-
-                Log.d("IMAGECACHE", "Image not in cache.");
-            }
-            else    {
-                Log.d("IMAGECACHE", "Image cache hit.");
             }
 
             return bmap;

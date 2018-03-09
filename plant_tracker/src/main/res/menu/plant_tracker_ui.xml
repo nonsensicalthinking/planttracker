@@ -21,26 +21,6 @@
                     android:title="@string/plant_opt_add_group"
                     android:visible="true"
                     app:showAsAction="never"/>
-                <item
-                    android:id="@+id/rename_group"
-                    android:checkable="false"
-                    android:enabled="true"
-                    android:orderInCategory="0"
-                    android:title="@string/plant_opt_rename_group"
-                    android:visible="true"
-                    app:showAsAction="never">
-                    <menu></menu>
-                </item>
-                <item
-                    android:id="@+id/delete_group"
-                    android:checkable="false"
-                    android:enabled="true"
-                    android:orderInCategory="0"
-                    android:title="@string/plant_opt_delete_group"
-                    android:visible="true"
-                    app:showAsAction="never">
-                    <menu></menu>
-                </item>
             </menu>
         </item>
         <item
