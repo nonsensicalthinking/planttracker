@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.nonsense.planttracker.R;
@@ -18,53 +20,45 @@ import java.util.List;
 
 public class PlantTileArrayAdapter extends ArrayAdapter<Plant> {
 
-    private int viewResourceId;
+    private List<Plant> selected;
 
-    public PlantTileArrayAdapter(Context context, int textViewResourceId) {
-        super(context, textViewResourceId);
-        viewResourceId = textViewResourceId;
-    }
-
-    public PlantTileArrayAdapter(Context context, int resource, List<Plant> items) {
-        super(context, resource, items);
-        viewResourceId = resource;
+    public PlantTileArrayAdapter(Context context, List<Plant> items, List<Plant> selected) {
+        super(context, R.layout.tile_text_checkbox, items);
+        this.selected = selected;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         View v = convertView;
 
         if (v == null) {
             LayoutInflater vi;
             vi = LayoutInflater.from(getContext());
-            v = vi.inflate(viewResourceId, null);
+            v = vi.inflate(R.layout.tile_text_checkbox, null);
         }
 
         Plant p = getItem(position);
 
         if (p != null) {
-            TextView plantNameTextView = (TextView)v.findViewById(R.id.firstLine);
-            TextView plantSummaryTextView = (TextView)v.findViewById(R.id.secondLine);
-            TextView archivedTextView = (TextView)v.findViewById(R.id.archivedTextView);
+            CheckBox cb = v.findViewById(R.id.checkBox);
+            cb.setText(p.getPlantName());
+            cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked)  {
+                        if (!selected.contains(p))  {
+                            selected.add(p);
+                        }
+                    }
+                    else    {
+                        if (selected.contains(p))   {
+                            selected.remove(p);
+                        }
+                    }
+                }
+            });
 
-            if (plantNameTextView != null) {
-                plantNameTextView.setText(p.getPlantName());
-            }
-
-            if (plantSummaryTextView != null) {
-                String flowerWeek = "";
-
-                plantSummaryTextView.setText("Started " + p.getDaysFromStart() +
-                        " days ago, Grow Wk. " + p.getWeeksFromStart());
-            }
-
-            if (p.isArchived()) {
-                archivedTextView.setVisibility(View.VISIBLE);
-            }
-            else    {
-                archivedTextView.setVisibility(View.INVISIBLE);
-            }
+            cb.setChecked(selected.contains(p));
         }
 
         return v;

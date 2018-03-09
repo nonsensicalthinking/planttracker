@@ -256,6 +256,10 @@ public class Plant implements Serializable  {
         return plantData.groupIds;
     }
 
+    public boolean isMemberOfGroup(Long groupId)    {
+        return plantData.groupIds.contains(groupId);
+    }
+
     public String getCurrentStateName() {
         return plantData.currentStateName;
     }

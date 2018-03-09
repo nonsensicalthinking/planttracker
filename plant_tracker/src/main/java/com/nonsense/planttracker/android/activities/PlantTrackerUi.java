@@ -182,12 +182,10 @@ public class PlantTrackerUi extends AppCompatActivity
             currentDisplayArray = (ArrayList<Plant>) savedInstanceState.getSerializable(
                     "currentDisplayArray");
 
-            tracker = (PlantTracker)savedInstanceState.getSerializable("tracker");
             boolean individualPlantView = savedInstanceState.getBoolean("individualPlantView",
                     false);
 
             if (individualPlantView)    {
-                bindIndividualPlantView();
                 switchToIndividualPlant();
             }
         }
@@ -202,8 +200,6 @@ public class PlantTrackerUi extends AppCompatActivity
         }
 
         tracker.setPlantTrackerListener(this);
-
-        invalidateOptionsMenu();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -285,7 +281,8 @@ public class PlantTrackerUi extends AppCompatActivity
                 if (resultCode == RESULT_OK)    {
                     PlantTracker passedTracker = (PlantTracker) returnedIntent.getSerializableExtra(
                             AndroidConstants.INTENTKEY_PLANT_TRACKER);
-                    tracker.setPlantTrackerSettings(passedTracker.getPlantTrackerSettings());
+
+                    rehashPlantTracker();
 
                     refreshListView();
                 }
@@ -526,13 +523,9 @@ public class PlantTrackerUi extends AppCompatActivity
                 activeMenuItem.setVisible(false);
             }
 
-
             // Prepare sub menus
             buildAddToGroupSubMenu();
             buildRemoveFromGroupSubMenu();
-
-//            buildRenameGroupMenu();
-//            buildDeleteGroupMenu();
         }
 
         return true;
@@ -1008,6 +1001,7 @@ public class PlantTrackerUi extends AppCompatActivity
     }
 
 
+
     /*
         Display element manipulation
      */
@@ -1302,6 +1296,10 @@ public class PlantTrackerUi extends AppCompatActivity
     private IImageCache cache = new IImageCache() {
         @Override
         public Bitmap getImage(String path) {
+            if (path == null)   {
+                return null;
+            }
+
             Bitmap bmap;
             if ((bmap=imageCache.get(path)) == null)   {
                 bmap = decodeSampledBitmapFromResource(new File(path), 400,
@@ -1316,5 +1314,11 @@ public class PlantTrackerUi extends AppCompatActivity
 
     public void deleteRecordFromAllPlants(GenericRecord rec)    {
         tracker.deleteRecordFromAllPlants(rec);
+    }
+
+    private void rehashPlantTracker()   {
+        tracker.dismantle();
+        tracker = new PlantTracker(getExternalFilesDir("").getPath());
+        tracker.setPlantTrackerListener(this);
     }
 }

@@ -34,6 +34,10 @@ public class PlantTrackerSettings implements Serializable {
         listener = l;
     }
 
+    void removeListener()   {
+        listener = null;
+    }
+
     private void settingsChanged()  {
         // use of a listener is not required!
         if (listener != null)   {

@@ -1,5 +1,6 @@
 package com.nonsense.planttracker.android.activities;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -46,17 +47,29 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_management);
 
-        // TODO get tracker
-        Intent startingIntent = getIntent();
+        if (savedInstanceState != null) {
+            plantTracker = (PlantTracker)savedInstanceState.getSerializable(
+                    AndroidConstants.INTENTKEY_PLANT_TRACKER);
+        }
+        else    {
+            Intent startingIntent = getIntent();
 
-        plantTracker = (PlantTracker)startingIntent.getSerializableExtra(
-                AndroidConstants.INTENTKEY_PLANT_TRACKER);
+            plantTracker = (PlantTracker)startingIntent.getSerializableExtra(
+                    AndroidConstants.INTENTKEY_PLANT_TRACKER);
+
+        }
 
         plantTracker.setPlantTrackerListener(this);
 
         bindView();
-
         fillGroups();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+
+        bundle.putSerializable(AndroidConstants.INTENTKEY_PLANT_TRACKER, plantTracker);
     }
 
     @Override
@@ -96,6 +109,45 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        endActivity();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
+        super.onActivityResult(requestCode, resultCode, returnedIntent);
+        switch (requestCode) {
+            case AndroidConstants.ACTIVITY_LIST_PICKER_PLANTS:
+                if (resultCode == Activity.RESULT_OK) {
+                    ArrayList<Plant> selected = (ArrayList<Plant>)returnedIntent
+                            .getSerializableExtra(AndroidConstants.INTENTKEY_LIST_PICKER_SELECTED);
+
+                    ArrayList<Plant> unselected = (ArrayList<Plant>)returnedIntent
+                            .getSerializableExtra("unselected");
+
+                    Long groupId = returnedIntent.getLongExtra("groupId", 0);
+
+                    if (selected != null)   {
+                        for(Plant p : selected) {
+                            if (!p.isMemberOfGroup(groupId))    {
+                                plantTracker.addMemberToGroup(p.getPlantId(), groupId);
+                            }
+                        }
+                    }
+
+                    if (unselected != null) {
+                        for(Plant p : unselected)   {
+                            if (p.isMemberOfGroup(groupId)) {
+                                plantTracker.removeMemberFromGroup(p.getPlantId(), groupId);
+                            }
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
     private void bindView() {
         groupListView = findViewById(R.id.groupListView);
 
@@ -131,8 +183,17 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
         groupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // TODO display group information view with all current group members and
-                // TODO a way to add more
+                Group g = groups.get(position);
+                Intent i = new Intent(GroupManagement.this, ListPicker.class);
+
+                i.putExtra(AndroidConstants.INTENTKEY_LIST_PICKER_LIST,
+                        plantTracker.getAllPlants());
+
+                i.putExtra("selected", plantTracker.getMembersOfGroup(g.getGroupId()));
+                i.putExtra("groupId", g.getGroupId());
+                i.putExtra("groupName", g.getGroupName());
+
+                startActivityForResult(i, AndroidConstants.ACTIVITY_LIST_PICKER_PLANTS);
             }
         });
     }
@@ -240,11 +301,6 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
 //        }
 //
 //        emptyPlantListView.invalidate();
-    }
-
-    @Override
-    public void onBackPressed() {
-        endActivity();
     }
 
     private void endActivity()  {

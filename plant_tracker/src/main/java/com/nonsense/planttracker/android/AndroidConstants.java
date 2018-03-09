@@ -16,7 +16,7 @@ public class AndroidConstants {
     public static final int ACTIVITY_EXPORT_SELECT = 9;
     public static final int ACTIVITY_IMPORT_CHOOSER = 10;
     public static final int ACTIVITY_MANAGE_GROUPS = 11;
-
+    public static final int ACTIVITY_LIST_PICKER_PLANTS = 12;
 
     public static final String INTENTKEY_GENERIC_RECORD = "genericRecord";
     public static final String INTENTKEY_APPLY_TO_GROUP = "applyToGroup";
@@ -27,6 +27,8 @@ public class AndroidConstants {
     public static final String INTENTKEY_SHOW_NOTES = "showNotes";
     public static final String INTENTKEY_AVAILABLE_GROUPS = "availableGroups";
     public static final String INTENTKEY_BASE_DIRECTORY = "baseDir";
+    public static final String INTENTKEY_LIST_PICKER_LIST = "listPickerList";
+    public static final String INTENTKEY_LIST_PICKER_SELECTED = "listPickerSelected";
 
     public static final String PATH_TRACKER_IMAGES = "camera";
     public static final String PATH_TRACKER_SETTINGS = "settings";

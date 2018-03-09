@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Created by Derek Brooks on 6/30/2017.
@@ -154,7 +155,13 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     }
 
     public ArrayList<Plant> getActivePlants() {
-        activePlants.clear();
+        if (activePlants != null)   {
+            activePlants.clear();
+        }
+        else    {
+            activePlants = new ArrayList<>();
+        }
+
         for (Plant p : plants) {
             if (!p.isArchived()) {
                 activePlants.add(p);
@@ -651,6 +658,19 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         if (saveRequired)   {
             saveAllPlants();
         }
+    }
+
+    public void replacePlantData(ArrayList<Plant> allPlants) {
+        for(Plant p : allPlants)    {
+            Plant destPlant = getPlantById(p.getPlantId());
+            destPlant.setPlantData(p.getPlantData());
+        }
+    }
+
+    public void dismantle() {
+        plants.clear();
+        settings.removeListener();
+        settings = null;
     }
 }
 
