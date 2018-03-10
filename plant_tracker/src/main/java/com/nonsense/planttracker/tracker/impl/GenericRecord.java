@@ -55,7 +55,7 @@ public class GenericRecord implements Serializable, Cloneable {
     }
 
     public String getSummary(String summaryTemplate)  {
-        if (summary == null)    {
+        if (summary == null || summary.equals(""))    {
             if (summaryTemplate != null) {
                 String buildTemplate = summaryTemplate;
                 Pattern p = Pattern.compile("\\{(.*?)\\}");
