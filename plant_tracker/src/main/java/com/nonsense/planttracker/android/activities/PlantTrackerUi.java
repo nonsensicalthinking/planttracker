@@ -1003,7 +1003,8 @@ public class PlantTrackerUi extends AppCompatActivity
     private void setEmptyViewCaption(String caption) {
 
         View emptyPlantListView = findViewById(R.id.emptyPlantListView);
-        TextView itemNotFoundCaptionText = emptyPlantListView.findViewById(R.id.itemNotFoundCaptionText);
+        TextView itemNotFoundCaptionText = emptyPlantListView.findViewById(
+                R.id.itemNotFoundCaptionText);
 
         if (itemNotFoundCaptionText != null) {
             itemNotFoundCaptionText.setText(caption);

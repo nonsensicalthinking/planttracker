@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.support.annotation.ColorInt;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -74,7 +72,7 @@ public class CreateRecordType extends AppCompatActivity {
     }
 
     private void bindUi()   {
-        recordNameEditText = (EditText)findViewById(R.id.recordNameEditText);
+        recordNameEditText = findViewById(R.id.recordNameEditText);
         recordNameEditText.setText(record.displayName);
         recordNameEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -93,7 +91,7 @@ public class CreateRecordType extends AppCompatActivity {
             }
         });
 
-        colorPreviewTextView = (TextView)findViewById(R.id.colorPreviewTextView);
+        colorPreviewTextView = findViewById(R.id.colorPreviewTextView);
 
         final int color;
         if (record.color == 0)  {
@@ -114,7 +112,7 @@ public class CreateRecordType extends AppCompatActivity {
             }
         });
 
-        showNotesFieldCheckBox = (CheckBox)findViewById(R.id.showNotesFieldCheckBox);
+        showNotesFieldCheckBox = findViewById(R.id.showNotesFieldCheckBox);
         showNotesFieldCheckBox.setChecked(record.showNotes);
         showNotesFieldCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -128,7 +126,7 @@ public class CreateRecordType extends AppCompatActivity {
 
         bindSummaryTemplateInputs();
 
-        final Button cancelButton = (Button)findViewById(R.id.cancelButton);
+        final Button cancelButton = findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -137,7 +135,7 @@ public class CreateRecordType extends AppCompatActivity {
             }
         });
 
-        final Button okButton = (Button)findViewById(R.id.okButton);
+        final Button okButton = findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -152,7 +150,7 @@ public class CreateRecordType extends AppCompatActivity {
     }
 
     private void bindDataPointList()    {
-        final ListView dataPointListView = (ListView)findViewById(R.id.dataPointsListView);
+        final ListView dataPointListView = findViewById(R.id.dataPointsListView);
         final DataPointTileArrayAdapter dataPointTileArrayAdapter = new DataPointTileArrayAdapter(
                 getBaseContext(), R.layout.tile_plant_recordable, record.dataPoints);
 
@@ -194,7 +192,7 @@ public class CreateRecordType extends AppCompatActivity {
             }
         });
 
-        final Button addDataPointButton = (Button)findViewById(R.id.addButton);
+        final Button addDataPointButton = findViewById(R.id.addButton);
         addDataPointButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -204,8 +202,7 @@ public class CreateRecordType extends AppCompatActivity {
     }
 
     private void bindSummaryTemplateInputs()    {
-        final EditText summaryTemplateEditText = (EditText)findViewById(
-                R.id.summaryTemplateEditText);
+        final EditText summaryTemplateEditText = findViewById(R.id.summaryTemplateEditText);
 
         summaryTemplateEditText.setText(record.summaryTemplate);
 
@@ -226,7 +223,7 @@ public class CreateRecordType extends AppCompatActivity {
             }
         });
 
-        final Spinner insertDataPointSpinner = (Spinner)findViewById(R.id.insertDataPointSpinner);
+        final Spinner insertDataPointSpinner = findViewById(R.id.insertDataPointSpinner);
 
         final ArrayList<String> dataPoints = new ArrayList<String>();
         dataPoints.add(DEFAULT_DATA_POINT_OPTION);
@@ -265,7 +262,7 @@ public class CreateRecordType extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                return;
+
             }
         });
     }
@@ -274,15 +271,12 @@ public class CreateRecordType extends AppCompatActivity {
         final Dialog dialog = new Dialog(CreateRecordType.this);
         dialog.setContentView(R.layout.dialog_new_data_point);
 
-        final EditText dataPointNameEditText = (EditText)dialog.findViewById(
-                R.id.dataPointNameEditText);
+        final EditText dataPointNameEditText = dialog.findViewById(R.id.dataPointNameEditText);
 
         dataPointNameEditText.setText(selectedDataPointName);
 
-        final Spinner dataPointTypeSpinner = (Spinner)dialog.findViewById(
-                R.id.dataPointTypeSpinner);
-        final EditText defaultValueEditText = (EditText)dialog.findViewById(
-                R.id.defaultValueEditText);
+        final Spinner dataPointTypeSpinner = dialog.findViewById(R.id.dataPointTypeSpinner);
+        final EditText defaultValueEditText = dialog.findViewById(R.id.defaultValueEditText);
 
         final ArrayList<String> dataTypeOptions = new ArrayList<>();
         dataTypeOptions.add("Text");
@@ -316,7 +310,7 @@ public class CreateRecordType extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                return;
+
             }
         });
 
@@ -331,11 +325,11 @@ public class CreateRecordType extends AppCompatActivity {
                 }
                 else if (dpObj instanceof Integer) {
                     dataPointTypeSpinner.setSelection(adapter.getPosition("Integer"));
-                    defaultValueEditText.setText(((Integer)dpObj).toString());
+                    defaultValueEditText.setText(String.valueOf((Integer)dpObj));
                 }
                 else if (dpObj instanceof Double)  {
                     dataPointTypeSpinner.setSelection(adapter.getPosition("Decimal"));
-                    defaultValueEditText.setText(((Double)dpObj).toString());
+                    defaultValueEditText.setText(String.valueOf((Double)dpObj));
                 }
             }
         }
@@ -365,6 +359,7 @@ public class CreateRecordType extends AppCompatActivity {
                                     defaultValueEditText.getText().toString());
                         }
                         else    {
+                            // we're boxing so we can explicitly reflect that this is an integer without the need to store more type information
                             selectedObjectType = new Integer(0);
                         }
                         break;
@@ -375,6 +370,7 @@ public class CreateRecordType extends AppCompatActivity {
                                     defaultValueEditText.getText().toString());
                         }
                         else    {
+                            // we're boxing so we can explicitly reflect that this is an double without the need to store more type information
                             selectedObjectType = new Double(0.0);
                         }
                         break;
