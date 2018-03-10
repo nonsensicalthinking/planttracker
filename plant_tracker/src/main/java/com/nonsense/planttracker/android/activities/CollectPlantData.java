@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -55,6 +56,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
@@ -357,7 +359,78 @@ public class CollectPlantData extends AppCompatActivity {
 
         attachedImageCountTextView = findViewById(R.id.attachImageCountTextView);
         attachedImageCountTextView.setText(String.valueOf(images.size()));
+
+        ItemTouchHelper.Callback _ithCallback = new ItemTouchHelper.Callback() {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                // get the viewHolder's and target's positions in your adapter data, swap them
+                Collections.swap(images, viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                // and notify the adapter that its dataset has changed
+                adapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                return true;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int pos = viewHolder.getAdapterPosition();
+                switch(direction)   {
+                    case ItemTouchHelper.LEFT:
+                        promptRemoveAttachment(pos);
+                        break;
+                    case ItemTouchHelper.RIGHT:
+                        //TODO change image-plant association
+                        Toast.makeText(CollectPlantData.this,
+                                "Launch plant pick intent", Toast.LENGTH_SHORT).show();
+                        adapter.notifyItemChanged(pos);
+                        break;
+                }
+            }
+
+            //defines the enabled move directions in each state (idle, swiping, dragging).
+            @Override
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                return makeMovementFlags(ItemTouchHelper.DOWN | ItemTouchHelper.UP,
+                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+            }
+        };
+
+        ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
+
+
+        ith.attachToRecyclerView(attachedImageRecyclerView);
     }
+
+    private void promptRemoveAttachment(int pos)    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                CollectPlantData.this);
+        builder.setTitle(R.string.app_name);
+        builder.setMessage("Are you sure you want to remove this attachment?");
+        builder.setIcon(R.drawable.ic_growing_plant);
+        builder.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        String filePath = images.get(pos);
+                        images.remove(pos);
+                        adapter.notifyItemRemoved(pos);
+                        updateImageAttachmentCount();
+                        File f = new File(filePath);
+                        f.delete();
+                        dialog.dismiss();
+                    }
+                });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                adapter.notifyItemChanged(pos);
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
 
     private LinearLayout bindStringInput(final String key, String value)   {
         final LinearLayout layout = new LinearLayout(this);
@@ -484,6 +557,10 @@ public class CollectPlantData extends AppCompatActivity {
 
     private void refreshImageAttachments()  {
         adapter.notifyDataSetChanged();
+        attachedImageCountTextView.setText(String.valueOf(images.size()));
+    }
+
+    private void updateImageAttachmentCount()   {
         attachedImageCountTextView.setText(String.valueOf(images.size()));
     }
 
@@ -646,6 +723,9 @@ public class CollectPlantData extends AppCompatActivity {
         retInt.putExtra(AndroidConstants.INTENTKEY_GENERIC_RECORD, record);
         retInt.putExtra(AndroidConstants.INTENTKEY_APPLY_TO_GROUP, applyToGroup);
         retInt.putExtra(AndroidConstants.INTENTKEY_SELECTED_GROUP, selectedGroup);
+
+        // so the image at the top of the list is the thumbnail
+        Collections.reverse(images);
         retInt.putExtra(AndroidConstants.INTENTKEY_SELECTED_FILES, images);
 
         setResult(Activity.RESULT_OK, retInt);

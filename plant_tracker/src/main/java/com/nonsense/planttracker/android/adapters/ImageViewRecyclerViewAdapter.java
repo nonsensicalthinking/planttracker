@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +13,6 @@ import android.widget.TextView;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.interf.IImageCache;
-import com.nonsense.planttracker.tracker.impl.GenericRecord;
-import com.nonsense.planttracker.tracker.impl.PlantTracker;
 
 import java.io.File;
 import java.util.ArrayList;
