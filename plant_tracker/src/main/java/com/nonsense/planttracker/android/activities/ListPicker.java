@@ -1,36 +1,17 @@
 package com.nonsense.planttracker.android.activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.LruCache;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.CheckBox;
 import android.widget.ListView;
 
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
-import com.nonsense.planttracker.android.adapters.GroupTileArrayAdapter;
 import com.nonsense.planttracker.android.adapters.PlantTileArrayAdapter;
-import com.nonsense.planttracker.android.adapters.PlantTileRecyclerViewAdapter;
-import com.nonsense.planttracker.android.interf.IAction;
-import com.nonsense.planttracker.android.interf.IImageCache;
-import com.nonsense.planttracker.tracker.impl.Group;
 import com.nonsense.planttracker.tracker.impl.Plant;
-import com.nonsense.planttracker.tracker.impl.PlantTracker;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Stack;
-import java.util.TreeMap;
-
-import static com.nonsense.planttracker.android.AndroidUtility.decodeSampledBitmapFromResource;
 
 /**
  * Created by Derek Brooks on 3/8/2018.

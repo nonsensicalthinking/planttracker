@@ -202,8 +202,8 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
         final Dialog dialog = new Dialog(c);
         dialog.setContentView(R.layout.dialog_add_group);
 
-        final EditText groupNameEditText = (EditText) dialog.findViewById(R.id.groupNameEditText);
-        Button okButton = (Button) dialog.findViewById(R.id.okButton);
+        final EditText groupNameEditText = dialog.findViewById(R.id.groupNameEditText);
+        Button okButton = dialog.findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -218,7 +218,7 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
             }
         });
 
-        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+        Button cancelButton = dialog.findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -234,13 +234,13 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
         final Dialog dialog = new Dialog(c);
         dialog.setContentView(R.layout.dialog_rename_group);
 
-        final EditText groupNameEditText = (EditText) dialog.findViewById(R.id.groupNameEditText);
-        final TextView groupNameTextView = (TextView) dialog.findViewById(R.id.groupNameTextView);
+        final EditText groupNameEditText = dialog.findViewById(R.id.groupNameEditText);
+        final TextView groupNameTextView = dialog.findViewById(R.id.groupNameTextView);
         groupNameTextView.setText(tracker.getGroup(groupId).getGroupName());
 
         final long localGroupId = groupId;
 
-        Button okButton = (Button) dialog.findViewById(R.id.okButton);
+        Button okButton = dialog.findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -254,7 +254,7 @@ public class GroupManagement extends AppCompatActivity implements IPlantTrackerL
             }
         });
 
-        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+        Button cancelButton = dialog.findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1,7 +1,6 @@
 package com.nonsense.planttracker.android.activities;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.media.ExifInterface;
@@ -12,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.nonsense.planttracker.R;
@@ -55,8 +53,8 @@ public class ImageSeriesViewer extends AppCompatActivity {
 
     @SuppressLint("ClickableViewAccessibility")
     private void bindUi()   {
-        imageViewLayout = (LinearLayout)findViewById(R.id.imageViewLayout);
-        mPictureImageView = (ImageView)findViewById(R.id.pictureImageView);
+        imageViewLayout = findViewById(R.id.imageViewLayout);
+        mPictureImageView = findViewById(R.id.pictureImageView);
         otl = new OnSwipeTouchListener(ImageSeriesViewer.this) {
 
             public void onSwipeTop()    {

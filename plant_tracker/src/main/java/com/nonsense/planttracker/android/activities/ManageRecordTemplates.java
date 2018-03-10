@@ -53,10 +53,10 @@ public class ManageRecordTemplates extends AppCompatActivity {
     }
 
     private void bindUi()   {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingButton);
-        customRecordTemplateListView = (ListView) findViewById(R.id.customRecordTemplateListView);
-        floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingButton);
+        toolbar = findViewById(R.id.toolbar);
+        floatingActionButton = findViewById(R.id.floatingButton);
+        customRecordTemplateListView = findViewById(R.id.customRecordTemplateListView);
+        floatingActionButton = findViewById(R.id.floatingButton);
     }
 
     private void fillUi()   {
