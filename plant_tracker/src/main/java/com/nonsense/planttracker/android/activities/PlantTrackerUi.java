@@ -105,8 +105,6 @@ public class PlantTrackerUi extends AppCompatActivity
     private LinearLayout individualPlantView;
     private Toolbar toolbar;
 
-    private ListDisplay currentListView = ListDisplay.Plants;
-
     // All plants view
     private RecyclerView plantListView;
 
@@ -206,7 +204,7 @@ public class PlantTrackerUi extends AppCompatActivity
 
         refreshDrawerGroups();
 
-        refreshListView();
+        updateMainActivityView();
     }
 
     @Override
@@ -273,7 +271,7 @@ public class PlantTrackerUi extends AppCompatActivity
                             AndroidConstants.INTENTKEY_PLANT_TRACKER);
                     tracker.setPlantTrackerSettings(passedTracker.getPlantTrackerSettings());
 
-                    refreshListView();
+                    updateMainActivityView();
                 }
                 break;
 
@@ -284,14 +282,14 @@ public class PlantTrackerUi extends AppCompatActivity
 
                     rehashPlantTracker();
 
-                    refreshListView();
+                    updateMainActivityView();
                 }
                 break;
 
             case AndroidConstants.ACTIVITY_IMPORT_CHOOSER:
                 if (resultCode == Activity.RESULT_OK)   {
                     tracker.importFinished();
-                    refreshListView();
+                    updateMainActivityView();
                     Toast.makeText(PlantTrackerUi.this, "Finished plant import.",
                             Toast.LENGTH_SHORT).show();
                 }
@@ -661,13 +659,11 @@ public class PlantTrackerUi extends AppCompatActivity
      */
     private void fillViewWithPlants() {
         toolbar.setTitle(R.string.app_name);
-//        toolbar.setElevation(10);
+        toolbar.setElevation(100);
 
         setEmptyViewCaption("No Plants Found");
 
         showFloatingActionButton();
-
-        currentListView = ListDisplay.Plants;
 
         setFloatingButtonTextAndAction(new View.OnClickListener() {
             @Override
@@ -947,28 +943,12 @@ public class PlantTrackerUi extends AppCompatActivity
         }
     }
 
-    public void refreshListView() {
+    public void updateMainActivityView() {
         if (switcher.getCurrentView() == individualPlantView) {
             fillIndividualPlantView();
         }
         else {
-            switch (currentListView) {
-                case Plants:
-                    fillViewWithPlants();
-                    break;
-
-                case Groups:
-                    launchManageGroupsIntent();
-                    break;
-
-                case CustomEvents: // custom events
-                    //fillViewWithCustomEvents();
-                    break;
-
-                case Phases: // plant phase
-//                    fillViewWithPlantPhases();
-                    break;
-            }
+            fillViewWithPlants();
         }
     }
 
@@ -1117,7 +1097,7 @@ public class PlantTrackerUi extends AppCompatActivity
 
                         dialog.dismiss();
 
-                        refreshListView();
+                        updateMainActivityView();
                     }
                 });
 
@@ -1262,13 +1242,13 @@ public class PlantTrackerUi extends AppCompatActivity
      */
     @Override
     public void plantUpdated(Plant p) {
-        refreshListView();
+        updateMainActivityView();
     }
 
     @Override
     public void groupsUpdated() {
         refreshDrawerGroups();
-        refreshListView();
+        updateMainActivityView();
     }
 
     /*
