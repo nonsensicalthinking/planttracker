@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -17,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.InputType;
@@ -45,10 +45,7 @@ import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.android.AndroidUtility;
 import com.nonsense.planttracker.android.adapters.ImageViewRecyclerViewAdapter;
-import com.nonsense.planttracker.android.adapters.PlantTileRecyclerViewAdapter;
-import com.nonsense.planttracker.android.interf.IAction;
 import com.nonsense.planttracker.tracker.impl.GenericRecord;
-import com.nonsense.planttracker.tracker.impl.Plant;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,12 +55,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class CollectPlantData extends AppCompatActivity {
 
-    // TODO store currently selected tab and restore onCreate
+    private SimpleDateFormat simpleDateFormat =
+            new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
+
+    private int selectedTab = 0;
 
     private GenericRecord record;
     private boolean applyToGroup;
@@ -93,6 +94,9 @@ public class CollectPlantData extends AppCompatActivity {
             if (savedUri != null)   {
                 photoURI = Uri.parse(savedUri);
             }
+
+            selectedTab = savedInstanceState.getInt("selectedTab");
+
             images = savedInstanceState.getStringArrayList("images");
             selectedGroup = savedInstanceState.getLong("selectedGroup");
 
@@ -121,6 +125,8 @@ public class CollectPlantData extends AppCompatActivity {
             bundle.putString("photoUri", photoURI.toString());
         }
 
+        bundle.putInt("selectedTab", selectedTab);
+
         bundle.putStringArrayList("images", images);
         bundle.putLong("selectedGroup", selectedGroup);
         bundle.putBoolean("applyToGroup", applyToGroup);
@@ -145,9 +151,8 @@ public class CollectPlantData extends AppCompatActivity {
     }
 
     private void bindTabs() {
-        TabHost tabs = (TabHost) findViewById(R.id.tabHost);
+        TabHost tabs = findViewById(R.id.tabHost);
         tabs.setup();
-        tabs.setCurrentTab(0);
 
         TabHost.TabSpec dialogTab = tabs.newTabSpec("Tab1");
         dialogTab.setIndicator("Info");
@@ -172,6 +177,8 @@ public class CollectPlantData extends AppCompatActivity {
         tabs.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
+                selectedTab = tabs.getCurrentTab();
+
                 // Hide the keyboard if we're on any of the static tabs
                 if (!tabId.equals("Tab1")) {
                     View view = getCurrentFocus();
@@ -184,10 +191,13 @@ public class CollectPlantData extends AppCompatActivity {
                 }
             }
         });
+
+
+        tabs.setCurrentTab(selectedTab);
     }
 
     private void bindGroupListSpinner() {
-        Spinner groupListSpinner = (Spinner)findViewById(R.id.groupListSpinner);
+        Spinner groupListSpinner = findViewById(R.id.groupListSpinner);
 
         final ArrayList<String> groupNames = new ArrayList<>(availableGroups.keySet());
 
@@ -195,8 +205,7 @@ public class CollectPlantData extends AppCompatActivity {
             groupListSpinner.setEnabled(false);
             groupNames.add("No Groups");
 
-            CheckBox applyToGroupCheckBox =
-                    (CheckBox)findViewById(R.id.applyToGroupCheckbox);
+            CheckBox applyToGroupCheckBox = findViewById(R.id.applyToGroupCheckbox);
 
             applyToGroupCheckBox.setEnabled(false);
         }
@@ -223,7 +232,7 @@ public class CollectPlantData extends AppCompatActivity {
     }
 
     private void bindDataPoints()   {
-        LinearLayout tab1 = (LinearLayout)findViewById(R.id.tab1);
+        LinearLayout tab1 = findViewById(R.id.tab1);
 
         LinearLayout heading = new LinearLayout(this);
         TextView headingTextView = new TextView(this);
@@ -286,17 +295,17 @@ public class CollectPlantData extends AppCompatActivity {
     private void bindSharedControls()   {
         record.time = Calendar.getInstance();
 
-        final DatePicker datePicker = (DatePicker)findViewById(R.id.eventDatePicker);
+        final DatePicker datePicker = findViewById(R.id.eventDatePicker);
         datePicker.updateDate(record.time.get(Calendar.YEAR), record.time.get(Calendar.MONTH),
                 record.time.get(Calendar.DAY_OF_MONTH));
 
-        final TimePicker timePicker = (TimePicker)findViewById(R.id.eventTimePicker);
+        final TimePicker timePicker = findViewById(R.id.eventTimePicker);
         timePicker.setHour(record.time.get(Calendar.HOUR_OF_DAY));
         timePicker.setMinute(record.time.get(Calendar.MINUTE));
 
         bindAttachImageTab();
 
-        final CheckBox applyToGroupCheckBox = (CheckBox)findViewById(R.id.applyToGroupCheckbox);
+        final CheckBox applyToGroupCheckBox = findViewById(R.id.applyToGroupCheckbox);
         applyToGroupCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
@@ -305,7 +314,7 @@ public class CollectPlantData extends AppCompatActivity {
             }
         });
 
-        final Button okButton = (Button)findViewById(R.id.okButton);
+        final Button okButton = findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -313,7 +322,7 @@ public class CollectPlantData extends AppCompatActivity {
             }
         });
 
-        final Button cancelButton = (Button)findViewById(R.id.cancelButton);
+        final Button cancelButton = findViewById(R.id.cancelButton);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -323,7 +332,7 @@ public class CollectPlantData extends AppCompatActivity {
     }
 
     private void bindAttachImageTab()   {
-        final Button cameraButton = (Button)findViewById(R.id.openCameraButton);
+        final Button cameraButton = findViewById(R.id.openCameraButton);
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -339,7 +348,7 @@ public class CollectPlantData extends AppCompatActivity {
             }
         });
 
-        final Button galleryButton = (Button)findViewById(R.id.attachImagesButton);
+        final Button galleryButton = findViewById(R.id.attachImagesButton);
         galleryButton.setEnabled(true);
         galleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -353,20 +362,23 @@ public class CollectPlantData extends AppCompatActivity {
 
         LinearLayoutManager llm = new LinearLayoutManager(CollectPlantData.this);
         attachedImageRecyclerView = findViewById(R.id.attachedImageRecyclerView);
-        adapter = getAttachedImageAdapater();
+        adapter = getAttachedImageAdapter();
         attachedImageRecyclerView.setLayoutManager(llm);
         attachedImageRecyclerView.setAdapter(adapter);
 
         attachedImageCountTextView = findViewById(R.id.attachImageCountTextView);
         attachedImageCountTextView.setText(String.valueOf(images.size()));
 
-        ItemTouchHelper.Callback _ithCallback = new ItemTouchHelper.Callback() {
+        ItemTouchHelper.Callback ithCallback = new ItemTouchHelper.Callback() {
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                // get the viewHolder's and target's positions in your adapter data, swap them
-                Collections.swap(images, viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                // and notify the adapter that its dataset has changed
-                adapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+                Collections.swap(images, viewHolder.getAdapterPosition(),
+                        target.getAdapterPosition());
+
+                adapter.notifyItemMoved(viewHolder.getAdapterPosition(),
+                        target.getAdapterPosition());
+
                 return true;
             }
 
@@ -388,14 +400,14 @@ public class CollectPlantData extends AppCompatActivity {
 
             //defines the enabled move directions in each state (idle, swiping, dragging).
             @Override
-            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder
+                    viewHolder) {
                 return makeMovementFlags(ItemTouchHelper.DOWN | ItemTouchHelper.UP,
                         ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
             }
         };
 
-        ItemTouchHelper ith = new ItemTouchHelper(_ithCallback);
-
+        ItemTouchHelper ith = new ItemTouchHelper(ithCallback);
 
         ith.attachToRecyclerView(attachedImageRecyclerView);
     }
@@ -548,11 +560,8 @@ public class CollectPlantData extends AppCompatActivity {
         return layout;
     }
 
-    private ImageViewRecyclerViewAdapter getAttachedImageAdapater()   {
-        ImageViewRecyclerViewAdapter adapter = new ImageViewRecyclerViewAdapter(
-                CollectPlantData.this, images);
-
-        return adapter;
+    private ImageViewRecyclerViewAdapter getAttachedImageAdapter()   {
+        return new ImageViewRecyclerViewAdapter(CollectPlantData.this, images);
     }
 
     private void refreshImageAttachments()  {
@@ -670,17 +679,15 @@ public class CollectPlantData extends AppCompatActivity {
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = simpleDateFormat.format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(AndroidConstants.PATH_TRACKER_IMAGES);
-        File image = File.createTempFile(imageFileName,".jpg", storageDir);
-
-        return image;
+        return File.createTempFile(imageFileName,".jpg", storageDir);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[],
-                                           int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
         switch (requestCode) {
             case AndroidConstants.PERMISSION_REQ_CAMERA:
                 if (grantResults.length > 0
@@ -700,7 +707,9 @@ public class CollectPlantData extends AppCompatActivity {
         if (record.images != null)  {
             for(String s : images)   {
                 File f = new File(s);
-                f.delete();
+                if (!f.delete()) {
+                    Log.d("DELETE", "Unable to delete file: " + f.getPath());
+                }
             }
         }
 
@@ -709,8 +718,8 @@ public class CollectPlantData extends AppCompatActivity {
     }
 
     private void endActivity()  {
-        DatePicker datePicker = (DatePicker)findViewById(R.id.eventDatePicker);
-        TimePicker timePicker = (TimePicker)findViewById(R.id.eventTimePicker);
+        DatePicker datePicker = findViewById(R.id.eventDatePicker);
+        TimePicker timePicker = findViewById(R.id.eventTimePicker);
 
         Calendar cal = Calendar.getInstance();
         cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
