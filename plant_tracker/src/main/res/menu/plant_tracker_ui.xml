@@ -31,14 +31,14 @@
             android:title="@string/plant_opt_clone_plant"
             android:visible="true"
             app:showAsAction="never" />
-        <!--<item-->
-            <!--android:id="@+id/action_copy"-->
-            <!--android:checkable="false"-->
-            <!--android:enabled="true"-->
-            <!--android:orderInCategory="100"-->
-            <!--android:title="@string/action_copy"-->
-            <!--android:visible="true"-->
-            <!--app:showAsAction="never" />-->
+        <item
+            android:id="@+id/action_copy"
+            android:checkable="false"
+            android:enabled="true"
+            android:orderInCategory="100"
+            android:title="@string/action_copy"
+            android:visible="true"
+            app:showAsAction="never" />
         <!--<item-->
             <!--android:id="@+id/action_set_reminder"-->
             <!--android:checkable="false"-->

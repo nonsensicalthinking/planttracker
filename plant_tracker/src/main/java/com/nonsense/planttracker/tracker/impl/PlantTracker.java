@@ -1,6 +1,8 @@
 package com.nonsense.planttracker.tracker.impl;
 
 import android.graphics.Color;
+import android.service.autofill.RegexValidator;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -28,6 +30,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Derek Brooks on 6/30/2017.
@@ -309,61 +313,66 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         try {
             Plant p = new Plant();
             BufferedReader br = new BufferedReader(new FileReader(filePath));
-            Gson g = new Gson();
-
-            Type plantType = new TypeToken<PlantData>() {
-            }.getType();
-
             StringBuilder sb = new StringBuilder();
             while (br.ready()) {
                 sb.append(br.readLine());
             }
 
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy",
-                    Locale.getDefault());
-
-            PlantData plantData = g.fromJson(sb.toString(), plantType);
-
-            for(GenericRecord rec : plantData.genericRecords)   {
-                StringBuilder sBuilder = new StringBuilder();
-                // Build phase string
-                sBuilder.append(sdf.format(rec.time.getTime()));
-                sBuilder.append(" ");
-
-                int phaseCount = rec.phaseCount;
-                int stateWeekCount = rec.weeksSincePhase;
-                int growWeekCount = rec.weeksSinceStart;
-
-                if (rec.phaseCount > 0)   {
-                    sBuilder.append("[P");
-                    sBuilder.append(phaseCount);
-                    sBuilder.append("Wk");
-                    sBuilder.append(stateWeekCount);
-                    sBuilder.append("/");
-                    sBuilder.append(growWeekCount);
-                    sBuilder.append("]");
-                }
-                else    {
-                    sBuilder.append("[Wk ");
-                    sBuilder.append(growWeekCount);
-                    sBuilder.append("]");
-                }
-
-                rec.phaseDisplay = sBuilder.toString();
-
-                rec.hasImages = (rec.images != null && rec.images.size() > 0);
-                rec.hasDataPoints = (rec.dataPoints != null && rec.dataPoints.size() > 0);
-            }
-
-            p.setPlantData(plantData);
-
-            return p;
+            return getPlantFromJson(sb.toString());
         } catch (Exception e) {
             e.printStackTrace();
             File f = new File(filePath);
             // f.delete();
             return null;
         }
+    }
+
+    private Plant getPlantFromJson(String json)  {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy",
+                Locale.getDefault());
+
+        Gson g = new Gson();
+        Plant p = new Plant();
+
+        Type plantType = new TypeToken<PlantData>() {
+        }.getType();
+
+        PlantData plantData = g.fromJson(json, plantType);
+
+        for(GenericRecord rec : plantData.genericRecords)   {
+            StringBuilder sBuilder = new StringBuilder();
+            // Build phase string
+            sBuilder.append(sdf.format(rec.time.getTime()));
+            sBuilder.append(" ");
+
+            int phaseCount = rec.phaseCount;
+            int stateWeekCount = rec.weeksSincePhase;
+            int growWeekCount = rec.weeksSinceStart;
+
+            if (rec.phaseCount > 0)   {
+                sBuilder.append("[P");
+                sBuilder.append(phaseCount);
+                sBuilder.append("Wk");
+                sBuilder.append(stateWeekCount);
+                sBuilder.append("/");
+                sBuilder.append(growWeekCount);
+                sBuilder.append("]");
+            }
+            else    {
+                sBuilder.append("[Wk ");
+                sBuilder.append(growWeekCount);
+                sBuilder.append("]");
+            }
+
+            rec.phaseDisplay = sBuilder.toString();
+
+            rec.hasImages = (rec.images != null && rec.images.size() > 0);
+            rec.hasDataPoints = (rec.dataPoints != null && rec.dataPoints.size() > 0);
+        }
+
+        p.setPlantData(plantData);
+
+        return p;
     }
 
     public void savePlantTrackerSettings() {
@@ -671,6 +680,51 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         plants.clear();
         settings.removeListener();
         settings = null;
+    }
+
+    public void copyPlant(long plantId, int plantCount) {
+        Plant sourcePlant = getPlantById(plantId);
+
+        Gson g = new Gson();
+        String json = g.toJson(sourcePlant.getPlantData());
+
+        String plantNameBaseString = "";
+
+        Pattern ptrn = Pattern.compile("\\.\\d+$");
+        Matcher m = ptrn.matcher(sourcePlant.getPlantName());
+        boolean foundAMatch = m.find();
+
+        int x=1;
+        if (foundAMatch)   {
+            plantNameBaseString = sourcePlant.getPlantName().substring(
+                    0, sourcePlant.getPlantName().lastIndexOf('.'));
+
+            //TODO add routines to detect the current number and start x from that
+            x = 2;
+        }
+        else    {
+            plantNameBaseString = sourcePlant.getPlantName();
+        }
+
+        for(; x <= plantCount; x++)   {
+            Plant p = getPlantFromJson(json);
+
+            p.getPlantData().plantId = System.currentTimeMillis();
+
+            String pName = plantNameBaseString + "." + x;
+
+            p.getPlantData().plantName = pName;
+            savePlant(p);
+            plants.add(p);
+
+            try {
+                // we're only doing this to try to ensure we're getting unique plantIds
+                Thread.sleep(10);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 

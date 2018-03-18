@@ -22,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.SubMenu;
@@ -375,6 +376,10 @@ public class PlantTrackerUi extends AppCompatActivity
                         refreshDrawerGroups();
                     }
                 });
+                break;
+
+            case R.id.action_copy:
+                presentCopyDialog();
                 break;
 
 //            case R.id.action_set_reminder:
@@ -1169,6 +1174,35 @@ public class PlantTrackerUi extends AppCompatActivity
         dialogHandler.bindDialog(dialog);
 
         dialog.show();
+    }
+
+    private void presentCopyDialog()    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter number of copies to make");
+
+        final EditText input = new EditText(this);
+
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        builder.setView(input);
+
+// Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int plantCount = Integer.parseInt(input.getText().toString());
+
+                tracker.copyPlant(currentPlant.getPlantId(), plantCount);
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
     private void presentRecordableEventSummaryDialog(int eventIndex) {
