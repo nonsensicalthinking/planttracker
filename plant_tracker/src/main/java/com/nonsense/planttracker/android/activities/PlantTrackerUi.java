@@ -25,6 +25,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
 import android.util.LruCache;
+import android.view.LayoutInflater;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -45,6 +46,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -1178,21 +1180,24 @@ public class PlantTrackerUi extends AppCompatActivity
 
     private void presentCopyDialog()    {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Enter number of copies to make");
+        builder.setTitle("Copy plant...");
 
-        final EditText input = new EditText(this);
+        View v = this.getLayoutInflater().inflate(R.layout.dialog_copy_plant, null);
+        builder.setView(v);
 
-        input.setInputType(InputType.TYPE_CLASS_NUMBER);
-        builder.setView(input);
+        final EditText input = v.findViewById(R.id.copyCountEditText);
+        input.setText("");
 
-// Set up the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 int plantCount = Integer.parseInt(input.getText().toString());
 
                 tracker.copyPlant(currentPlant.getPlantId(), plantCount);
                 dialog.dismiss();
+                Toast.makeText(PlantTrackerUi.this,
+                        "Created " + plantCount + " copies.",
+                        Toast.LENGTH_SHORT).show();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

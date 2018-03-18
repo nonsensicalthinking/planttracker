@@ -694,24 +694,27 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
         Matcher m = ptrn.matcher(sourcePlant.getPlantName());
         boolean foundAMatch = m.find();
 
-        int x=1;
+        int slidingCount = 0;
         if (foundAMatch)   {
             plantNameBaseString = sourcePlant.getPlantName().substring(
                     0, sourcePlant.getPlantName().lastIndexOf('.'));
 
-            //TODO add routines to detect the current number and start x from that
-            x = 2;
+            int baseCount = Integer.parseInt(sourcePlant.getPlantName().substring(
+                    sourcePlant.getPlantName().lastIndexOf('.')+1));
+
+            slidingCount = baseCount + 1;
         }
         else    {
             plantNameBaseString = sourcePlant.getPlantName();
+            slidingCount = 1;
         }
 
-        for(; x <= plantCount; x++)   {
+        for(int x=0; x < plantCount; x++)   {
             Plant p = getPlantFromJson(json);
 
             p.getPlantData().plantId = System.currentTimeMillis();
 
-            String pName = plantNameBaseString + "." + x;
+            String pName = plantNameBaseString + "." + slidingCount++;
 
             p.getPlantData().plantName = pName;
             savePlant(p);
