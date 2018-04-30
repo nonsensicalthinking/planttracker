@@ -140,11 +140,11 @@ public class ImageSeriesViewer extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-
+    
     public void updateImageDisplayed() {
-        mPictureImageView.setImageURI(Uri.fromFile(new File(files.get(mSelectedImageIndex))));
+        if ( mSelectedImageIndex < files.size() )
+        {
+            mPictureImageView.setImageURI(Uri.fromFile(new File(files.get(mSelectedImageIndex))));
+        }
     }
-
-
 }
