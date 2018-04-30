@@ -180,8 +180,8 @@ public class PlantTrackerUi extends AppCompatActivity
             parentPlantViewStack = (Stack<Plant>)savedInstanceState.getSerializable(
                     "parentPlantViewStack");
 
-            currentDisplayArray = (ArrayList<Plant>) savedInstanceState.getSerializable(
-                    "currentDisplayArray");
+//            currentDisplayArray = (ArrayList<Plant>) savedInstanceState.getSerializable(
+//                    "currentDisplayArray");
 
             boolean individualPlantView = savedInstanceState.getBoolean("individualPlantView",
                     false);
@@ -218,7 +218,7 @@ public class PlantTrackerUi extends AppCompatActivity
         bundle.putLong("groupIdViewFilter", groupIdViewFilter);
 
         bundle.putSerializable("parentPlantViewStack", parentPlantViewStack);
-        bundle.putSerializable("currentDisplayArray", currentDisplayArray);
+        //bundle.putSerializable("currentDisplayArray", currentDisplayArray);
         bundle.putSerializable("tracker", tracker);
 
         if (switcher != null && switcher.getCurrentView() == individualPlantView) {
