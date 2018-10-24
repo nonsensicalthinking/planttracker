@@ -3,7 +3,7 @@ Plant Tracker is a free Android Phone App for tracking your plant grows. Keeps t
 
 __App Screenshots__:
 
-<img src="https://github.com/nonsensicalthinking/planttracker/blob/master/screenshots/shot1.png" />
+<img src="https://github.com/nonsensicalthinking/planttracker/blob/master/screenshots/shot2.png" />
 
 __Currently implemented features__:
 * Create plants
