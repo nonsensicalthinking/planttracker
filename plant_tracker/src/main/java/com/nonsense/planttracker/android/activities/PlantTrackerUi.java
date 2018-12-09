@@ -1348,7 +1348,7 @@ public class PlantTrackerUi extends AppCompatActivity
         ArrayList<File> masterImageUploadList = new ArrayList<>();
         ArrayList<File> masterJsonUploadList = new ArrayList<>();
 
-        if (true) {//!tracker.getPlantTrackerSettings().hasSynced()) {
+        if (!tracker.getPlantTrackerSettings().hasSynced()) {
             // Send it all we've never synced with the server before.
             File folder = new File(plantFolderPath);
             File[] plants = folder.listFiles();
