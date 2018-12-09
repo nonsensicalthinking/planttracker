@@ -6,6 +6,7 @@ import com.nonsense.planttracker.tracker.interf.ISettingsChangedListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -23,6 +24,11 @@ public class PlantTrackerSettings implements Serializable {
     private TreeMap<String, GenericRecord> genericRecordTemplates;
     private ArrayList<Group> groups;
     private ArrayList<String> stateAutoComplete;
+
+    private String syncAddress = null;
+    private Date lastSync = null;
+    private ArrayList<String> plantChangesSinceLastSync = new ArrayList<>();
+    private ArrayList<String> imageChangesSinceLastSync = new ArrayList<>();
 
     PlantTrackerSettings()   {
         genericRecordTemplates = new TreeMap<>();
@@ -159,5 +165,54 @@ public class PlantTrackerSettings implements Serializable {
 
     }
 
+    public void setSyncServerAddress(String s) {
+        if (s.equals("")) {
+            syncAddress = null;
+        }
+        else {
+            syncAddress = s;
+        }
 
+        settingsChanged();
+    }
+
+    public String getSyncServerAddress() {
+        return syncAddress;
+    }
+
+    public void addPlantChangeSinceSync(String plantId) {
+        if (plantChangesSinceLastSync.contains(plantId) || !hasSynced())
+            return;
+
+        plantChangesSinceLastSync.add(plantId);
+        settingsChanged();
+    }
+
+    public void addImageChangesSinceLastSync(String imageName) {
+        if (imageChangesSinceLastSync.contains(imageName) || !hasSynced())
+            return;
+
+        imageChangesSinceLastSync.add(imageName);
+        settingsChanged();
+    }
+
+    public void resetChangesSinceSync() {
+        lastSync = new Date();
+        plantChangesSinceLastSync.clear();
+        imageChangesSinceLastSync.clear();
+        settingsChanged();
+    }
+
+    public boolean hasSynced() {
+        return lastSync != null;
+    }
+
+    public TreeMap<String, ArrayList<String>> getChangesSinceLastSync() {
+        TreeMap<String, ArrayList<String>> changes = new TreeMap<>();
+
+        changes.put("plants", plantChangesSinceLastSync);
+        changes.put("images", imageChangesSinceLastSync);
+
+        return changes;
+    }
 }

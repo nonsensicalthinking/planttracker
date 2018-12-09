@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView26"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="PrivateStash Sync Server Settings"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textView28"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/textView26"
+            android:layout_below="@+id/textView26"
+            android:layout_marginTop="15dp"
+            android:text="Sync Server Hostname"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/syncAddressEditText"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_below="@+id/textView26"
+            android:layout_toEndOf="@+id/textView26"
+            android:ems="10"
+            android:inputType="text" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/groupNameEditText"
+            android:layout_toStartOf="@+id/groupNameEditText"
+            android:layout_weight="1"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/okButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/groupNameEditText"
+            android:layout_alignTop="@+id/cancelButton"
+            android:layout_weight="1"
+            android:text="Ok" />
+
+    </LinearLayout>
+
+</LinearLayout>

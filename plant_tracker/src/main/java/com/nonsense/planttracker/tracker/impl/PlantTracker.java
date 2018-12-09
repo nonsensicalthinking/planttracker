@@ -232,6 +232,7 @@ public class PlantTracker implements IPlantUpdateListener, ISettingsChangedListe
     }
 
     public void savePlant(Plant p) {
+        settings.addPlantChangeSinceSync("" + p.getPlantId());
         File folder = new File(plantFolderPath + PLANTS_FOLDER);
         if (!folder.exists()) {
             folder.mkdir();

@@ -22,10 +22,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.util.Log;
 import android.util.LruCache;
-import android.view.LayoutInflater;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -46,7 +44,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -54,9 +51,11 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.google.gson.Gson;
 import com.nonsense.planttracker.R;
 import com.nonsense.planttracker.android.AndroidConstants;
 import com.nonsense.planttracker.android.AndroidUtility;
+import com.nonsense.planttracker.android.MultipartUtility;
 import com.nonsense.planttracker.android.interf.IAction;
 import com.nonsense.planttracker.android.interf.ICallback;
 import com.nonsense.planttracker.android.interf.IImageCache;
@@ -75,6 +74,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Stack;
 import java.util.TreeMap;
 
@@ -243,6 +243,14 @@ public class PlantTrackerUi extends AppCompatActivity
 
                     record.images = (ArrayList<String>)returnedIntent.
                             getSerializableExtra(AndroidConstants.INTENTKEY_SELECTED_FILES);
+
+                    if (record.images != null && record.images.size() > 0) {
+                        for(String img : record.images) {
+                            int index = img.lastIndexOf('/') + 1;
+                            String fileName = img.substring(index>0?index:0);
+                            tracker.getPlantTrackerSettings().addImageChangesSinceLastSync(fileName);
+                        }
+                    }
 
                     record.template = tracker.getGenericRecordTemplate(record.displayName);
 
@@ -434,8 +442,23 @@ public class PlantTrackerUi extends AppCompatActivity
                 }
                 break;
 
+            case R.id.nav_sync_settings:
+                presentSetSyncAddressDialog(this, tracker, new ICallback() {
+                    @Override
+                    public void callback() {
+                    }
+                });
+                break;
+
             case R.id.nav_backup:
-                //TODO full backup
+                String syncAddress = tracker.getPlantTrackerSettings().getSyncServerAddress();
+                if (syncAddress != null) {
+                    syncWithPrivateStash(syncAddress);
+                }
+                else {
+                    Toast.makeText(PlantTrackerUi.this, "You must set a Sync Address in Sync Settings first!",
+                            Toast.LENGTH_LONG).show();
+                }
                 break;
 
             case R.id.nav_manage_events:
@@ -448,30 +471,6 @@ public class PlantTrackerUi extends AppCompatActivity
                 startActivityForResult(manageRecordTemplates,
                         AndroidConstants.ACTIVITY_MANAGE_RECORD_TEMPLATES);
                 break;
-
-            case R.id.nav_export:
-                Intent exportIntent = new Intent(this, ImportExportData.class);
-                exportIntent.putExtra(AndroidConstants.INTENTKEY_PLANT_TRACKER, tracker);
-                exportIntent.putExtra("isExport", true);
-                startActivityForResult(exportIntent, AndroidConstants.ACTIVITY_EXPORT_SELECT);
-                break;
-
-            case R.id.nav_import:
-                Intent importIntent = new Intent(this, ImportExportData.class);
-                importIntent.putExtra(AndroidConstants.INTENTKEY_PLANT_TRACKER, tracker);
-                importIntent.putExtra("isExport", false);
-                startActivityForResult(importIntent, AndroidConstants.ACTIVITY_IMPORT_CHOOSER);
-                break;
-
-
-//            case R.id.nav_manage_states:
-//                if (switcher.getCurrentView() != allPlantsView) {
-//                    switchToPlantList();
-//                    fillViewWithPlantPhases();
-//                } else {
-//                    fillViewWithPlantPhases();
-//                }
-//                break;
 
             case R.id.nav_delete:
                 AlertDialog alert = AndroidUtility.presentDeleteAllPlantsDialog(
@@ -1341,4 +1340,139 @@ public class PlantTrackerUi extends AppCompatActivity
         tracker = new PlantTracker(getExternalFilesDir("").getPath());
         tracker.setPlantTrackerListener(this);
     }
+
+    private void syncWithPrivateStash(String host) {
+        String plantFolderPath = getExternalFilesDir("").getPath() + "/plants/";
+        String cameraFolderPath = getExternalFilesDir("").getPath() + "/camera/";
+        ArrayList<File> masterImageUploadList = new ArrayList<>();
+        ArrayList<File> masterJsonUploadList = new ArrayList<>();
+
+        if (!tracker.getPlantTrackerSettings().hasSynced()) {
+            // Send it all we've never synced with the server before.
+            File folder = new File(plantFolderPath);
+            File[] plants = folder.listFiles();
+            for(int x=0; x < plants.length; x++) {
+                masterJsonUploadList.add(plants[x]);
+            }
+
+            File cameraFolder = new File(cameraFolderPath);
+            File[] images = cameraFolder.listFiles();
+            for(int x=0; x < images.length; x++) {
+                masterImageUploadList.add(images[x]);
+            }
+        }
+        else {
+            // Send only the change we've seen since the last sync
+            TreeMap<String, ArrayList<String>> changes =
+                    tracker.getPlantTrackerSettings().getChangesSinceLastSync();
+
+            if (changes != null) {
+                if (changes.containsKey("plants")) {
+                    for(String s : changes.get("plants")) {
+                        File f = new File(plantFolderPath + s + ".json");
+                        masterJsonUploadList.add(f);
+                    }
+                }
+
+                if (changes.containsKey("images")) {
+                    for(String s : changes.get("images")) {
+                        File f = new File(cameraFolderPath + s);
+                        masterImageUploadList.add(f);
+                    }
+                }
+            }
+        }
+
+        if (masterJsonUploadList.size() == 0 && masterImageUploadList.size() == 0) {
+            Toast.makeText(PlantTrackerUi.this, "No plant data to sync.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    String charset = "UTF-8";
+                    String requestURL = "http://" + host + "/plants/sync_plants";
+                    MultipartUtility multipart = new MultipartUtility(requestURL, charset);
+
+                    Gson g = new Gson();
+                    String groupsJson = g.toJson(tracker.getAllGroups());
+
+                    multipart.addFormField("groups_json", groupsJson);
+
+                    for(File f : masterJsonUploadList) {
+                        multipart.addFilePart("json_files[]", f);
+                    }
+
+                    for(File f : masterImageUploadList) {
+                        multipart.addFilePart("plant_images[]", f);
+                    }
+
+                    List<String> response = multipart.finish();
+
+                    Log.v("rht", "SERVER REPLIED:");
+
+                    for (String line : response) {
+                        Log.v("rht", "Line : "+line);
+                    }
+
+                    // We have to reset the sync state when we've finished pushing changes successfully.
+                    tracker.getPlantTrackerSettings().resetChangesSinceSync();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                Runnable updateUi = new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(PlantTrackerUi.this, "Finished plant data sync.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                };
+
+                PlantTrackerUi.this.runOnUiThread(updateUi);
+            }
+        };
+
+        Thread syncPlantData = new Thread(runnable);
+        syncPlantData.start();
+    }
+
+    static void presentSetSyncAddressDialog(Context c, PlantTracker tracker, ICallback caller) {
+        final Dialog dialog = new Dialog(c);
+        dialog.setContentView(R.layout.dialog_set_sync_address);
+
+        final EditText groupNameEditText = dialog.findViewById(R.id.syncAddressEditText);
+
+        if (tracker.getPlantTrackerSettings().getSyncServerAddress() != null) {
+            groupNameEditText.setText(tracker.getPlantTrackerSettings().getSyncServerAddress());
+        }
+
+        Button okButton = dialog.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tracker.getPlantTrackerSettings().setSyncServerAddress(
+                        groupNameEditText.getText().toString());
+
+                caller.callback();
+                dialog.dismiss();
+            }
+        });
+
+        Button cancelButton = dialog.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
 }
