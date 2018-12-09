@@ -71,6 +71,7 @@ import com.nonsense.planttracker.tracker.interf.IDialogHandler;
 import com.nonsense.planttracker.tracker.interf.IPlantTrackerListener;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -1394,29 +1395,14 @@ public class PlantTrackerUi extends AppCompatActivity
             public void run() {
 
                 try {
-                    String charset = "UTF-8";
                     String requestURL = "http://" + host + "/plants/sync_plants";
-                    MultipartUtility multipart = new MultipartUtility(requestURL, charset);
-
-                    Gson g = new Gson();
-                    String groupsJson = g.toJson(tracker.getAllGroups());
-
-                    multipart.addFormField("groups_json", groupsJson);
 
                     for(File f : masterJsonUploadList) {
-                        multipart.addFilePart("json_files[]", f);
+                        sendFile(requestURL,"json_files[]", f);
                     }
 
                     for(File f : masterImageUploadList) {
-                        multipart.addFilePart("plant_images[]", f);
-                    }
-
-                    List<String> response = multipart.finish();
-
-                    Log.v("rht", "SERVER REPLIED:");
-
-                    for (String line : response) {
-                        Log.v("rht", "Line : "+line);
+                        sendFile(requestURL,"plant_images[]", f);
                     }
 
                     // We have to reset the sync state when we've finished pushing changes successfully.
@@ -1440,6 +1426,28 @@ public class PlantTrackerUi extends AppCompatActivity
 
         Thread syncPlantData = new Thread(runnable);
         syncPlantData.start();
+    }
+
+    private void sendFile(String url, String fieldName, File f) {
+        try {
+            MultipartUtility multipart = new MultipartUtility(url, "UTF-8");
+
+            Gson g = new Gson();
+            String groupsJson = g.toJson(tracker.getAllGroups());
+
+            multipart.addFormField("groups_json", groupsJson);
+            multipart.addFilePart(fieldName, f);
+
+            List<String> response = multipart.finish();
+
+            Log.v("rht", "SERVER REPLIED:");
+
+            for (String line : response) {
+                Log.v("rht", "Line : "+line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     static void presentSetSyncAddressDialog(Context c, PlantTracker tracker, ICallback caller) {
