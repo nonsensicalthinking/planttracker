@@ -27,6 +27,7 @@
     <string name="drawer_item_record_templates">Record Templates</string>
     <string name="drawer_item_groups">Groups</string>
     <string name="drawer_item_sync">Sync with PrivateStash</string>
+    <string name="drawer_item_full_sync">Force Sync</string>
     <string name="drawer_item_sync_settings">Sync Settings...</string>
     <string name="drawer_item_export">Export</string>
     <string name="drawer_item_import">Import</string>

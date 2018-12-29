@@ -452,14 +452,11 @@ public class PlantTrackerUi extends AppCompatActivity
                 break;
 
             case R.id.nav_backup:
-                String syncAddress = tracker.getPlantTrackerSettings().getSyncServerAddress();
-                if (syncAddress != null) {
-                    syncWithPrivateStash(syncAddress);
-                }
-                else {
-                    Toast.makeText(PlantTrackerUi.this, "You must set a Sync Address in Sync Settings first!",
-                            Toast.LENGTH_LONG).show();
-                }
+                startSync(false);
+                break;
+
+            case R.id.nav_full_sync:
+                startSync(true);
                 break;
 
             case R.id.nav_manage_events:
@@ -512,6 +509,17 @@ public class PlantTrackerUi extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void startSync(boolean fullSync) {
+        String syncAddress = tracker.getPlantTrackerSettings().getSyncServerAddress();
+        if (syncAddress != null) {
+            syncWithPrivateStash(syncAddress, fullSync);
+        }
+        else {
+            Toast.makeText(PlantTrackerUi.this, "You must set a Sync Address in Sync Settings first!",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -1342,13 +1350,13 @@ public class PlantTrackerUi extends AppCompatActivity
         tracker.setPlantTrackerListener(this);
     }
 
-    private void syncWithPrivateStash(String host) {
+    private void syncWithPrivateStash(String host, boolean forceFullSync) {
         String plantFolderPath = getExternalFilesDir("").getPath() + "/plants/";
         String cameraFolderPath = getExternalFilesDir("").getPath() + "/camera/";
         ArrayList<File> masterImageUploadList = new ArrayList<>();
         ArrayList<File> masterJsonUploadList = new ArrayList<>();
 
-        if (!tracker.getPlantTrackerSettings().hasSynced()) {
+        if (!tracker.getPlantTrackerSettings().hasSynced() || forceFullSync) {
             // Send it all we've never synced with the server before.
             File folder = new File(plantFolderPath);
             File[] plants = folder.listFiles();

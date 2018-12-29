@@ -53,6 +53,10 @@
                 android:id="@+id/nav_backup"
                 android:icon="@drawable/ic_export"
                 android:title="@string/drawer_item_sync" />
+            <item
+                android:id="@+id/nav_full_sync"
+                android:icon="@drawable/ic_export"
+                android:title="@string/drawer_item_full_sync" />
         </menu>
     </item>
 
