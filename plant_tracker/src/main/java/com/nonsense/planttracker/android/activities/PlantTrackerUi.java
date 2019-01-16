@@ -219,8 +219,6 @@ public class PlantTrackerUi extends AppCompatActivity
         bundle.putLong("groupIdViewFilter", groupIdViewFilter);
 
         bundle.putSerializable("parentPlantViewStack", parentPlantViewStack);
-        //bundle.putSerializable("currentDisplayArray", currentDisplayArray);
-        bundle.putSerializable("tracker", tracker);
 
         if (switcher != null && switcher.getCurrentView() == individualPlantView) {
             bundle.putBoolean("individualPlantView", true);
@@ -464,7 +462,7 @@ public class PlantTrackerUi extends AppCompatActivity
                         ManageRecordTemplates.class);
 
                 //TODO pass data
-                manageRecordTemplates.putExtra("tracker", tracker);
+                //manageRecordTemplates.putExtra("tracker", tracker);
 
                 startActivityForResult(manageRecordTemplates,
                         AndroidConstants.ACTIVITY_MANAGE_RECORD_TEMPLATES);
